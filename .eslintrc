@@ -1,0 +1,29 @@
+// http://eslint.org/docs/rules/
+// http://eslint.org/docs/user-guide/configuring
+{
+  "extends": "google",
+  "rules": {
+    "camelcase": 1,
+    "indent": ["error", 2],
+    "comma-dangle": 0,
+    "quotes": 0,
+    "strict": 0,
+    "linebreak-style": 0,
+    "no-var": 0,
+    "no-unused-vars": 1,
+    "require-jsdoc": 0,
+    "valid-jsdoc": 0,
+    "max-len": 1,
+    "no-invalid-this": 0,
+    "padded-blocks": ["error", { "blocks": "never", "switches": "always" }],
+    "brace-style": ["error", "stroustrup"]
+  },
+  "parserOptions": {
+    "ecmaVersion": 6
+  },
+  "env": {
+      "browser": true,
+      "es6": true,
+      "commonjs": true
+  }
+}
