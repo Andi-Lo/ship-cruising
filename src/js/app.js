@@ -5,6 +5,7 @@ function shipcruising(options) {
   // var _ = require('underscore');
   var createMap = require('./modules/createMap');
   var draw = require('./modules/draw');
+  var grid = require('./modules/grid');
   var el = window.document.getElementById('ship-cruising');
 
   var defaults = {
@@ -17,6 +18,7 @@ function shipcruising(options) {
 
   var canvas = createMap(defaults.width, defaults.height);
   var ctx = canvas.getContext('2d');
+  var grid = grid(ctx);
   el.appendChild(canvas);
 
   // draw.drawPolygon(ctx, data, defaults.mapColor);
@@ -45,7 +47,7 @@ function shipcruising(options) {
       switch (type) {
 
       case "Point":
-        draw.drawPoint(ctx, coordinates, defaults.pointColor);
+        draw.drawPoint(ctx, coordinates, defaults.pointColor, 4);
         break;
 
       }

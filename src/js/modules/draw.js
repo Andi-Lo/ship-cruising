@@ -29,13 +29,13 @@ var drawPolygon = function(ctx, polygon, color) {
   ctx.fill();
 };
 
-var drawPoint = function(ctx, point, color) {
+var drawPoint = function(ctx, point, color, lineWidth) {
   // make points visible: see http://stackoverflow.com/questions/9165766/html5-canvas-set-z-index
   ctx.globalCompositeOperation='destination-over';
 
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
-  ctx.lineWidth = 4;
+  ctx.lineWidth = lineWidth;
 
   var pixel = posToPixel(point);
 
