@@ -8,7 +8,7 @@
     "comma-dangle": 0,
     "quotes": 0,
     "strict": 0,
-    "linebreak-style": 0,
+    "linebreak-style": 1,
     "no-var": 0,
     "no-unused-vars": 1,
     "require-jsdoc": 0,
