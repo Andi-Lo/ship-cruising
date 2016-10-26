@@ -29,12 +29,9 @@ function shipcruising(options) {
       const {type, coordinates} = features.geometry;
 
       switch (type) {
-
-      case "Polygon":
-        draw.drawPolygon(ctx, coordinates, defaults.mapColor);
-        break;
-      // case "MultiPolygon": return drawPolygon(ctx, coordinates);
-
+        case "Polygon":
+          draw.drawPolygon(ctx, coordinates, defaults.mapColor);
+          break;
       }
     });
   });
@@ -45,11 +42,9 @@ function shipcruising(options) {
       const {type, coordinates} = features.geometry;
 
       switch (type) {
-
-      case "Point":
-        draw.drawPoint(ctx, coordinates, defaults.pointColor, 4);
-        break;
-
+        case "Point":
+          draw.drawPoint(ctx, coordinates, defaults.pointColor, 4);
+          break;
       }
     });
 
@@ -62,12 +57,10 @@ function shipcruising(options) {
       const {type, coordinates} = features.geometry;
 
       switch (type) {
-
-      case "Point":
-        draw.drawRoute(ctx, coordinates, defaults.strokeColor, route);
-        route.iterator++;
-        break;
-
+        case "Point":
+          draw.drawRoute(ctx, coordinates, defaults.strokeColor, route);
+          route.iterator++;
+          break;
       }
     });
   });
