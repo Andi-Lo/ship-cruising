@@ -10,6 +10,7 @@
   },
   "author": "Andreas Lorer and Kevin Klugmann",
   "dependencies": {
+    "@turf/meta": "^3.5.2",
     "@turf/turf": "^3.5.2",
     "async": "^1.5.2",
     "browserify": "^12.0.1",
@@ -33,5 +34,5 @@
   },
   "devDependencies": {},
   "license": "",
-  "repository": ""
+  "repository": "https://github.com/Andi-Lo/ship-cruising"
 }
