@@ -1,5 +1,4 @@
-var turf = require('@turf/turf');
-turf.meta = require('@turf/meta');
+var turf = require('./turf');
 var draw = require('./draw');
 
 module.exports = function(ctx) {
@@ -14,10 +13,10 @@ module.exports = function(ctx) {
   var units = 'miles';
 
   var grid = turf.pointGrid(bbox, cellWidth, units);
+  // console.log('grid', grid);
 
   // draw raster map
-  fetch('./map/map.geojson').then((parseJson) => parseJson.json()).then((props) => {
-    // draw map
+  fetch('./map/map.geojson').then((parse) => parse.json()).then((props) => {
     turf.meta.featureEach(props, function(feature) {
       var type = feature.geometry.type;
 
@@ -27,7 +26,7 @@ module.exports = function(ctx) {
             switch (polygon.geometry.type) {
               case "Point":
                 if (turf.inside(polygon, feature)) {
-                  draw.drawPoint(ctx, polygon.geometry.coordinates, 'rgba(50, 80, 0, 0.4)', 0.1);
+                  draw.drawPoint(ctx, polygon.geometry.coordinates, 'rgba(50, 80, 0, 0.4)', 1);
                 }
                 break;
             }

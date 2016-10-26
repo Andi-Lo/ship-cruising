@@ -6,6 +6,7 @@ function shipcruising(options) {
   var createMap = require('./modules/createMap');
   var draw = require('./modules/draw');
   var grid = require('./modules/grid');
+  var turf = require('./modules/turf');
   var el = window.document.getElementById('ship-cruising');
 
   var defaults = {
@@ -21,48 +22,35 @@ function shipcruising(options) {
   var grid = grid(ctx);
   el.appendChild(canvas);
 
-  // draw.drawPolygon(ctx, data, defaults.mapColor);
-
-  fetch('./map/map.geojson').then((res) => res.json()).then((geo) => {
+  fetch('./map/map.geojson').then((parse) => parse.json()).then((geo) => {
     // draw map
     geo.features.forEach((features) => {
-      const {type, coordinates} = features.geometry;
-
-      switch (type) {
+      switch (features.geometry.type) {
         case "Polygon":
-          draw.drawPolygon(ctx, coordinates, defaults.mapColor);
+          turf.meta.featureEach(features, function(coords) {
+            draw.drawMultiPolygon(ctx, coords, defaults.mapColor);
+          });
           break;
       }
     });
   });
 
-  fetch('./map/route.geojson').then((res) => res.json()).then((geo) => {
+  fetch('./map/route.geojson').then((parse) => parse.json()).then((geo) => {
     // draw points
     geo.features.forEach((features) => {
-      const {type, coordinates} = features.geometry;
-
-      switch (type) {
+      switch (features.geometry.type) {
         case "Point":
-          draw.drawPoint(ctx, coordinates, defaults.pointColor, 4);
+          draw.drawPoint(
+            ctx,
+            features.geometry.coordinates,
+            defaults.pointColor,
+            4
+          );
           break;
       }
     });
 
-    var route = [];
-    route.push('length', geo.features.length);
-    route.push('iterator', 0);
-
-    // draw route
-    geo.features.forEach((features) => {
-      const {type, coordinates} = features.geometry;
-
-      switch (type) {
-        case "Point":
-          draw.drawRoute(ctx, coordinates, defaults.strokeColor, route);
-          route.iterator++;
-          break;
-      }
-    });
+    draw.drawRoute(ctx, geo, defaults.strokeColor);
   });
 };
 
