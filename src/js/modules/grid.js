@@ -9,17 +9,26 @@ module.exports = function(ctx) {
 
   var grid = turf.pointGrid(bbox, cellWidth, units);
 
-  console.log('grid', grid);
+  fetch('./map/map.geojson').then((res) => res.json()).then((geo) => {
+    var count = 0;
+    // draw map
+    geo.features.forEach((feat) => {
+      const {type, coordinates} = feat.geometry;
 
-  grid.features.forEach((features) => {
-    const {type, coordinates} = features.geometry;
+      switch (type) {
 
-    switch (type) {
-
-    case "Point":
-      draw.drawPoint(ctx, coordinates, 'rgba(50, 80, 0, 0.4)', 0.1);
-      break;
-
-    }
+      case "Polygon":
+        grid.features.forEach((feature) => {
+          const {type, coordinates} = feature.geometry;
+          switch (type) {
+          case "Point":
+            if(turf.inside(feature, feat)) {
+              draw.drawPoint(ctx, coordinates, 'rgba(50, 80, 0, 0.4)', 0.1);
+            }
+          }
+        });
+        break;
+      }
+    });
   });
 };
