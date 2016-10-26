@@ -30,7 +30,7 @@ var drawPolygon = function(ctx, polygon, color) {
 };
 
 var drawPoint = function(ctx, point, color, lineWidth) {
-  // make points visible: see http://stackoverflow.com/questions/9165766/html5-canvas-set-z-index
+  // make points visible
   ctx.globalCompositeOperation='destination-over';
 
   ctx.fillStyle = color;
@@ -55,7 +55,6 @@ var drawRoute = function(ctx, points, color, route) {
   ctx.globalCompositeOperation='destination-over';
 
   var pixel = posToPixel(points);
-  console.log(pixel);
 
   if(pixel.x > 0 && pixel.y > 0) {
     if(route.iterator === 0) {
