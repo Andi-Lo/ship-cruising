@@ -4,7 +4,7 @@
   "description": "Ship cruising data visualization project",
   "main": "src/app.js",
   "scripts": {
-    "start": "gulp",
+    "start": "gulp serve",
     "build": "gulp build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -30,9 +30,9 @@
     "sphericalmercator": "^1.0.5",
     "underscore": "^1.8.3",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "rgb2hex": "^0.1.0"
   },
-  "devDependencies": {},
   "license": "",
   "repository": "https://github.com/Andi-Lo/ship-cruising"
 }
