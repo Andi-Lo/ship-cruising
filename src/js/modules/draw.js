@@ -3,80 +3,92 @@
 var posToPixel = require('./positionToPixel');
 var turf = require('./turf');
 
-// todo
-var drawMultiPolygon = function(ctx, featureCollection, color) {
-  // console.log('featureCollection', featureCollection);
+var unpackMultiPolCoords = function(features) {
+  var data = [];
+
+  turf.meta.featureEach(features, function(feature) {
+    var coordCollection = feature.geometry.coordinates;
+    coordCollection.forEach(function(coords) {
+      coords.forEach(function(coord) {
+        data.push(coord);
+      });
+    });
+  });
+  return data;
+};
+
+var drawLine = function(ctx, coord, isFirst, stroke = false) {
+  var pixel = posToPixel(coord);
+
+  if(pixel.x > 0 || pixel.y > 0) {
+    if(isFirst === true) {
+      ctx.beginPath();
+      ctx.moveTo(pixel.x, pixel.y);
+      isFirst = false;
+    }
+    else {
+      ctx.lineTo(pixel.x, pixel.y);
+      if (stroke === true) {
+        ctx.stroke();
+      }
+    }
+  }
+  return isFirst;
+};
+
+var drawMultiPolygon = function(ctx, features, color) {
   ctx.fillStyle = color;
   var isFirst = true;
 
-  turf.meta.coordEach(featureCollection, function(coord) {
-    var pixel = posToPixel(coord);
-
-    if(pixel.x > 0 || pixel.y > 0) {
-      if(isFirst === true) {
-        ctx.beginPath();
-        ctx.moveTo(pixel.x, pixel.y);
-        isFirst = false;
-      }
-      else {
-        ctx.lineTo(pixel.x, pixel.y);
-      }
-    }
+  var coordinates = unpackMultiPolCoords(features);
+  coordinates.forEach(function(coords) {
+    coords.forEach(function(coord) {
+      isFirst = drawLine(ctx, coord, isFirst);
+    });
+    isFirst = true;
+    ctx.closePath();
+    ctx.fill();
   });
 
-  isFirst = true;
   ctx.closePath();
   ctx.fill();
 };
 
-var drawPolygon = function(ctx, feature, color) {
-  // console.log('feature', feature);
+var drawPolygon = function(ctx, features, color) {
   ctx.fillStyle = color;
-
   var isFirst = true;
 
-  turf.meta.coordEach(feature, function(coord) {
-    var pixel = posToPixel(coord);
-
-    if(pixel.x > 0 || pixel.y > 0) {
-      if(isFirst === true) {
-        ctx.beginPath();
-        ctx.moveTo(pixel.x, pixel.y);
-        isFirst = false;
-      }
-      else {
-        ctx.lineTo(pixel.x, pixel.y);
-      }
-    }
+  turf.meta.featureEach(features, function(feature) {
+    turf.meta.coordEach(feature, function(coord) {
+      isFirst = drawLine(ctx, coord, isFirst);
+    });
   });
 
-  isFirst = true;
   ctx.closePath();
   ctx.fill();
 };
 
-var drawPoint = function(ctx, point, color, lineWidth) {
-  // make points visible
-  ctx.globalCompositeOperation='destination-over';
-
+var drawPoint = function(ctx, features, color, lineWidth) {
+  // console.log('point feautes', features);
+  var point = features.geometry.coordinates;
+  var pixel = posToPixel(point);
+  ctx.globalCompositeOperation = 'destination-over';
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
   ctx.lineWidth = lineWidth;
-
-  var pixel = posToPixel(point);
 
   ctx.beginPath();
   ctx.arc(pixel.x, pixel.y, lineWidth, 0, (Math.PI/180)*360, false);
   ctx.stroke();
   ctx.closePath();
 
-  // draw full circle
+  // fill circle
   ctx.fill();
 };
 
-var drawRoute = function(ctx, route, color, fill = false) {
-  // console.log('route', route);
-  var length = route.features.length;
+var drawRoute = function(ctx, route, color) {
+  var routeLength = route.features.length;
+  var length = 1;
   var isFirst = true;
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
@@ -84,28 +96,11 @@ var drawRoute = function(ctx, route, color, fill = false) {
   ctx.globalCompositeOperation = 'destination-over';
 
   turf.meta.featureEach(route, function(point) {
-    // console.log("point", point);
     var coord = turf.invariant.getCoord(point);
-    // console.log("coord", coord);
-    var pixel = posToPixel(coord);
-    // console.log("pixel", pixel);
-
-    if(pixel.x > 0 && pixel.y > 0) {
-      if(isFirst === true) {
-        ctx.beginPath();
-        ctx.moveTo(pixel.x, pixel.y);
-        isFirst = false;
-      }
-      else {
-        ctx.lineTo(pixel.x, pixel.y);
-        ctx.stroke();
-      }
-    }
-    if(isFirst === length) {
-      ctx.closePath();
-    }
+    isFirst = drawLine(ctx, coord, isFirst, true);
+    if(routeLength === length) ctx.closePath();
+    length++;
   });
-  fill === true ? ctx.fill() : '';
 };
 
 exports.drawPoint = drawPoint;
