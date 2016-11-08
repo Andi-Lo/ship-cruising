@@ -2,11 +2,11 @@
 
 var options = require('./options');
 var rgb2hex = require('rgb2hex');
-var astar = require('./astar');
+var pathfinding = require('./pathfinding');
 
 var canvas;
 var isFirst = true;
-var firstClick = {};
+var start = {};
 var clickCount = 0;
 var colorData;
 var defaults = options.defaults;
@@ -38,26 +38,25 @@ var createMap = function(width, height) {
 var updateVal = function(canvas, event) {
   var coord = document.getElementById('coordinates');
   var pos = getMousePosition(canvas, event);
-  // console.log(pos[0], pos);
   coord.innerHTML = 'x: ' + pos.x + ' y: ' + pos.y;
 };
 
 var calcRoute = function(canvas, event) {
-  var pos = getMousePosition(canvas, event);
+  var end = getMousePosition(canvas, event);
   var ctx = canvas.getContext('2d');
-  var color = ctx.getImageData(pos.x, pos.y, 1, 1);
+  var color = ctx.getImageData(end.x, end.y, 1, 1);
   var hex = rgb2hex('rgba(' + color.data +')');
 
   ++clickCount;
   if(clickCount % 2 == 1) {
-    console.log('first click at:', pos.x, pos.y, 'color:', hex);
-    firstClick.x = pos.x;
-    firstClick.y = pos.y;
+    console.log('first click at:', end.x, end.y, 'color:', hex);
+    start.x = end.x;
+    start.y = end.y;
   };
 
   if(clickCount % 2 == 0) {
-    console.log('2nd click at:', pos.x, pos.y, 'color:', hex);
-    astar(canvas, colorData, pos.x, pos.y, firstClick);
+    console.log('2nd click at:', end.x, end.y, 'color:', hex);
+    pathfinding(canvas, colorData, end, start);
   }
 };
 
@@ -91,11 +90,11 @@ var createPixelData = function(canvas) {
     for(var y = 0; y < defaults.width; y++) {
       var color = ctx.getImageData(x, y, 1, 1);
       var hex = rgb2hex('rgba(' + color.data +')');
-      colorData[x][y] = hex.hex === '#303030' ? 1 : 0;
+      colorData[x][y] = hex.hex === '#303030' ? 0 : 1;
     }
   }
   console.log('data', colorData);
-  drawPixels(ctx, colorData);
+  // drawPixels(ctx, colorData);
   return false;
 };
 
