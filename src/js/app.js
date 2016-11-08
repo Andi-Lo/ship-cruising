@@ -2,24 +2,17 @@
 function shipcruising(options) {
   'use strict';
 
-  var createMap = require('./modules/createMap');
+  var canvasMap = require('./modules/canvasMap');
   var draw = require('./modules/draw');
   var el = window.document.getElementById('ship-cruising');
-  var rgb2hex = require('rgb2hex');
-  var defaults = {
-    'strokeColor': 'rgba(255, 80, 255, 0.8)',
-    'pointColor': 'rgba(255, 50, 10, 0.8)',
-    'mapColor': '#000',
-    'width': 640,
-    'height': 640
-  };
+  var options = require('./modules/options');
+  var defaults = options.defaults;
 
-  var canvas = createMap(defaults.width, defaults.height);
+  var canvas = canvasMap.createMap(defaults.width, defaults.height);
   var ctx = canvas.getContext('2d');
   el.appendChild(canvas);
 
   fetch('./map/jamaica.geojson').then((parse) => parse.json()).then((geo) => {
-    // console.log(geo);
     geo.features.forEach((features) => {
       switch (features.geometry.type) {
         case "Polygon":
@@ -39,23 +32,6 @@ function shipcruising(options) {
           break;
       }
     });
-    var color = ctx.getImageData(1, 1, 1, 1);
-    var hex = rgb2hex('rgba(' + color.data +')');
-    console.log('color rgba', color.data, 'color in hex', hex);
-
-    // var colorData = new Array(640);
-    // for (var i = 0; i < 640; i++) {
-    //   colorData[i] = new Array(640);
-    // }
-
-    // for(var y = 0; y < 640; y++) {
-    //   for(var x = 0; x < 640; x++) {
-    //     color = ctx.getImageData(x, y, 1, 1);
-    //     var hex = rgb2hex('rgba(' + color.data +')');
-    //     colorData[x][y] = hex;
-    //   }
-    // }
-    // console.log('data', colorData[640-1][640-1]);
   });
 
   fetch('./map/route.geojson').then((parse) => parse.json()).then((geo) => {

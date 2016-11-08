@@ -2,6 +2,8 @@
 
 var mercator = new (require('sphericalmercator'))();
 var bbox = require('./bbox');
+var options = require('./options');
+var defaults = options.defaults;
 var bboxJamaika = [
   -91.14257812499999,
   7.493196470122287,
@@ -23,12 +25,12 @@ var bboxKaribik = [
    * @returns a pixel position
    */
 module.exports = function(coord) {
-  var bounds = bbox(bboxJamaika, 640, 640);
+  var bounds = bbox(bboxJamaika, defaults.width, defaults.height);
   var center = mercator.px(bounds.center, bounds.zoom);
 
   var origin = [
-    center[0] - 320,
-    center[1] - 320
+    center[0] - defaults.width/2,
+    center[1] - defaults.height/2
   ];
 
   var px = mercator.px(coord, bounds.zoom);

@@ -13,6 +13,9 @@
     "@turf/meta": "^3.5.2",
     "@turf/turf": "^3.5.2",
     "async": "^1.5.2",
+    "babel-plugin-transform-async-to-generator": "^6.16.0",
+    "babel-preset-es2017": "^6.16.0",
+    "babelify": "^7.3.0",
     "browserify": "^12.0.1",
     "classnames": "^2.2.3",
     "eslint": "^3.8.1",
@@ -26,13 +29,15 @@
     "gulp-uglify": "^1.5.1",
     "gulp-watch": "^4.3.5",
     "parse-float": "^0.1.1",
+    "pathfinding": "^0.4.18",
+    "rgb2hex": "^0.1.0",
     "run-sequence": "^1.2.2",
     "sphericalmercator": "^1.0.5",
     "underscore": "^1.8.3",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0",
-    "rgb2hex": "^0.1.0"
+    "vinyl-source-stream": "^1.1.0"
   },
   "license": "",
-  "repository": "https://github.com/Andi-Lo/ship-cruising"
+  "repository": "https://github.com/Andi-Lo/ship-cruising",
+  "devDependencies": {}
 }
