@@ -32,6 +32,7 @@ function shipcruising(options) {
           break;
       }
     });
+    canvasMap.createPixelData(canvas);
   });
 
   fetch('./map/route.geojson').then((parse) => parse.json()).then((geo) => {

@@ -5,7 +5,6 @@ var rgb2hex = require('rgb2hex');
 var pathfinding = require('./pathfinding');
 
 var canvas;
-var isFirst = true;
 var start = {};
 var clickCount = 0;
 var colorData;
@@ -22,10 +21,6 @@ var createMap = function(width, height) {
 
   canvas.addEventListener('click', function(evt) {
     calcRoute(canvas, evt);
-  }, false);
-
-  canvas.addEventListener('click', function(evt) {
-    if(isFirst) isFirst = createPixelData(canvas, evt);
   }, false);
 
   canvas.addEventListener('mousemove', function(evt) {
