@@ -1,9 +1,10 @@
 'use strict';
 
+var options = require('./options');
+var turf = require('./turf');
+var defaults = options.defaults;
 var mercator = new (require('sphericalmercator'))();
 var bbox = require('./bbox');
-var options = require('./options');
-var defaults = options.defaults;
 var bboxJamaika = [
   -91.14257812499999,
   7.493196470122287,
@@ -18,12 +19,11 @@ var bboxKaribik = [
   29.19053283229458
 ];
 
-  /**
-   * Takes a long, lat coordinate, the origin of your viewport plus a zoom level
-   * @param {any} coord
-   * @param {any} zoom
-   * @returns a pixel position
-   */
+/**
+ * Takes a long, lat coordinate
+ * @param {[any,any]} coord
+ * @returns a pixel position in form [p.x, p.y]
+ */
 var positionToPixel = function(coord) {
   var bounds = bbox(bboxJamaika, defaults.width, defaults.height);
   var center = mercator.px(bounds.center, bounds.zoom);
@@ -42,10 +42,22 @@ var positionToPixel = function(coord) {
   return pixel;
 };
 
-var calculateScale = function(start, end, units) {
-  let from = turf.point(start.x, start.y);
+/**
+ * Takes a bbox and calculates the scale of the map taking the distance from the
+ * lower left corner to the lower right corner of the rectangle.
+ * @param {string} units (default kilometers) can be miles, or kilometers
+ * @param {[any,any,any,any]} box
+ * @returns the scale of 1px in units
+ */
+var calculateScale = function(units = 'kilometers', box = bboxJamaika) {
+  var bounds = bbox(box, defaults.width, defaults.height);
+  var start = turf.point([bounds.minX, bounds.minY]);
+  var end = turf.point([bounds.maxX, bounds.minY]);
+  var dist = Math.floor(turf.distance(start, end, units));
+  var scale = Math.ceil(dist / defaults.width);
+
+  return scale;
 };
 
 module.exports.calcScale = calculateScale;
-
 module.exports.posToPixel = positionToPixel;

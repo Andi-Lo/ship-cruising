@@ -36,6 +36,11 @@ var updateVal = function(canvas, event) {
   coord.innerHTML = 'x: ' + pos.x + ' y: ' + pos.y;
 };
 
+var setScale = function(scale, units = 'kilometers') {
+  var el = document.getElementById('scale');
+  el.innerHTML = '1px is: ' + scale + ' ' + units;
+};
+
 var calcRoute = function(canvas, event) {
   var end = getMousePosition(canvas, event);
   var ctx = canvas.getContext('2d');
@@ -100,3 +105,4 @@ var getCanvas = function() {
 module.exports.createPixelData = createPixelData;
 module.exports.getCanvas = getCanvas;
 module.exports.createMap = createMap;
+module.exports.setScale = setScale;

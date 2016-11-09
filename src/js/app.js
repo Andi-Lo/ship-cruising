@@ -4,6 +4,7 @@ function shipcruising(options) {
 
   var canvasMap = require('./modules/canvasMap');
   var draw = require('./modules/draw');
+  var mercator = require('./modules/mercator');
   var el = window.document.getElementById('ship-cruising');
   var options = require('./modules/options');
   var defaults = options.defaults;
@@ -33,6 +34,8 @@ function shipcruising(options) {
       }
     });
     canvasMap.createPixelData(canvas);
+    var dist = mercator.calcScale('kilometers');
+    canvasMap.setScale(dist);
   });
 
   fetch('./map/route.geojson').then((parse) => parse.json()).then((geo) => {
