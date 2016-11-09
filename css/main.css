@@ -1,0 +1,12 @@
+canvas {
+  border: 1px solid;
+}
+
+.data-wrapper {
+  width: 640px;
+}
+
+#scale {
+  text-align: right;
+  float: right;
+}
