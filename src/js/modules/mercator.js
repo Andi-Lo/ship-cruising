@@ -24,7 +24,7 @@ var bboxKaribik = [
    * @param {any} zoom
    * @returns a pixel position
    */
-module.exports = function(coord) {
+var positionToPixel = function(coord) {
   var bounds = bbox(bboxJamaika, defaults.width, defaults.height);
   var center = mercator.px(bounds.center, bounds.zoom);
 
@@ -41,3 +41,11 @@ module.exports = function(coord) {
 
   return pixel;
 };
+
+var calculateScale = function(start, end, units) {
+  let from = turf.point(start.x, start.y);
+};
+
+module.exports.calcScale = calculateScale;
+
+module.exports.posToPixel = positionToPixel;

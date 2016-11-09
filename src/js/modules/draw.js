@@ -1,6 +1,6 @@
 'use strict';
 
-var posToPixel = require('./positionToPixel');
+var mercator = require('./mercator');
 var turf = require('./turf');
 
 var unpackMultiPolCoords = function(features) {
@@ -18,7 +18,7 @@ var unpackMultiPolCoords = function(features) {
 };
 
 var drawLine = function(ctx, coord, isFirst, stroke = false) {
-  var pixel = posToPixel(coord);
+  var pixel = mercator.posToPixel(coord);
 
   if(pixel.x > 0 || pixel.y > 0) {
     if(isFirst === true) {
@@ -71,7 +71,7 @@ var drawPolygon = function(ctx, features, color) {
 var drawPoint = function(ctx, features, color, lineWidth) {
   // console.log('point feautes', features);
   var point = features.geometry.coordinates;
-  var pixel = posToPixel(point);
+  var pixel = mercator.posToPixel(point);
   ctx.globalCompositeOperation = 'destination-over';
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
