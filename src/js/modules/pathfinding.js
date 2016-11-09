@@ -1,10 +1,7 @@
-var PF = require('pathfinding');
-var rgb2hex = require('rgb2hex');
 var astar = require('../libs/astar.js');
 
 module.exports = function(canvas, colorData, start, end) {
   var ctx = canvas.getContext('2d');
-  var grid = new PF.Grid(colorData);
 
   findPath(ctx, colorData, start, end);
 };
