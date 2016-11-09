@@ -2,74 +2,47 @@
 function shipcruising(options) {
   'use strict';
 
-  // var _ = require('underscore');
-  var createMap = require('./modules/createMap');
+  var canvasMap = require('./modules/canvasMap');
   var draw = require('./modules/draw');
-  var grid = require('./modules/grid');
   var el = window.document.getElementById('ship-cruising');
+  var options = require('./modules/options');
+  var defaults = options.defaults;
 
-  var defaults = {
-    'strokeColor': 'rgba(255, 80, 255, 0.8)',
-    'pointColor': 'rgba(255, 50, 10, 0.8)',
-    'mapColor': '#000',
-    'width': 640,
-    'height': 640
-  };
-
-  var canvas = createMap(defaults.width, defaults.height);
+  var canvas = canvasMap.createMap(defaults.width, defaults.height);
   var ctx = canvas.getContext('2d');
-  var grid = grid(ctx);
   el.appendChild(canvas);
 
-  // draw.drawPolygon(ctx, data, defaults.mapColor);
-
-  fetch('./map/map.geojson').then((res) => res.json()).then((geo) => {
-    // draw map
+  fetch('./map/jamaica.geojson').then((parse) => parse.json()).then((geo) => {
     geo.features.forEach((features) => {
-      const {type, coordinates} = features.geometry;
+      switch (features.geometry.type) {
+        case "Polygon":
+          draw.drawPolygon(ctx, features, defaults.mapColor);
+          break;
 
-      switch (type) {
+        case "Point":
+          draw.drawPoint(ctx, features, defaults.pointColor, 4);
+          break;
 
-      case "Polygon":
-        draw.drawPolygon(ctx, coordinates, defaults.mapColor);
-        break;
-      // case "MultiPolygon": return drawPolygon(ctx, coordinates);
+        case "MultiPolygon":
+          draw.drawMultiPolygon(ctx, features, defaults.mapColor);
+          break;
 
+        default:
+          console.log(features.geometry.type);
+          break;
       }
     });
   });
 
-  fetch('./map/route.geojson').then((res) => res.json()).then((geo) => {
-    // draw points
+  fetch('./map/route.geojson').then((parse) => parse.json()).then((geo) => {
     geo.features.forEach((features) => {
-      const {type, coordinates} = features.geometry;
-
-      switch (type) {
-
-      case "Point":
-        draw.drawPoint(ctx, coordinates, defaults.pointColor, 4);
-        break;
-
+      switch (features.geometry.type) {
+        case "Point":
+          draw.drawPoint(ctx, features, defaults.pointColor, 4);
+          break;
       }
     });
-
-    var route = [];
-    route.push('length', geo.features.length);
-    route.push('iterator', 0);
-
-    // draw route
-    geo.features.forEach((features) => {
-      const {type, coordinates} = features.geometry;
-
-      switch (type) {
-
-      case "Point":
-        draw.drawRoute(ctx, coordinates, defaults.strokeColor, route);
-        route.iterator++;
-        break;
-
-      }
-    });
+    draw.drawRoute(ctx, geo, defaults.strokeColor);
   });
 };
 

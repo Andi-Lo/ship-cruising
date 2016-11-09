@@ -41,6 +41,7 @@ gulp.task('lint', function() {
 
 gulp.task('build', ['lint'], function() {
   return $.browserify('./src/js/app.js')
+    .transform("babelify")
     .bundle()
     .on('error', swallowError)
     .pipe($.source('bundle.js'))
@@ -62,7 +63,7 @@ gulp.task('build-dev', function() {
 
 gulp.task('watch', function() {
   gulp.start('build');
-  gulp.watch('./src/js/**/*.js', ['build']);
+  gulp.watch(['./src/js/**/*.js', '!./src/js/bundle.js'], ['build']);
   gulp.watch('./src/*.html', ['html']);
 });
 

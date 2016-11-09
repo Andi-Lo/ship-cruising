@@ -4,7 +4,7 @@
   "extends": "google",
   "rules": {
     "camelcase": 1,
-    "indent": ["error", 2],
+    "indent": ["error", 2, { "SwitchCase": 1 }],
     "comma-dangle": 0,
     "quotes": 0,
     "strict": 0,
@@ -19,7 +19,7 @@
     "brace-style": ["error", "stroustrup"]
   },
   "parserOptions": {
-    "ecmaVersion": 6
+    "ecmaVersion": 8
   },
   "env": {
       "browser": true,
