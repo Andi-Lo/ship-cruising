@@ -36,11 +36,14 @@ var drawLine = function(ctx, coord, isFirst, stroke = false) {
   return isFirst;
 };
 
-var drawPixels = function(canvas, path, color = 'rgba(670, 160, 50, 0.8)') {
+var drawPixels = function(canvas, path, color = 'rgba(50, 200, 0, 0.8)') {
   var ctx = canvas.getContext('2d');
+  ctx.globalCompositeOperation = 'destination-over';
   ctx.fillStyle = color;
-  path.forEach((pixel) => {
-    ctx.fillRect(pixel[0], pixel[1], 2, 2);
+
+  path.forEach((point) => {
+    var pixel = mercator.posToPixel(point);
+    ctx.fillRect(pixel.x, pixel.y, 4, 4);
   });
 };
 
@@ -94,6 +97,23 @@ var drawPoint = function(ctx, features, color, lineWidth) {
   ctx.fill();
 };
 
+var drawLineString = function(canvas, lineStringFeature) {
+  var routeLength = lineStringFeature.geometry.coordinates.length;
+  var ctx = canvas.getContext('2d');
+  var length = 1;
+  var isFirst = true;
+  ctx.fillStyle = 'rgba(670, 160, 50, 0.8)';
+  ctx.strokeStyle = 'rgba(670, 160, 50, 0.8)';
+  ctx.lineWidth = 2;
+  ctx.globalCompositeOperation = 'destination-over';
+
+  turf.meta.coordEach(lineStringFeature, function(coord) {
+    isFirst = drawLine(ctx, coord, isFirst, true);
+    if(routeLength === length) ctx.closePath();
+    length++;
+  });
+};
+
 var drawRoute = function(ctx, route, color) {
   var routeLength = route.features.length;
   var length = 1;
@@ -116,3 +136,4 @@ exports.drawPolygon = drawPolygon;
 exports.drawMultiPolygon = drawMultiPolygon;
 exports.drawRoute = drawRoute;
 exports.drawPixels = drawPixels;
+exports.drawLineString = drawLineString;

@@ -1,6 +1,8 @@
 var astar = require('../libs/astar.js');
 var turf = require('./turf');
+var mercator = require('./mercator');
 var simplifyjs = require('simplify-js');
+var geojsonTidy = require('geojson-tidy');
 var draw = require('./draw');
 
 module.exports = function(canvas, colorData, start, end) {
@@ -9,13 +11,15 @@ module.exports = function(canvas, colorData, start, end) {
   var end = graph.grid[end.x][end.y];
   var result = astar.astar.search(graph, start, end);
 
-  var simple = simplify(result);
-  draw.drawPixels(canvas, simple);
+  var simplified = simplify(result);
+  var linestring = turf.lineString(simplified);
 
+  draw.drawLineString(canvas, linestring);
+  draw.drawPixels(canvas, simplified);
   return result;
 };
 
-function simplify(data, tolerance = 1) {
+function simplify(data, tolerance = 3) {
   // change data format to [{num.x, num.y},{..},{.}] for simplify func
   var longLat = [];
   data.forEach((pixelPos) => {
@@ -27,7 +31,8 @@ function simplify(data, tolerance = 1) {
   // get the data back to format [[0 => long, 1 => lat], .., .]
   var toArray = [];
   simplified.forEach((obj) => {
-    toArray.push([obj.x, obj.y]);
+    coord = mercator.pixelToPos([obj.x, obj.y]);
+    toArray.push([coord[0], coord[1]]);
   });
 
   return toArray;
