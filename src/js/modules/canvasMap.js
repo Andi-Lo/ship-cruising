@@ -1,16 +1,16 @@
 'use strict';
 
-var options = require('./options');
-var rgb2hex = require('rgb2hex');
-var pathfinding = require('./pathfinding');
+let options = require('./options');
+let rgb2hex = require('rgb2hex');
+let pathfinding = require('./pathfinding');
 
-var canvas;
-var start = {};
-var clickCount = 0;
-var colorData;
-var defaults = options.defaults;
+let canvas;
+let start = {};
+let clickCount = 0;
+let colorData;
+let defaults = options.defaults;
 
-var createMap = function(width, height) {
+let createMap = function(width, height) {
   canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
@@ -30,22 +30,22 @@ var createMap = function(width, height) {
   return canvas;
 };
 
-var updateVal = function(canvas, event) {
-  var coord = document.getElementById('coordinates');
-  var pos = getMousePosition(canvas, event);
+let updateVal = function(canvas, event) {
+  let coord = document.getElementById('coordinates');
+  let pos = getMousePosition(canvas, event);
   coord.innerHTML = 'x: ' + pos.x + ' y: ' + pos.y;
 };
 
-var setScale = function(scale, units = 'kilometers') {
-  var el = document.getElementById('scale');
+let setScale = function(scale, units = 'kilometers') {
+  let el = document.getElementById('scale');
   el.innerHTML = '1px is: ' + scale + ' ' + units;
 };
 
-var calcRoute = function(canvas, event) {
-  var end = getMousePosition(canvas, event);
-  var ctx = canvas.getContext('2d');
-  var color = ctx.getImageData(end.x, end.y, 1, 1);
-  var hex = rgb2hex('rgba(' + color.data +')');
+let calcRoute = function(canvas, event) {
+  let end = getMousePosition(canvas, event);
+  let ctx = canvas.getContext('2d');
+  let color = ctx.getImageData(end.x, end.y, 1, 1);
+  let hex = rgb2hex('rgba(' + color.data +')');
 
   ++clickCount;
   if(clickCount % 2 == 1) {
@@ -60,32 +60,32 @@ var calcRoute = function(canvas, event) {
   }
 };
 
-var getMousePosition = function(canvas, event) {
-  var rectangle = canvas.getBoundingClientRect();
+let getMousePosition = function(canvas, event) {
+  let rectangle = canvas.getBoundingClientRect();
   return {
     x: event.clientX - rectangle.left,
     y: event.clientY - rectangle.top
   };
 };
 
-var createPixelData = function(canvas) {
-  var ctx = canvas.getContext('2d');
+let createPixelData = function(canvas) {
+  let ctx = canvas.getContext('2d');
   colorData = new Array(defaults.height);
-  for (var i = 0; i < defaults.height; i++) {
+  for (let i = 0; i < defaults.height; i++) {
     colorData[i] = new Array(defaults.width);
   }
 
-  for(var x = 0; x < defaults.height; x++) {
-    for(var y = 0; y < defaults.width; y++) {
-      var color = ctx.getImageData(x, y, 1, 1);
-      var hex = rgb2hex('rgba(' + color.data +')');
+  for(let x = 0; x < defaults.height; x++) {
+    for(let y = 0; y < defaults.width; y++) {
+      let color = ctx.getImageData(x, y, 1, 1);
+      let hex = rgb2hex('rgba(' + color.data +')');
       colorData[x][y] = hex.hex === '#303030' ? 0 : 1;
     }
   }
   return false;
 };
 
-var getCanvas = function() {
+let getCanvas = function() {
   return canvas;
 };
 

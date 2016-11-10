@@ -1,18 +1,18 @@
 'use strict';
 
-var options = require('./options');
-var turf = require('./turf');
-var defaults = options.defaults;
-var SM = new (require('sphericalmercator'))();
-var bbox = require('./bbox');
-var bboxJamaika = [
+let options = require('./options');
+let turf = require('./turf');
+let defaults = options.defaults;
+let SM = new (require('sphericalmercator'))();
+let bbox = require('./bbox');
+let bboxJamaika = [
   -91.14257812499999,
   7.493196470122287,
   -64.8193359375,
   25.839449402063185
 ];
 
-// var bboxKaribik = [
+// let bboxKaribik = [
 //   -87.95654296875,
 //   9.709057068618208,
 //   -62.75390625,
@@ -24,11 +24,11 @@ var bboxJamaika = [
  * @param {[any,any]} coord
  * @returns a pixel position in form [p.x, p.y]
  */
-var positionToPixel = function(coord) {
-  var origin = getOrigin();
-  var px = SM.px(coord, origin.zoom);
+let positionToPixel = function(coord) {
+  let origin = getOrigin();
+  let px = SM.px(coord, origin.zoom);
 
-  var pixel = [];
+  let pixel = [];
   pixel.x = px[0] - origin[0];
   pixel.y = px[1] - origin[1];
 
@@ -42,12 +42,12 @@ var positionToPixel = function(coord) {
  * @param {[any,any,any,any]} box
  * @returns the scale of 1px in units
  */
-var calculateScale = function(units = 'kilometers', box = bboxJamaika) {
-  var bounds = bbox(box, defaults.width, defaults.height);
-  var start = turf.point([bounds.minX, bounds.minY]);
-  var end = turf.point([bounds.maxX, bounds.minY]);
-  var dist = Math.floor(turf.distance(start, end, units));
-  var scale = Math.ceil(dist / defaults.width);
+let calculateScale = function(units = 'kilometers', box = bboxJamaika) {
+  let bounds = bbox(box, defaults.width, defaults.height);
+  let start = turf.point([bounds.minX, bounds.minY]);
+  let end = turf.point([bounds.maxX, bounds.minY]);
+  let dist = Math.floor(turf.distance(start, end, units));
+  let scale = Math.ceil(dist / defaults.width);
 
   return scale;
 };
@@ -59,10 +59,10 @@ var calculateScale = function(units = 'kilometers', box = bboxJamaika) {
  * @returns {[num, num, zoom]}
  */
 function getOrigin(box = bboxJamaika) {
-  var bounds = bbox(box, defaults.width, defaults.height);
-  var center = SM.px(bounds.center, bounds.zoom);
+  let bounds = bbox(box, defaults.width, defaults.height);
+  let center = SM.px(bounds.center, bounds.zoom);
 
-  var origin = [
+  let origin = [
     center[0] - defaults.width/2,
     center[1] - defaults.height/2,
   ];
@@ -76,14 +76,14 @@ function getOrigin(box = bboxJamaika) {
  * @param {[any, any]} pixelPos
  * @returns {[any, any]} a longLat position
  */
-var pixelToPosition = function(pixelPos) {
-  var origin = getOrigin();
+let pixelToPosition = function(pixelPos) {
+  let origin = getOrigin();
 
-  var pixel = [];
+  let pixel = [];
   pixel.x = pixelPos[0] + origin[0];
   pixel.y = pixelPos[1] + origin[1];
 
-  var longLat = SM.ll([pixel.x, pixel.y], origin.zoom);
+  let longLat = SM.ll([pixel.x, pixel.y], origin.zoom);
 
   return [
     longLat.x = longLat[0],

@@ -1,9 +1,9 @@
 'use strict';
 
-var geoViewport = require('geo-viewport');
+let geoViewport = require('geo-viewport');
 
 module.exports = function(bbox, width, height) {
-  var coords = bbox;
+  let coords = bbox;
   bbox = geoViewport.viewport(bbox, [width, height]);
   bbox.minX = coords[0];
   bbox.minY = coords[1];

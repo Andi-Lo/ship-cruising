@@ -9,7 +9,7 @@
     "quotes": 0,
     "strict": 0,
     "linebreak-style": 1,
-    "no-var": 0,
+    "no-var": 1,
     "no-unused-vars": 1,
     "require-jsdoc": 0,
     "valid-jsdoc": 0,
