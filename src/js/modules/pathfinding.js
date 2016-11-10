@@ -2,24 +2,26 @@ let astar = require('../libs/astar.js');
 let turf = require('./turf');
 let mercator = require('./mercator');
 let simplifyjs = require('simplify-js');
-let geojsonTidy = require('geojson-tidy');
 let draw = require('./draw');
 
 module.exports = function(canvas, colorData, start, end) {
   let graph = new astar.Graph(colorData, {diganoal: true});
   start = graph.grid[start.x][start.y];
   end = graph.grid[end.x][end.y];
-  let result = astar.astar.search(graph, start, end);
+  let heuristic = {heuristic: astar.astar.heuristics.diagonal};
+  let result = astar.astar.search(graph, start, end, heuristic);
 
   let simplified = simplify(result);
   let linestring = turf.lineString(simplified);
+  let curved = turf.bezier(linestring, 10000, .4);
+  let simpleBezier = turf.simplify(curved, 0.01, false);
 
-  draw.drawLineString(canvas, linestring);
+  draw.drawLineString(canvas, simpleBezier);
   draw.drawPixels(canvas, simplified);
   return result;
 };
 
-function simplify(data, tolerance = 3) {
+function simplify(data, tolerance = 4) {
   // change data format to [{num.x, num.y},{..},{.}] for simplify func
   let longLat = [];
   data.forEach((pixelPos) => {
