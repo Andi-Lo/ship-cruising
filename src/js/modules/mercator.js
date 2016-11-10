@@ -12,12 +12,12 @@ var bboxJamaika = [
   25.839449402063185
 ];
 
-var bboxKaribik = [
-  -87.95654296875,
-  9.709057068618208,
-  -62.75390625,
-  29.19053283229458
-];
+// var bboxKaribik = [
+//   -87.95654296875,
+//   9.709057068618208,
+//   -62.75390625,
+//   29.19053283229458
+// ];
 
 /**
  * Takes a long, lat coordinate
@@ -52,6 +52,12 @@ var calculateScale = function(units = 'kilometers', box = bboxJamaika) {
   return scale;
 };
 
+/**
+ * get the origin which is the very top left corner of the canvas
+ * plus the actual zoom level of the bbox
+ * @param {bbox} [box=bboxJamaika]
+ * @returns {[num, num, zoom]}
+ */
 function getOrigin(box = bboxJamaika) {
   var bounds = bbox(box, defaults.width, defaults.height);
   var center = SM.px(bounds.center, bounds.zoom);
@@ -65,6 +71,11 @@ function getOrigin(box = bboxJamaika) {
   return origin;
 }
 
+/**
+ * Takes a pixel position of [num, num] and calculating the longLat for it
+ * @param {[any, any]} pixelPos
+ * @returns {[any, any]} a longLat position
+ */
 var pixelToPosition = function(pixelPos) {
   var origin = getOrigin();
 
@@ -74,7 +85,10 @@ var pixelToPosition = function(pixelPos) {
 
   var longLat = SM.ll([pixel.x, pixel.y], origin.zoom);
 
-  return {'x': longLat[0], 'y': longLat[1]};
+  return [
+    longLat.x = longLat[0],
+    longLat.y = longLat[1]
+  ];
 };
 
 module.exports.calcScale = calculateScale;
