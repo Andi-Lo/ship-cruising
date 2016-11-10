@@ -3,7 +3,7 @@
 var options = require('./options');
 var turf = require('./turf');
 var defaults = options.defaults;
-var mercator = new (require('sphericalmercator'))();
+var SM = new (require('sphericalmercator'))();
 var bbox = require('./bbox');
 var bboxJamaika = [
   -91.14257812499999,
@@ -25,15 +25,8 @@ var bboxKaribik = [
  * @returns a pixel position in form [p.x, p.y]
  */
 var positionToPixel = function(coord) {
-  var bounds = bbox(bboxJamaika, defaults.width, defaults.height);
-  var center = mercator.px(bounds.center, bounds.zoom);
-
-  var origin = [
-    center[0] - defaults.width/2,
-    center[1] - defaults.height/2
-  ];
-
-  var px = mercator.px(coord, bounds.zoom);
+  var origin = getOrigin();
+  var px = SM.px(coord, origin.zoom);
 
   var pixel = [];
   pixel.x = px[0] - origin[0];
@@ -59,5 +52,31 @@ var calculateScale = function(units = 'kilometers', box = bboxJamaika) {
   return scale;
 };
 
+function getOrigin(box = bboxJamaika) {
+  var bounds = bbox(box, defaults.width, defaults.height);
+  var center = SM.px(bounds.center, bounds.zoom);
+
+  var origin = [
+    center[0] - defaults.width/2,
+    center[1] - defaults.height/2,
+  ];
+  origin['zoom'] = bounds.zoom;
+
+  return origin;
+}
+
+var pixelToPosition = function(pixelPos) {
+  var origin = getOrigin();
+
+  var pixel = [];
+  pixel.x = pixelPos[0] + origin[0];
+  pixel.y = pixelPos[1] + origin[1];
+
+  var longLat = SM.ll([pixel.x, pixel.y], origin.zoom);
+
+  return {'x': longLat[0], 'y': longLat[1]};
+};
+
 module.exports.calcScale = calculateScale;
 module.exports.posToPixel = positionToPixel;
+module.exports.pixelToPos = pixelToPosition;
