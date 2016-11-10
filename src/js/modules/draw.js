@@ -36,6 +36,14 @@ var drawLine = function(ctx, coord, isFirst, stroke = false) {
   return isFirst;
 };
 
+var drawPixels = function(canvas, path, color = 'rgba(670, 160, 50, 0.8)') {
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = color;
+  path.forEach((pixel) => {
+    ctx.fillRect(pixel[0], pixel[1], 2, 2);
+  });
+};
+
 var drawMultiPolygon = function(ctx, features, color) {
   ctx.fillStyle = color;
   var isFirst = true;
@@ -107,3 +115,4 @@ exports.drawPoint = drawPoint;
 exports.drawPolygon = drawPolygon;
 exports.drawMultiPolygon = drawMultiPolygon;
 exports.drawRoute = drawRoute;
+exports.drawPixels = drawPixels;
