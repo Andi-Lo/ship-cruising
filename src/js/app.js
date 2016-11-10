@@ -42,11 +42,11 @@ function shipcruising(options) {
     geo.features.forEach((features) => {
       switch (features.geometry.type) {
         case "Point":
-          draw.drawPoint(ctx, features, defaults.pointColor, 4);
+          // draw.drawPoint(ctx, features, defaults.pointColor, 4);
           break;
       }
     });
-    draw.drawRoute(ctx, geo, defaults.strokeColor);
+    // draw.drawRoute(ctx, geo, defaults.strokeColor);
   });
 };
 
