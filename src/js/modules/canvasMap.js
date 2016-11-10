@@ -68,17 +68,6 @@ var getMousePosition = function(canvas, event) {
   };
 };
 
-function drawPixels(ctx, colorData) {
-  ctx.fillStyle = 'rgba(670, 160, 50, 0.8)';
-  ctx.globalCompositeOperation = 'destination-over';
-
-  for(var x = 0; x < defaults.height; x++) {
-    for(var y = 0; y < defaults.width; y++) {
-      if(colorData[x][y] !== 0) ctx.fillRect(x, y, 1, 1);
-    }
-  }
-};
-
 var createPixelData = function(canvas) {
   var ctx = canvas.getContext('2d');
   colorData = new Array(defaults.height);
@@ -93,8 +82,6 @@ var createPixelData = function(canvas) {
       colorData[x][y] = hex.hex === '#303030' ? 0 : 1;
     }
   }
-  console.log('data', colorData);
-  // drawPixels(ctx, colorData);
   return false;
 };
 
