@@ -1,6 +1,6 @@
 var astar = require('../libs/astar.js');
 var turf = require('./turf');
-var simplify = require('simplify-js');
+var simplifyjs = require('simplify-js');
 var draw = require('./draw');
 
 module.exports = function(canvas, colorData, start, end) {
@@ -9,20 +9,20 @@ module.exports = function(canvas, colorData, start, end) {
   var end = graph.grid[end.x][end.y];
   var result = astar.astar.search(graph, start, end);
 
-  var simple = tidy(result);
+  var simple = simplify(result);
   draw.drawPixels(canvas, simple);
 
   return result;
 };
 
-function tidy(data, tolerance = 1) {
+function simplify(data, tolerance = 1) {
   // change data format to [{num.x, num.y},{..},{.}] for simplify func
   var longLat = [];
   data.forEach((pixelPos) => {
     longLat.push({'x': pixelPos.x, 'y': pixelPos.y});
   });
 
-  var simplified = simplify(longLat, tolerance, true);
+  var simplified = simplifyjs(longLat, tolerance, true);
 
   // get the data back to format [[0 => long, 1 => lat], .., .]
   var toArray = [];
