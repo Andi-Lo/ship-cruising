@@ -19,7 +19,7 @@ let unpackMultiPolCoords = function(features) {
   return data;
 };
 
-let drawLine = function(ctx, coord, isFirst, stroke = false) {
+let drawLine = function(ctx, coord, isFirst) {
   let pixel = mercator.posToPixel(coord);
 
   if(pixel.x > 0 || pixel.y > 0) {
@@ -30,9 +30,6 @@ let drawLine = function(ctx, coord, isFirst, stroke = false) {
     }
     else {
       ctx.lineTo(pixel.x, pixel.y);
-      if (stroke === true) {
-        ctx.stroke();
-      }
     }
   }
   return isFirst;
@@ -71,7 +68,6 @@ let drawPolygon = function(ctx, features, color) {
 };
 
 let drawPoint = function(ctx, features, color, lineWidth) {
-  // console.log('point feautes', features);
   let point = features.geometry.coordinates;
   let pixel = mercator.posToPixel(point);
   ctx.globalCompositeOperation = 'destination-over';
@@ -83,8 +79,6 @@ let drawPoint = function(ctx, features, color, lineWidth) {
   ctx.arc(pixel.x, pixel.y, lineWidth, 0, (Math.PI/180)*360, false);
   ctx.stroke();
   ctx.closePath();
-
-  // fill circle
   ctx.fill();
 };
 
