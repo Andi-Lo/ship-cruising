@@ -30,27 +30,24 @@ function calcRoute(start, end, colorData) {
   let prev = end;
   let path;
 
-  start = mercator.posToPixel(start.value.geometry.coordinates);
-  start = graph.grid[start.x][start.y];
+  let getNode = (node) => {
+    node = mercator.posToPixel(node.value.geometry.coordinates);
+    return graph.grid[node.x][node.y];
+  };
 
-  end = mercator.posToPixel(end.value.geometry.coordinates);
-  end = graph.grid[end.x][end.y];
+  start = getNode(start);
+  end = getNode(end);
 
   try {
     path = astar.astar.search(graph, start, end, heuristic);
     if (path.length <= 0) {
-      throw new Error(
-          'At least one of the given positions is set falsly'
-        );
+      throw new Error('At least one of the given positions is set falsly');
     }
   }
   catch (error) {
     throw error;
   }
-
-  // let path = astar.astar.search(graph, start, end, heuristic);
   let route = simplifyRoute(path);
-
   return {route, prev};
 }
 
