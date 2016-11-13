@@ -2,6 +2,8 @@
 
 let mercator = require('./mercator');
 let turf = require('./turf');
+let options = require('./options');
+let defaults = options.defaults;
 
 let unpackMultiPolCoords = function(features) {
   let data = [];
@@ -97,20 +99,24 @@ let drawPoint = function(ctx, features, color, lineWidth) {
   ctx.fill();
 };
 
-let drawLineString = function(canvas, lineStringFeature) {
-  let routeLength = lineStringFeature.geometry.coordinates.length;
+let drawLineString = function(canvas, featureCollection) {
   let ctx = canvas.getContext('2d');
   let length = 1;
   let isFirst = true;
-  ctx.fillStyle = 'rgba(670, 160, 50, 0.8)';
-  ctx.strokeStyle = 'rgba(670, 160, 50, 0.8)';
+  ctx.fillStyle = defaults.strokeColor;
+  ctx.strokeStyle = defaults.strokeColor;
   ctx.lineWidth = 2;
   ctx.globalCompositeOperation = 'destination-over';
 
-  turf.meta.coordEach(lineStringFeature, function(coord) {
-    isFirst = drawLine(ctx, coord, isFirst, true);
-    if(routeLength === length) ctx.closePath();
-    length++;
+  turf.meta.featureEach(featureCollection, function(feature) {
+    let routeLength = feature.geometry.coordinates.length;
+    turf.meta.coordEach(feature, function(coord) {
+      isFirst = drawLine(ctx, coord, isFirst, true);
+      if(routeLength === length) ctx.closePath();
+      length++;
+    });
+    length = 1;
+    isFirst = true;
   });
 };
 

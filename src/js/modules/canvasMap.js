@@ -1,13 +1,17 @@
 'use strict';
 
 let options = require('./options');
+let turf = require('./turf');
 let rgb2hex = require('rgb2hex');
 let pathfinding = require('./pathfinding');
+let mercator = require('./mercator');
+let draw = require('./draw');
 
 let canvas;
 let start = {};
 let clickCount = 0;
 let colorData;
+let features = [];
 let defaults = options.defaults;
 
 let createMap = function(width, height) {
@@ -20,12 +24,28 @@ let createMap = function(width, height) {
   }, false);
 
   canvas.addEventListener('click', function(evt) {
-    calcRoute(canvas, evt);
+    registerClick(canvas, evt);
   }, false);
 
   canvas.addEventListener('mousemove', function(evt) {
     updateVal(canvas, evt);
   }, false);
+
+  window.addEventListener("keydown", function(event) {
+    if(event.defaultPrevented) {
+      return; // Do nothing if the event was already processed
+    }
+
+    switch (event.key) {
+      case "Enter":
+        calcRoute(canvas, event);
+        break;
+      default:
+        return; // Quit when this doesn't handle the key event.
+    }
+    // Cancel the default action to avoid it being handled twice
+    event.preventDefault();
+  }, true);
 
   return canvas;
 };
@@ -41,23 +61,19 @@ let setScale = function(scale, units = 'kilometers') {
   el.innerHTML = '1px is: ' + scale + ' ' + units;
 };
 
+let registerClick = function(canvas, event) {
+  let pixelPos = getMousePosition(canvas, event);
+  let point = mercator.pixelToPos([pixelPos.x, pixelPos.y]);
+  point = turf.point([point.x, point.y], {name: 'Point', pixelPos: pixelPos}),
+  features.push(point);
+};
+
 let calcRoute = function(canvas, event) {
-  let end = getMousePosition(canvas, event);
-  let ctx = canvas.getContext('2d');
-  let color = ctx.getImageData(end.x, end.y, 1, 1);
-  let hex = rgb2hex('rgba(' + color.data +')');
-
-  ++clickCount;
-  if(clickCount % 2 == 1) {
-    console.log('first click at:', end.x, end.y, 'color:', hex);
-    start.x = end.x;
-    start.y = end.y;
-  };
-
-  if(clickCount % 2 == 0) {
-    console.log('2nd click at:', end.x, end.y, 'color:', hex);
-    pathfinding(canvas, colorData, end, start);
-  }
+  let fc = turf.featureCollection(features);
+  let routes = pathfinding(canvas, colorData, fc);
+  draw.drawLineString(canvas, routes);
+  // draw.drawPixels(canvas, routes);
+  features = [];
 };
 
 let getMousePosition = function(canvas, event) {
@@ -79,7 +95,7 @@ let createPixelData = function(canvas) {
     for(let y = 0; y < defaults.width; y++) {
       let color = ctx.getImageData(x, y, 1, 1);
       let hex = rgb2hex('rgba(' + color.data +')');
-      colorData[x][y] = hex.hex === '#303030' ? 0 : 1;
+      colorData[x][y] = hex.hex === defaults.mapColor ? 0 : 1;
     }
   }
   return false;

@@ -4,7 +4,6 @@ let mercator = require('./mercator');
 let simplifyjs = require('simplify-js');
 
 module.exports = function(canvas, colorData, fc) {
-  console.log('fc', fc);
   let feature = turf.iterateFeature(fc);
 
   let start = feature.next();
@@ -22,14 +21,12 @@ module.exports = function(canvas, colorData, fc) {
     }
   }
   lineCollection = turf.featureCollection(lineCollection);
-  console.log('lineCollection', lineCollection);
   return lineCollection;
 };
 
 function calcRoute(start, end, colorData) {
   let graph = new astar.Graph(colorData, {diagonal: true});
   let heuristic = {heuristic: astar.astar.heuristics.diagonal};
-  let route = [];
   let prev = end;
 
   start = mercator.posToPixel(start.value.geometry.coordinates);
@@ -39,7 +36,7 @@ function calcRoute(start, end, colorData) {
   end = graph.grid[end.x][end.y];
 
   let path = astar.astar.search(graph, start, end, heuristic);
-  route.push(simplifyRoute(path));
+  let route = simplifyRoute(path);
 
   return {route, prev};
 }
@@ -51,8 +48,9 @@ function simplifyRoute(path) {
   const resolution = 10000;
   const sharpness = .4;
   let bezier = turf.bezier(linestring, resolution, sharpness);
+  let bezierSimplified = turf.simplify(bezier, 0.01, false);
 
-  return turf.simplify(bezier, 0.01, false);
+  return bezierSimplified;
 };
 
 function simplify(path, tolerance = 4) {
