@@ -72,7 +72,7 @@ let calcRoute = function(canvas, event) {
   let fc = turf.featureCollection(features);
   let routes = pathfinding(canvas, colorData, fc);
   draw.drawLineString(canvas, routes);
-  // draw.drawPixels(canvas, routes);
+  draw.drawPixels(canvas, routes);
   features = [];
 };
 

@@ -38,17 +38,6 @@ let drawLine = function(ctx, coord, isFirst, stroke = false) {
   return isFirst;
 };
 
-let drawPixels = function(canvas, path, color = 'rgba(50, 200, 0, 0.8)') {
-  let ctx = canvas.getContext('2d');
-  ctx.globalCompositeOperation = 'destination-over';
-  ctx.fillStyle = color;
-
-  path.forEach((point) => {
-    let pixel = mercator.posToPixel(point);
-    ctx.fillRect(pixel.x, pixel.y, 4, 4);
-  });
-};
-
 let drawMultiPolygon = function(ctx, features, color) {
   ctx.fillStyle = color;
   let isFirst = true;
@@ -97,6 +86,19 @@ let drawPoint = function(ctx, features, color, lineWidth) {
 
   // fill circle
   ctx.fill();
+};
+
+let drawPixels = function(canvas, featureCollection) {
+  let ctx = canvas.getContext('2d');
+  ctx.globalCompositeOperation = 'destination-over';
+  ctx.fillStyle = defaults.pixelColor;
+
+  turf.meta.featureEach(featureCollection, function(feature) {
+    turf.meta.coordEach(feature, function(coord) {
+      let pixel = mercator.posToPixel(coord);
+      ctx.fillRect(pixel.x, pixel.y, 4, 4);
+    });
+  });
 };
 
 let drawLineString = function(canvas, featureCollection) {
