@@ -28,6 +28,7 @@ function calcRoute(start, end, colorData) {
   let graph = new astar.Graph(colorData, {diagonal: true});
   let heuristic = {heuristic: astar.astar.heuristics.diagonal};
   let prev = end;
+  let path;
 
   start = mercator.posToPixel(start.value.geometry.coordinates);
   start = graph.grid[start.x][start.y];
@@ -35,7 +36,19 @@ function calcRoute(start, end, colorData) {
   end = mercator.posToPixel(end.value.geometry.coordinates);
   end = graph.grid[end.x][end.y];
 
-  let path = astar.astar.search(graph, start, end, heuristic);
+  try {
+    path = astar.astar.search(graph, start, end, heuristic);
+    if (path.length <= 0) {
+      throw new Error(
+          'At least one of the given positions is set falsly'
+        );
+    }
+  }
+  catch (error) {
+    throw error;
+  }
+
+  // let path = astar.astar.search(graph, start, end, heuristic);
   let route = simplifyRoute(path);
 
   return {route, prev};

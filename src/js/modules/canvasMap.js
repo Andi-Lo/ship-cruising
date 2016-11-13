@@ -38,7 +38,15 @@ let createMap = function(width, height) {
 
     switch (event.key) {
       case "Enter":
-        calcRoute(canvas, event);
+        try {
+          calcRoute(canvas, event);
+        }
+        catch(e) {
+          throw e;
+        }
+        finally {
+          features = [];
+        }
         break;
       default:
         return; // Quit when this doesn't handle the key event.
