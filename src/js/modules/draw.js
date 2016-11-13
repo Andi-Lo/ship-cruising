@@ -19,7 +19,7 @@ let unpackMultiPolCoords = function(features) {
   return data;
 };
 
-let drawLine = function(ctx, coord, isFirst) {
+let drawLine = function(ctx, coord, isFirst, stroke = false) {
   let pixel = mercator.posToPixel(coord);
 
   if(pixel.x > 0 || pixel.y > 0) {
@@ -30,6 +30,9 @@ let drawLine = function(ctx, coord, isFirst) {
     }
     else {
       ctx.lineTo(pixel.x, pixel.y);
+      if (stroke === true) {
+        ctx.stroke();
+      }
     }
   }
   return isFirst;
