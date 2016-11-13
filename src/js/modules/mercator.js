@@ -36,6 +36,25 @@ let positionToPixel = function(coord) {
 };
 
 /**
+ * Takes a pixel position of [num, num] and calculating the longLat for it
+ * @param {[any, any]} pixelPos
+ * @returns {[any, any]} a longLat position
+ */
+let pixelToPosition = function(pixelPos) {
+  let origin = getOrigin();
+
+  let pixel = [];
+  pixel.x = pixelPos[0] + origin[0];
+  pixel.y = pixelPos[1] + origin[1];
+
+  let longLat = SM.ll([pixel.x, pixel.y], origin.zoom);
+  longLat.x = longLat[0];
+  longLat.y = longLat[1];
+
+  return longLat;
+};
+
+/**
  * Takes a bbox and calculates the scale of the map taking the distance from the
  * lower left corner to the lower right corner of the rectangle.
  * @param {string} units (default kilometers) can be miles, or kilometers
@@ -70,26 +89,6 @@ function getOrigin(box = bboxJamaika) {
 
   return origin;
 }
-
-/**
- * Takes a pixel position of [num, num] and calculating the longLat for it
- * @param {[any, any]} pixelPos
- * @returns {[any, any]} a longLat position
- */
-let pixelToPosition = function(pixelPos) {
-  let origin = getOrigin();
-
-  let pixel = [];
-  pixel.x = pixelPos[0] + origin[0];
-  pixel.y = pixelPos[1] + origin[1];
-
-  let longLat = SM.ll([pixel.x, pixel.y], origin.zoom);
-
-  return [
-    longLat.x = longLat[0],
-    longLat.y = longLat[1]
-  ];
-};
 
 module.exports.calcScale = calculateScale;
 module.exports.posToPixel = positionToPixel;
