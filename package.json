@@ -28,6 +28,7 @@
     "gulp-sourcemaps": "^2.1.1",
     "gulp-uglify": "^1.5.1",
     "gulp-watch": "^4.3.5",
+    "leaflet": "^1.0.1",
     "parse-float": "^0.1.1",
     "rgb2hex": "^0.1.0",
     "run-sequence": "^1.2.2",
