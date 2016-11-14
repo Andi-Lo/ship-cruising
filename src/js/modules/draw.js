@@ -2,8 +2,7 @@
 
 let mercator = require('./mercator');
 let turf = require('./turf');
-let options = require('./options');
-let defaults = options.defaults;
+let defaults = require('./options').defaults;
 
 let unpackMultiPolCoords = function(features) {
   let data = [];

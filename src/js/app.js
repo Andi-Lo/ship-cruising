@@ -6,8 +6,7 @@ function shipcruising() {
   let draw = require('./modules/draw');
   let mercator = require('./modules/mercator');
   let el = window.document.getElementById('ship-cruising');
-  let options = require('./modules/options');
-  let defaults = options.defaults;
+  let defaults = require('./modules/options').defaults;
 
   let canvas = canvasMap.createMap(defaults.width, defaults.height);
   let ctx = canvas.getContext('2d');

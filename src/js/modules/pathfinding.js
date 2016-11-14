@@ -1,4 +1,5 @@
-let astar = require('../libs/astar.js');
+let astar = require('../libs/astar.js').astar;
+let Graph = require('../libs/astar.js').Graph;
 let turf = require('./turf');
 let mercator = require('./mercator');
 let simplifyjs = require('simplify-js');
@@ -25,8 +26,8 @@ module.exports = function(canvas, colorData, fc) {
 };
 
 function calcRoute(start, end, colorData) {
-  let graph = new astar.Graph(colorData, {diagonal: true});
-  let heuristic = {heuristic: astar.astar.heuristics.diagonal};
+  let graph = new Graph(colorData, {diagonal: true});
+  let heuristic = {heuristic: astar.heuristics.diagonal};
   let prev = end;
   let path;
 
@@ -39,7 +40,7 @@ function calcRoute(start, end, colorData) {
   end = getNode(end);
 
   try {
-    path = astar.astar.search(graph, start, end, heuristic);
+    path = astar.search(graph, start, end, heuristic);
     if (path.length <= 0) {
       throw new Error('At least one of the given positions is set falsly');
     }
