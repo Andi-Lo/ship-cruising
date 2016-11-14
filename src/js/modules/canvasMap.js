@@ -6,6 +6,7 @@ let rgb2hex = require('rgb2hex');
 let pathfinding = require('./pathfinding');
 let mercator = require('./mercator');
 let draw = require('./draw');
+let erode = require('./erode');
 
 let canvas;
 let start = {};
@@ -107,7 +108,9 @@ let createPixelData = function(canvas) {
       colorData[x][y] = hex.hex === defaults.mapColor ? 0 : 1;
     }
   }
-  return false;
+  colorData = erode(colorData, defaults.width, defaults.height);
+  // console.log('colorData', colorData[277][317]);
+  return colorData;
 };
 
 let getCanvas = function() {
