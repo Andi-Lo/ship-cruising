@@ -66,7 +66,8 @@ let updateVal = function(canvas, event) {
 
 let setScale = function(scale, units = 'kilometers') {
   let el = document.getElementById('scale');
-  el.innerHTML = '1px is: ' + scale + ' ' + units;
+  if(units === 'kilometers') units = 'km';
+  el.innerHTML = '1px = ' + scale + ' ' + units;
 };
 
 let registerClick = function(canvas, event) {
