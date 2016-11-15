@@ -17,7 +17,7 @@ let maps = [];
 const cssSizeUnit = 'px';
 
 let createToneMapDiv = function(elementInteractive, divId) {
-  let map = init(elementInteractive, divId);
+  let map = init(elementInteractive, divId, 640, 640);
 
   // Add map to map array
   maps.push(map);
@@ -53,13 +53,15 @@ let getMaps = function() {
   return maps;
 };
 
-function init(elementInteractive, divId) {
+function init(elementInteractive, divId,
+              divWidth = defaults.width,
+              divHeight = defaults.height) {
   // Create new leaflet div with a css class
   // Like in the tutorial
   let divLeaflet = document.createElement('div');
   divLeaflet.setAttribute('id', divId);
-  divLeaflet.style.width = defaults.width + cssSizeUnit;
-  divLeaflet.style.height = defaults.height + cssSizeUnit;
+  divLeaflet.style.width = divWidth + cssSizeUnit;
+  divLeaflet.style.height = divHeight + cssSizeUnit;
   elementInteractive.appendChild(divLeaflet);
 
   // Get center of bbox
