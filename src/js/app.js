@@ -8,9 +8,7 @@ function shipcruising() {
   let leafletMap = require('./modules/leafletMap');
   let el = window.document.getElementById('ship-cruising');
   let elInteractive = window.document.getElementById('interactive-map');
-  let options = require('./modules/options');
-  let defaults = options.defaults;
-
+  let defaults = require('./modules/options').defaults;
   let canvas = canvasMap.createMap(defaults.width, defaults.height);
   let ctx = canvas.getContext('2d');
   el.appendChild(canvas);

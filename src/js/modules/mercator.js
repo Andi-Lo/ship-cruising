@@ -1,8 +1,7 @@
 'use strict';
 
-let options = require('./options');
 let turf = require('./turf');
-let defaults = options.defaults;
+let defaults = require('./options').defaults;
 let SM = new (require('sphericalmercator'))();
 let bbox = require('./bbox');
 let bboxJamaika = [

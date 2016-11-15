@@ -1,6 +1,6 @@
 'use strict';
 
-let options = require('./options');
+let defaults = require('./options').defaults;
 let turf = require('./turf');
 let rgb2hex = require('rgb2hex');
 let pathfinding = require('./pathfinding');
@@ -9,11 +9,8 @@ let draw = require('./drawCanvas');
 let erode = require('./erode');
 
 let canvas;
-let start = {};
-let clickCount = 0;
 let colorData;
 let features = [];
-let defaults = options.defaults;
 
 let createMap = function(width, height) {
   canvas = document.createElement('canvas');
