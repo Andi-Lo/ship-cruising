@@ -34,7 +34,7 @@ function shipcruising() {
           break;
       }
     });
-    canvasMap.createPixelData(canvas);
+    canvasMap.createPixelData();
     let dist = mercator.calcScale('kilometers');
     canvasMap.setScale(dist);
   });
