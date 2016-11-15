@@ -3,7 +3,7 @@ function shipcruising() {
   'use strict';
 
   let canvasMap = require('./modules/canvasMap');
-  let draw = require('./modules/draw');
+  let draw = require('./modules/drawCanvas');
   let mercator = require('./modules/mercator');
   let leafletMap = require('./modules/leafletMap');
   let el = window.document.getElementById('ship-cruising');

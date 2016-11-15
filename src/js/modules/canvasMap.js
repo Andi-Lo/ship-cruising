@@ -5,7 +5,7 @@ let turf = require('./turf');
 let rgb2hex = require('rgb2hex');
 let pathfinding = require('./pathfinding');
 let mercator = require('./mercator');
-let draw = require('./draw');
+let draw = require('./drawCanvas');
 let erode = require('./erode');
 
 let canvas;
