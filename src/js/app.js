@@ -5,7 +5,9 @@ function shipcruising() {
   let canvasMap = require('./modules/canvasMap');
   let draw = require('./modules/draw');
   let mercator = require('./modules/mercator');
+  let leafletMap = require('./modules/leafletMap');
   let el = window.document.getElementById('ship-cruising');
+  let elInteractive = window.document.getElementById('interactive-map');
   let options = require('./modules/options');
   let defaults = options.defaults;
 
@@ -48,6 +50,10 @@ function shipcruising() {
     });
     // draw.drawRoute(ctx, geo, defaults.strokeColor);
   });
+
+  // Interactive map sector
+  leafletMap.createToneMapDiv(elInteractive, 'tone-map');
+  leafletMap.createMapboxMapDiv(elInteractive, 'mapbox-map');
 };
 
 shipcruising();

@@ -3,6 +3,7 @@
 let mercator = require('./mercator');
 let turf = require('./turf');
 let options = require('./options');
+let leafletMap = require('./leafletMap');
 let defaults = options.defaults;
 
 let unpackMultiPolCoords = function(features) {
@@ -108,6 +109,9 @@ let drawLineString = function(canvas, featureCollection) {
   ctx.globalCompositeOperation = 'destination-over';
 
   turf.meta.featureEach(featureCollection, function(feature) {
+    // Draw LineString(Polyline) in Leaflet
+    leafletMap.drawPolyline(feature.geometry.coordinates);
+
     let routeLength = feature.geometry.coordinates.length;
     turf.meta.coordEach(feature, function(coord) {
       isFirst = drawLine(ctx, coord, isFirst, true);
