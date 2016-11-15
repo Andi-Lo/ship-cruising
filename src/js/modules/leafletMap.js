@@ -13,6 +13,7 @@ let box = [
 
 // Gets initialized in init, with leaflet map
 let maps = [];
+
 const cssSizeUnit = 'px';
 
 let createToneMapDiv = function(elementInteractive, divId) {
@@ -48,13 +49,8 @@ let createMapboxMapDiv = function(elementInteractive, divId) {
   }).addTo(map);
 };
 
-let drawPolyline = function(coords) {
-  // Create a red polyline from an array of LatLng points
-  let swapedCoords = swapLongLat(coords);
-
-  for(let i = 0; i < maps.length; i++) {
-    leaflet.polyline(swapedCoords, {color: 'red'}).addTo(maps[i]);
-  }
+let getMaps = function() {
+  return maps;
 };
 
 function init(elementInteractive, divId) {
@@ -72,15 +68,6 @@ function init(elementInteractive, divId) {
       .setView([bounds.center[1], bounds.center[0]], bounds.zoom);
 };
 
-function swapLongLat(coords) {
-  let tmpFeatures = [];
-  for(let i = 0; i < coords.length; i++) {
-    tmpFeatures.push([coords[i][1], coords[i][0]]);
-  }
-
-  return tmpFeatures;
-};
-
 module.exports.createToneMapDiv = createToneMapDiv;
 module.exports.createMapboxMapDiv = createMapboxMapDiv;
-module.exports.drawPolyline = drawPolyline;
+module.exports.getMaps = getMaps;
