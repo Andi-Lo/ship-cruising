@@ -3,17 +3,15 @@
 // https://en.wikipedia.org/wiki/Erosion_(morphology)
 // https://en.wikipedia.org/wiki/Dilation_(morphology)
 
-(function(){Math.clamp=function(a,b = 0,c = 99999999){return Math.max(b,Math.min(c,a));}})(); // eslint-disable-line
-
-module.exports = function(colorData, w, h) {
-  let result = colorData;
+module.exports = function(binaryImage, w, h, threshold) {
+  let result = binaryImage;
   let neighbours = [];
 
   for(let x = 0; x < w; x++) {
     for(let y = 0; y < h; y++) {
-      let pix = colorData[x][y];
+      let pix = binaryImage[x][y];
       if(pix === 1) {
-        neighbours = kernel(colorData, w, h, x, y);
+        neighbours = kernel(binaryImage, w, h, x, y);
         let threshold = neighbours.reduce((a, b) => {
           return a + b;
         }, 0);
@@ -29,7 +27,7 @@ module.exports = function(colorData, w, h) {
 };
 
 /**
- * Searches the neighbours of a given binary image by search patern
+ * Searches the neighbours of a given binary image by search pattern
  * 0 0 0
  * 0 1 0
  * 0 0 0
@@ -41,16 +39,18 @@ module.exports = function(colorData, w, h) {
  * @returns an array containing the neighbours values
  */
 function kernel(pixels, w, h, x, y) {
+  w = w - 1;
+  h = h - 1;
   let pixs = [];
 
-  pixs.push(pixels[Math.clamp(((x-1) % w))][Math.clamp(((y-1) % h))]);
-  pixs.push(pixels[x][Math.clamp((y-1) % h)]);
-  pixs.push(pixels[(x+1) % w][Math.clamp((y-1) % h)]);
+  pixs.push(pixels[((x-1) % w) < 0 ? w : x % w][((y-1) % h) < 0 ? h : x % h]);
+  pixs.push(pixels[x][((y-1) % h) < 0 ? h : x % h]);
+  pixs.push(pixels[(x+1) % w][((y-1) % h) < 0 ? h : x % h]);
 
-  pixs.push(pixels[Math.clamp((x-1) % w)][y]);
+  pixs.push(pixels[((x-1) % w) < 0 ? w : x % w][y]);
   pixs.push(pixels[(x+1) % w][y]);
 
-  pixs.push(pixels[Math.clamp((x-1) % w)][(y+1) % h]);
+  pixs.push(pixels[((x-1) % w) < 0 ? w : x % w][(y+1) % h]);
   pixs.push(pixels[x][(y+1) % h]);
   pixs.push(pixels[(x+1) % w][(y+1) % h]);
 
