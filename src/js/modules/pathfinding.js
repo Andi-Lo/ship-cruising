@@ -2,9 +2,13 @@ let astar = require('../libs/astar.js').astar;
 let Graph = require('../libs/astar.js').Graph;
 let turf = require('./turf');
 let mercator = require('./mercator');
+let canvasMap = require('./canvasMap');
 let simplifyjs = require('simplify-js');
 
-module.exports = function(canvas, colorData, fc) {
+let colorData = [];
+
+module.exports = function(fc) {
+  colorData = canvasMap.getColorData();
   let feature = turf.iterateFeature(fc);
 
   let start = feature.next();
@@ -13,7 +17,7 @@ module.exports = function(canvas, colorData, fc) {
   for(let i = 0; i < (fc.features.length - 1); i++) {
     let next = feature.next();
     if(next.done !== true) {
-      let path = calcRoute(start, next, colorData);
+      let path = findPath(start, next);
       start = path.prev;
       lineCollection.push(path.route);
     }
@@ -25,7 +29,7 @@ module.exports = function(canvas, colorData, fc) {
   return lineCollection;
 };
 
-function calcRoute(start, end, colorData) {
+function findPath(start, end) {
   let graph = new Graph(colorData, {diagonal: true});
   let heuristic = {heuristic: astar.heuristics.diagonal};
   let prev = end;
@@ -48,11 +52,11 @@ function calcRoute(start, end, colorData) {
   catch (error) {
     throw error;
   }
-  let route = simplifyRoute(path);
+  let route = simplifyPath(path);
   return {route, prev};
-}
+};
 
-function simplifyRoute(path) {
+function simplifyPath(path) {
   let simplified = simplify(path);
   let linestring = turf.lineString(simplified);
 
