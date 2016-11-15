@@ -2,7 +2,7 @@
 
 let turf = require('./turf');
 let pathfinding = require('./pathfinding');
-let draw = require('./draw');
+let draw = require('./drawCanvas');
 
 class Route {
   constructor(features) {
