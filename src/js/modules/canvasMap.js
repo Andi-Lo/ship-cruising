@@ -6,6 +6,7 @@ let rgb2hex = require('rgb2hex');
 let mercator = require('./mercator');
 let erode = require('./erode');
 let Route = require('./route').Route;
+let draw = require('./drawCanvas');
 
 let canvas;
 let colorData;
@@ -55,6 +56,33 @@ let createMap = function(width, height) {
   }, true);
 
   return canvas;
+};
+
+let init = function() {
+  fetch('./map/jamaica.geojson').then((parse) => parse.json()).then((geo) => {
+    geo.features.forEach((features) => {
+      switch (features.geometry.type) {
+        case "Polygon":
+          draw.drawPolygon(features, defaults.mapColor);
+          break;
+
+        case "Point":
+          draw.drawPoint(features, defaults.pointColor, 4);
+          break;
+
+        case "MultiPolygon":
+          draw.drawMultiPolygon(features, defaults.mapColor);
+          break;
+
+        default:
+          console.log(features.geometry.type);
+          break;
+      }
+    });
+    createPixelData(canvas);
+    let dist = mercator.calcScale('kilometers');
+    setScale(dist);
+  });
 };
 
 let updateVal = function(event) {
@@ -118,3 +146,4 @@ module.exports.getCanvas = getCanvas;
 module.exports.getColorData = getColorData;
 module.exports.createMap = createMap;
 module.exports.setScale = setScale;
+module.exports.init = init;

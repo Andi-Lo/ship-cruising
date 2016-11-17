@@ -20,7 +20,9 @@ let unpackMultiPolCoords = function(features) {
   return data;
 };
 
-let drawLine = function(ctx, coord, isFirst, stroke = false) {
+let drawLine = function(coord, isFirst, stroke = false) {
+  let canvas = canvasMap.getCanvas();
+  let ctx = canvas.getContext('2d');
   let pixel = mercator.posToPixel(coord);
 
   if(pixel.x > 0 || pixel.y > 0) {
@@ -39,14 +41,16 @@ let drawLine = function(ctx, coord, isFirst, stroke = false) {
   return isFirst;
 };
 
-let drawMultiPolygon = function(ctx, features, color) {
+let drawMultiPolygon = function(features, color) {
+  let canvas = canvasMap.getCanvas();
+  let ctx = canvas.getContext('2d');
   ctx.fillStyle = color;
   let isFirst = true;
 
   let coordinates = unpackMultiPolCoords(features);
   coordinates.forEach(function(coords) {
     coords.forEach(function(coord) {
-      isFirst = drawLine(ctx, coord, isFirst);
+      isFirst = drawLine(coord, isFirst);
     });
     isFirst = true;
     ctx.closePath();
@@ -108,7 +112,6 @@ let drawLineString = function(featureCollection) {
   ctx.fillStyle = defaults.strokeColor;
   ctx.strokeStyle = defaults.strokeColor;
   ctx.lineWidth = 2;
-  ctx.globalCompositeOperation = 'destination-over';
 
   turf.meta.featureEach(featureCollection, function(feature) {
     // Draw LineString(Polyline) in Leaflet
@@ -116,7 +119,7 @@ let drawLineString = function(featureCollection) {
 
     let routeLength = feature.geometry.coordinates.length;
     turf.meta.coordEach(feature, function(coord) {
-      isFirst = drawLine(ctx, coord, isFirst, true);
+      isFirst = drawLine(coord, isFirst, true);
       if(routeLength === length) ctx.closePath();
       length++;
     });
