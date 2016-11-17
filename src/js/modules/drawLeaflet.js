@@ -21,12 +21,19 @@ let drawMarkers = function(featureCollection) {
 
   turf.meta.featureEach(featureCollection, function(feature) {
     let coord = turf.invariant.getCoord(turf.flip(feature));
-    let marker = leaflet.marker(coord).addTo(maps[0]);
-    marker.bindPopup(
-      "<b>" + feature.properties.name + "</b><br>" +
-      "lat " + coord[0] + " long" + coord[1]
-      ).openPopup();
+    let marker = drawMarker(maps[0], coord);
+    let text = "<b>" + feature.properties.name + "</b><br>" +
+               " long" + coord[1] + "lat " + coord[0];
+    bindMarkerPopup(marker, text);
   });
+};
+
+function drawMarker(map, coord) {
+  return leaflet.marker(coord).addTo(map);
+};
+
+function bindMarkerPopup(marker, text) {
+  marker.bindPopup(text);
 };
 
 module.exports.drawPolyline = drawPolyline;
