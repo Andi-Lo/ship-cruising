@@ -1,7 +1,7 @@
 'use strict';
 
-let turf = require('./turf');
-let pathfinding = require('./pathfinding');
+let turf = require('../libs/turf');
+let pathfinding = require('../libs/pathfinding');
 let draw = require('./drawCanvas');
 
 class Route {

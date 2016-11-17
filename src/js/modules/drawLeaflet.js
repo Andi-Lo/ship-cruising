@@ -1,6 +1,6 @@
 'use strict';
 
-let turf = require('./turf');
+let turf = require('../libs/turf');
 let leafletMap = require('./leafletMap');
 let leaflet = require('leaflet');
 

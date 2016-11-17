@@ -1,7 +1,7 @@
 'use strict';
 
 let turf = require('./turf');
-let defaults = require('./options').defaults;
+let defaults = require('../modules/options').defaults;
 let SM = new (require('sphericalmercator'))();
 let bbox = require('./bbox');
 let bboxJamaika = [

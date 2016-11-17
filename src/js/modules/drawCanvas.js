@@ -1,7 +1,7 @@
 'use strict';
 
-let mercator = require('./mercator');
-let turf = require('./turf');
+let mercator = require('../libs/mercator');
+let turf = require('../libs/turf');
 let defaults = require('./options').defaults;
 let canvasMap = require('./canvasMap');
 

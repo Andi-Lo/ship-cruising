@@ -1,10 +1,10 @@
 'use strict';
 
 let defaults = require('./options').defaults;
-let turf = require('./turf');
+let turf = require('../libs/turf');
 let rgb2hex = require('rgb2hex');
-let mercator = require('./mercator');
-let erode = require('./erode');
+let mercator = require('../libs/mercator');
+let erode = require('../libs/erode');
 let draw = require('./drawCanvas');
 let CanvasObserver = require('../observers/canvasObserver').CanvasObserver;
 
@@ -96,7 +96,7 @@ let createPixelData = function() {
       colorData[x][y] = hex.hex === defaults.mapColor ? 0 : 1;
     }
   }
-  colorData = erode(colorData, defaults.width, defaults.height);
+  colorData = erode(colorData, defaults.width, defaults.height, 5);
   return colorData;
 };
 

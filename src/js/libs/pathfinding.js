@@ -1,8 +1,8 @@
-let astar = require('../libs/astar.js').astar;
-let Graph = require('../libs/astar.js').Graph;
+let astar = require('./astar.js').astar;
+let Graph = require('./astar.js').Graph;
 let turf = require('./turf');
 let mercator = require('./mercator');
-let canvasMap = require('./canvasMap');
+let canvasMap = require('../modules/canvasMap');
 let simplifyjs = require('simplify-js');
 
 let colorData = [];

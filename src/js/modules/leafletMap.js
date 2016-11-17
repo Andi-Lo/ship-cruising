@@ -2,7 +2,7 @@
 
 let leaflet = require('leaflet');
 let defaults = require('./options').defaults;
-let bbox = require('./bbox');
+let bbox = require('../libs/bbox');
 
 let box = [
   -91.14257812499999,
