@@ -2,4 +2,4 @@
 
 ## Todos:
 
-* Ask GoVios for historical ship GPS Data
+~~Ask GoVios for historical ship GPS Data~~
