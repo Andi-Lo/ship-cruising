@@ -9,4 +9,9 @@ let defaults = {
   'height': 320
 };
 
+let leaflet = {
+
+};
+
 module.exports.defaults = defaults;
+module.exports.leaflet = leaflet;
