@@ -74,9 +74,8 @@ let registerClick = function(event) {
   let point = mercator.pixelToPos([pixelPos.x, pixelPos.y]);
   point = turf.point(
       [point.x, point.y],
-      {name: 'Waypoint', coordinates: point}
+      {name: 'harbour'}
   );
-
   features.push(point);
 };
 

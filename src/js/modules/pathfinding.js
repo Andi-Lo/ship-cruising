@@ -18,6 +18,7 @@ module.exports = function(fc) {
     let next = feature.next();
     if(next.done !== true) {
       let path = findPath(start, next);
+      path.route.properties.name = 'route';
       start = path.prev;
       lineCollection.push(path.route);
     }
