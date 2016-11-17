@@ -5,61 +5,28 @@ let turf = require('./turf');
 let rgb2hex = require('rgb2hex');
 let mercator = require('./mercator');
 let erode = require('./erode');
-let Route = require('./route').Route;
 let draw = require('./drawCanvas');
+let CanvasObserver = require('../observers/canvasObserver').CanvasObserver;
 
 let canvas;
 let colorData;
 let features = [];
 
 let createMap = function(width, height) {
+  let el = window.document.getElementById('ship-cruising');
   canvas = document.createElement('canvas');
   canvas.setAttribute('id', 'sc_canvas');
   canvas.width = width;
   canvas.height = height;
 
-  canvas.addEventListener('click', function(evt) {
-    getMousePosition(evt);
-  }, false);
+  new CanvasObserver(canvas);
 
-  canvas.addEventListener('click', function(evt) {
-    registerClick(evt);
-  }, false);
-
-  canvas.addEventListener('mousemove', function(evt) {
-    updateVal(evt);
-  }, false);
-
-  window.addEventListener("keydown", function(event) {
-    if(event.defaultPrevented) {
-      return; // Do nothing if the event was already processed
-    }
-
-    switch (event.key) {
-      case "Enter":
-        try {
-          new Route(features);
-          features = [];
-        }
-        catch(e) {
-          throw e;
-        }
-        finally {
-          features = [];
-        }
-        break;
-      default:
-        return; // Quit when this doesn't handle the key event.
-    }
-    // Cancel the default action to avoid it being handled twice
-    event.preventDefault();
-  }, true);
-
+  el.appendChild(canvas);
   return canvas;
 };
 
-let init = function() {
-  fetch('./map/jamaica.geojson').then((parse) => parse.json()).then((geo) => {
+let init = function(path) {
+  fetch(path).then((parse) => parse.json()).then((geo) => {
     geo.features.forEach((features) => {
       switch (features.geometry.type) {
         case "Polygon":
@@ -137,13 +104,26 @@ let getCanvas = function() {
   return canvas;
 };
 
+let getFeatures = function() {
+  return features;
+};
+
+let setFeatures = function(val) {
+  features = val;
+};
+
 let getColorData = function() {
   return colorData;
 };
 
 module.exports.createPixelData = createPixelData;
+module.exports.getMousePosition = getMousePosition;
 module.exports.getCanvas = getCanvas;
 module.exports.getColorData = getColorData;
+module.exports.getFeatures = getFeatures;
 module.exports.createMap = createMap;
 module.exports.setScale = setScale;
+module.exports.setFeatures = setFeatures;
 module.exports.init = init;
+module.exports.updateVal = updateVal;
+module.exports.registerClick = registerClick;

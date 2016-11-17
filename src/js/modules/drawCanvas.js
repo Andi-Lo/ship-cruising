@@ -3,7 +3,6 @@
 let mercator = require('./mercator');
 let turf = require('./turf');
 let defaults = require('./options').defaults;
-let drawLeaflet = require('./drawLeaflet');
 let canvasMap = require('./canvasMap');
 
 let unpackMultiPolCoords = function(features) {
@@ -114,9 +113,6 @@ let drawLineString = function(featureCollection) {
   ctx.lineWidth = 2;
 
   turf.meta.featureEach(featureCollection, function(feature) {
-    // Draw LineString(Polyline) in Leaflet
-    drawLeaflet.drawPolyline(feature);
-
     let routeLength = feature.geometry.coordinates.length;
     turf.meta.coordEach(feature, function(coord) {
       isFirst = drawLine(coord, isFirst, true);
