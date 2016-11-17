@@ -22,7 +22,10 @@ let drawMarkers = function(featureCollection) {
   turf.meta.featureEach(featureCollection, function(feature) {
     let coord = turf.invariant.getCoord(turf.flip(feature));
     let marker = leaflet.marker(coord).addTo(maps[0]);
-    marker.bindPopup("<b>" + feature.properties.name + "</b>").openPopup();
+    marker.bindPopup(
+      "<b>" + feature.properties.name + "</b><br>" +
+      "lat " + coord[0] + " long" + coord[1]
+      ).openPopup();
   });
 };
 
