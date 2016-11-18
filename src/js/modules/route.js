@@ -8,6 +8,8 @@ class Route {
   constructor(features) {
     this._waypoints = turf.featureCollection(features);
     this._route = this.calcRoute(features);
+
+    this.route = turf.equidistantLineString(this.route);
   }
 
   set route(route) { this._route = route; }
@@ -25,6 +27,7 @@ class Route {
     let route = pathfinding(fc);
     return route;
   }
+
 };
 
 module.exports.Route = Route;
