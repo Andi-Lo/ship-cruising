@@ -28,6 +28,8 @@ module.exports = function(featureCollection) {
       let path = findPath(start, next, prevPoint);
       prevPoint = _.last(path.route.geometry.coordinates);
       path.route.properties.name = 'route';
+      path.route.properties.start = start.value.geometry.coordinates;
+      path.route.properties.end = next.value.geometry.coordinates;
       start = path.prev;
       lineCollection.push(path.route);
     }
