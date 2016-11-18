@@ -2,6 +2,8 @@ let turf = require('@turf/turf');
 turf.meta = require('@turf/meta');
 turf.invariant = require('@turf/invariant');
 
+let _ = require('lodash/array');
+
 
 /**
  * ES6 Generator iterates over the features of the featureCollection
@@ -11,15 +13,47 @@ turf.invariant = require('@turf/invariant');
  * @param {any} [end=-1]
  * @returns a feature on success else false
  */
-let iterateFeature = function* (featureCollection, start = 0, end = -1) {
-  if(end === -1) end = featureCollection.features.length;
+let iterateFeature = function* (fc, start = 0, end = -1) {
+  if(end === -1) end = fc.features.length;
 
   for(start; start < end; start++) {
-    yield featureCollection.features[start];
+    yield fc.features[start];
   }
 
   if(start === end) return false;
 };
 
+let equidistantLineString = function(fc) {
+  let pointOnLine = [];
+
+  turf.meta.featureEach(fc, function(feature) {
+    let length = feature.geometry.coordinates.length;
+    let dist = turf.lineDistance(feature)
+    let steps = Math.floor(dist / length); // idea: calculate a dynamic step size, depending on the total line distance
+    dist = dist + steps
+    let i = 0;
+
+    while(i < dist) {
+      pointOnLine.push(turf.along(feature, i ,'kilometers'));
+      i += steps/2;
+    }
+  });
+  fc = turf.featureCollection(pointOnLine);
+  lineString = toLineStringCollection(fc);
+
+  return lineString;
+};
+
+function toLineStringCollection(fc) {
+  let lineString = [];
+  for(let i = 0; i < fc.features.length - 1; i++) {
+    lineString.push(fc.features[i].geometry.coordinates);
+  }
+  lineString = turf.lineString(lineString)
+  lineString = turf.simplify(lineString, 0.01, false);
+  return lineString;
+}
+
 module.exports = turf;
 module.exports.iterateFeature = iterateFeature;
+module.exports.equidistantLineString = equidistantLineString;
