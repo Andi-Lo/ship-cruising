@@ -46,7 +46,7 @@ let equidistantLineString = function(fc) {
 
 function toLineStringCollection(fc) {
   let lineString = [];
-  for(let i = 0; i < fc.features.length - 1; i++) {
+  for(let i = 0; i < fc.features.length; i++) {
     lineString.push(fc.features[i].geometry.coordinates);
   }
   lineString = turf.lineString(lineString)
