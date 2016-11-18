@@ -22,8 +22,9 @@ let drawMarkers = function(featureCollection) {
   turf.meta.featureEach(featureCollection, function(feature) {
     let coord = turf.invariant.getCoord(turf.flip(feature));
     let marker = drawMarker(maps[0], coord);
-    let text = "<b>" + feature.properties.name + "</b><br>" +
-               " long" + coord[1] + "lat " + coord[0];
+    // using es6 template literals (` `) here
+    let text = `<b>${feature.properties.name}</b><br>
+                ${coord[1]} "lat "  ${coord[0]}`;
     bindMarkerPopup(marker, text);
   });
 };
