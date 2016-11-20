@@ -26,6 +26,9 @@ let createMap = function(width, height) {
 };
 
 let init = function(path) {
+  // Draw whole canvas black
+  draw.drawRect(defaults.mapBackgroundColor, defaults.width, defaults.height);
+
   fetch(path).then((parse) => parse.json()).then((geo) => {
     geo.features.forEach((features) => {
       switch (features.geometry.type) {
@@ -85,6 +88,7 @@ let getMousePosition = function(event) {
 let createPixelData = function() {
   let ctx = canvas.getContext('2d');
   colorData = new Array(defaults.height);
+
   for (let i = 0; i < defaults.height; i++) {
     colorData[i] = new Array(defaults.width);
   }
