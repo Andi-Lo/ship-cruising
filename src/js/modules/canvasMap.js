@@ -84,7 +84,7 @@ let getMousePosition = function(event) {
   };
 };
 
-let createPixelData = function() {
+/* let createPixelData = function() {
   let ctx = canvas.getContext('2d');
   colorData = new Array(defaults.height);
   let mapColor = convertColorStringToObj(defaults.mapColor);
@@ -99,6 +99,41 @@ let createPixelData = function() {
       colorData[x][y] = color.data[0] === mapColor.r ? 0 : 1;
     }
   }
+  colorData = erode(colorData, defaults.width, defaults.height, 5);
+  return colorData;
+};*/
+
+let createPixelData = function() {
+  // Get Pixel Data of canvas
+  // Use the size of the whole canvas
+  let ctx = canvas.getContext('2d');
+  let imageData = ctx.getImageData(0, 0, defaults.width, defaults.height);
+  let mapColor = convertColorStringToObj(defaults.mapColor);
+
+  // Go through imageData array and convert it to an 0/1 array
+  // For the Astar Algo
+  colorData = [];
+  let astarRow = [];
+  let rowIndex = 0;
+  let isFirstInit = true;
+  for(let i = 0; i < imageData.data.length; i += 4) {
+    // Just take the red canal of the imageData array
+    let astarValue = imageData.data[i] === mapColor.r ? 0 : 1;
+
+    if(isFirstInit) {
+      colorData.push([astarValue]);
+    }
+    else {
+      colorData[rowIndex].push(astarValue);
+    }
+    rowIndex++;
+
+    if(rowIndex === canvas.height) {
+      isFirstInit = false;
+      rowIndex = 0;
+    }
+  }
+
   colorData = erode(colorData, defaults.width, defaults.height, 5);
   return colorData;
 };
