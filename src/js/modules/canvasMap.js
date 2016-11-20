@@ -113,7 +113,6 @@ let createPixelData = function() {
   // Go through imageData array and convert it to an 0/1 array
   // For the Astar Algo
   colorData = [];
-  let astarRow = [];
   let rowIndex = 0;
   let isFirstInit = true;
   for(let i = 0; i < imageData.data.length; i += 4) {
