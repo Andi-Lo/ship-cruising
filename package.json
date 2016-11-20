@@ -30,7 +30,6 @@
     "gulp-watch": "^4.3.5",
     "leaflet": "^1.0.1",
     "parse-float": "^0.1.1",
-    "rgb2hex": "^0.1.0",
     "run-sequence": "^1.2.2",
     "sphericalmercator": "^1.0.5",
     "underscore": "^1.8.3",
