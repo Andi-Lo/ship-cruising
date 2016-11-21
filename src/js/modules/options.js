@@ -10,9 +10,15 @@ let defaults = {
   'height': 320
 };
 
-let leaflet = {
+let leafletTileStyles = {
+  'stamenTonerLight': 0,
+  'mapboxStreet': 1
+};
 
+let leaflet = {
+  'defaultTileStyle': leafletTileStyles.stamenTonerLight
 };
 
 module.exports.defaults = defaults;
 module.exports.leaflet = leaflet;
+module.exports.leafletTileStyles = leafletTileStyles;
