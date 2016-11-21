@@ -16,7 +16,6 @@ function shipcruising() {
 
   // Interactive map sector
   leafletMap.createToneMapDiv(elInteractive, 'tone-map');
-  leafletMap.createMapboxMapDiv(elInteractive, 'mapbox-map');
   new LeafletObserver();
 };
 
