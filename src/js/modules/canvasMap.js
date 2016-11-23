@@ -2,7 +2,6 @@
 
 let defaults = require('./options').defaults;
 let turf = require('../libs/turf');
-let rgb2hex = require('rgb2hex');
 let mercator = require('../libs/mercator');
 let erode = require('../libs/erode');
 let draw = require('./drawCanvas');
@@ -26,6 +25,9 @@ let createMap = function(width, height) {
 };
 
 let init = function(path) {
+  // Draw whole canvas black
+  draw.drawRect(defaults.mapBackgroundColor, defaults.width, defaults.height);
+
   fetch(path).then((parse) => parse.json()).then((geo) => {
     geo.features.forEach((features) => {
       switch (features.geometry.type) {
@@ -82,9 +84,11 @@ let getMousePosition = function(event) {
   };
 };
 
-let createPixelData = function() {
+/* let createPixelData = function() {
   let ctx = canvas.getContext('2d');
   colorData = new Array(defaults.height);
+  let mapColor = convertColorStringToObj(defaults.mapColor);
+
   for (let i = 0; i < defaults.height; i++) {
     colorData[i] = new Array(defaults.width);
   }
@@ -92,10 +96,43 @@ let createPixelData = function() {
   for(let x = 0; x < defaults.height; x++) {
     for(let y = 0; y < defaults.width; y++) {
       let color = ctx.getImageData(x, y, 1, 1);
-      let hex = rgb2hex('rgba(' + color.data +')');
-      colorData[x][y] = hex.hex === defaults.mapColor ? 0 : 1;
+      colorData[x][y] = color.data[0] === mapColor.r ? 0 : 1;
     }
   }
+  colorData = erode(colorData, defaults.width, defaults.height, 5);
+  return colorData;
+};*/
+
+let createPixelData = function() {
+  // Get Pixel Data of canvas
+  // Use the size of the whole canvas
+  let ctx = canvas.getContext('2d');
+  let imageData = ctx.getImageData(0, 0, defaults.width, defaults.height);
+  let mapColor = convertColorStringToObj(defaults.mapColor);
+
+  // Go through imageData array and convert it to an 0/1 array
+  // For the Astar Algo
+  colorData = [];
+  let rowIndex = 0;
+  let isFirstInit = true;
+  for(let i = 0; i < imageData.data.length; i += 4) {
+    // Just take the red canal of the imageData array
+    let astarValue = imageData.data[i] === mapColor.r ? 0 : 1;
+
+    if(isFirstInit) {
+      colorData.push([astarValue]);
+    }
+    else {
+      colorData[rowIndex].push(astarValue);
+    }
+    rowIndex++;
+
+    if(rowIndex === canvas.height) {
+      isFirstInit = false;
+      rowIndex = 0;
+    }
+  }
+
   colorData = erode(colorData, defaults.width, defaults.height, 5);
   return colorData;
 };
@@ -114,6 +151,18 @@ let setFeatures = function(val) {
 
 let getColorData = function() {
   return colorData;
+};
+
+let convertColorStringToObj = function(rgbaString) {
+  rgbaString = rgbaString.substring(5, rgbaString.length-1)
+      .replace(/ /g, '')
+      .split(',');
+  return {
+    'r': parseFloat(rgbaString[0]),
+    'g': parseFloat(rgbaString[1]),
+    'b': parseFloat(rgbaString[2]),
+    'a': parseFloat(rgbaString[3])
+  };
 };
 
 module.exports.createPixelData = createPixelData;

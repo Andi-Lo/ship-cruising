@@ -15,8 +15,7 @@ function shipcruising() {
   canvasMap.init('./map/jamaica.geojson');
 
   // Interactive map sector
-  leafletMap.createToneMapDiv(elInteractive, 'tone-map');
-  leafletMap.createMapboxMapDiv(elInteractive, 'mapbox-map');
+  leafletMap.init(elInteractive, 'tone-map', 640, 640);
   new LeafletObserver();
 };
 
