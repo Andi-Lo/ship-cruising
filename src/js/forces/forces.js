@@ -1,6 +1,10 @@
 'use strict';
 
-let force = function() {
+let mercator = require('../libs/mercator');
+let turf = require('../libs/turf');
+
+let force = function(route) {
+  console.log('route', route);
 
   let width = 960;
   let height = 500;
@@ -17,18 +21,23 @@ let force = function() {
   // The largest node for each cluster.
   let clusters = new Array(m);
 
-  let nodes = d3.range(n).map(function () {
-    let i = Math.floor(Math.random() * m),
-        r = Math.sqrt((i + 1) / m * -Math.log(Math.random())) * maxRadius,
-        d = {
-          cluster: i,
-          radius: r,
-          x: Math.cos(i / m * 2 * Math.PI) * 150 + width / 2 + Math.random(),
-          y: Math.sin(i / m * 2 * Math.PI) * 150 + height / 2 + Math.random()
-        };
-    if (!clusters[i] || (r > clusters[i].radius)) clusters[i] = d;
+  let getNodes = (route) => {
+    let d = [];
+    turf.meta.coordEach(route, function(coord) {
+        let i = Math.floor(Math.random() * m);
+        let r = Math.sqrt((i + 1) / m * -Math.log(Math.random())) * maxRadius;
+      let pixel = mercator.posToPixel(coord);
+      d.push({
+        radius: r,
+        cluster: i,
+        x: pixel.x,
+        y: pixel.y
+      });
+    });
     return d;
-  });
+  }
+
+  let nodes = getNodes(route);
 
   console.log('nodes', nodes);
 
