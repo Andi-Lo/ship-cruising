@@ -2,6 +2,8 @@
 
 let leaflet = require('leaflet');
 let defaults = require('./options').defaults;
+let leafletOptions = require('./options').leaflet;
+let leafletTileStyles = require('./options').leafletTileStyles;
 let bbox = require('../libs/bbox');
 
 let box = [
@@ -16,9 +18,7 @@ let maps = [];
 
 const cssSizeUnit = 'px';
 
-let createToneMapDiv = function(elementInteractive, divId) {
-  let map = init(elementInteractive, divId, 640, 640);
-
+let createToneMapDiv = function(elementInteractive, divId, map) {
   // Add map to map array
   maps.push(map);
   // Add Stamen toner tile to leaflet map
@@ -31,9 +31,7 @@ let createToneMapDiv = function(elementInteractive, divId) {
   }).addTo(map);
 };
 
-let createMapboxMapDiv = function(elementInteractive, divId) {
-  let map = init(elementInteractive, divId);
-
+let createMapboxMapDiv = function(elementInteractive, divId, map) {
   // Add map to map array
   maps.push(map);
 
@@ -53,7 +51,7 @@ let getMaps = function() {
   return maps;
 };
 
-function init(elementInteractive, divId,
+let init = function(elementInteractive, divId,
               divWidth = defaults.width,
               divHeight = defaults.height) {
   // Create new leaflet div with a css class
@@ -66,10 +64,18 @@ function init(elementInteractive, divId,
 
   // Get center of bbox
   let bounds = bbox(box, defaults.width, defaults.height);
-  return leaflet.map(divId)
+  let map = leaflet.map(divId)
       .setView([bounds.center[1], bounds.center[0]], bounds.zoom);
+
+  // Set the chosen tiles default style
+  let defaultStyle = leafletOptions.defaultTileStyle;
+  if(defaultStyle === leafletTileStyles.stamenTonerLight) {
+    createToneMapDiv(elementInteractive, divId, map);
+  }
+  else if(defaultStyle === leafletTileStyles.mapboxStreet) {
+    createMapboxMapDiv(elementInteractive, divId, map);
+  }
 };
 
-module.exports.createToneMapDiv = createToneMapDiv;
-module.exports.createMapboxMapDiv = createMapboxMapDiv;
+module.exports.init = init;
 module.exports.getMaps = getMaps;
