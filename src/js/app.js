@@ -5,6 +5,8 @@ let LeafletObserver = require('./observers/leafletObserver').LeafletObserver;
 let canvasMap = require('./modules/canvasMap');
 let leafletMap = require('./modules/leafletMap');
 let defaults = require('./modules/options').defaults;
+let forces = require('./forces/forces');
+// let force = require('./forces/forceCanvas');
 
 function shipcruising() {
   let elInteractive = window.document.getElementById('interactive-map');
@@ -13,6 +15,8 @@ function shipcruising() {
 
   canvasMap.createMap(defaults.width, defaults.height);
   canvasMap.init('./map/jamaica.geojson');
+  // force.forceCanvas();
+  forces.force();
 
   // Interactive map sector
   leafletMap.createToneMapDiv(elInteractive, 'tone-map');
