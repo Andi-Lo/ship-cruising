@@ -4,7 +4,7 @@ let turf = require('./turf');
 let mercator = require('./mercator');
 let canvasMap = require('../modules/canvasMap');
 let simplifyjs = require('simplify-js');
-var _ = require('lodash/array');
+let _ = require('lodash/array');
 
 let colorData = [];
 

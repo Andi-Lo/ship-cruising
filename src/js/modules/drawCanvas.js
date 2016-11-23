@@ -77,7 +77,7 @@ let drawPolygon = function(ctx, features, color) {
 let drawPoint = function(ctx, features, color, lineWidth) {
   let point = features.geometry.coordinates;
   let pixel = mercator.posToPixel(point);
-  ctx.globalCompositeOperation = 'destination-over';
+  // ctx.globalCompositeOperation = 'destination-over';
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
   ctx.lineWidth = lineWidth;
@@ -92,7 +92,6 @@ let drawPoint = function(ctx, features, color, lineWidth) {
 let drawPixels = function(featureCollection) {
   let canvas = canvasMap.getCanvas();
   let ctx = canvas.getContext('2d');
-  ctx.globalCompositeOperation = 'destination-over';
   ctx.fillStyle = defaults.pixelColor;
 
   turf.meta.featureEach(featureCollection, function(feature) {
@@ -141,9 +140,21 @@ let drawRoute = function(ctx, route, color) {
   });
 };
 
+let drawRect = function(color, width, height) {
+  let canvas = canvasMap.getCanvas();
+  let ctx = canvas.getContext('2d');
+
+  ctx.beginPath();
+  ctx.rect(0, 0, width, height);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.closePath();
+};
+
 exports.drawPoint = drawPoint;
 exports.drawPolygon = drawPolygon;
 exports.drawMultiPolygon = drawMultiPolygon;
 exports.drawRoute = drawRoute;
 exports.drawPixels = drawPixels;
 exports.drawLineString = drawLineString;
+exports.drawRect = drawRect;

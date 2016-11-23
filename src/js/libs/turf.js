@@ -1,7 +1,6 @@
 let turf = require('@turf/turf');
 turf.meta = require('@turf/meta');
 turf.invariant = require('@turf/invariant');
-
 let _ = require('lodash/array');
 
 
@@ -28,13 +27,14 @@ let equidistantLineString = function(fc) {
 
   turf.meta.featureEach(fc, function(feature) {
     let length = feature.geometry.coordinates.length;
-    let dist = turf.lineDistance(feature)
-    let steps = Math.floor(dist / length); // idea: calculate a dynamic step size, depending on the total line distance
-    dist = dist + steps
+    let dist = turf.lineDistance(feature);
+    let steps = Math.floor(dist / length);
+    // idea: calculate a dynamic step size, depending on the total line distance
+    dist = dist + steps;
     let i = 0;
 
     while(i < dist) {
-      pointOnLine.push(turf.along(feature, i ,'kilometers'));
+      pointOnLine.push(turf.along(feature, i, 'kilometers'));
       i += steps/2;
     }
   });
@@ -49,8 +49,7 @@ function toLineStringCollection(fc) {
   for(let i = 0; i < fc.features.length; i++) {
     lineString.push(fc.features[i].geometry.coordinates);
   }
-  lineString = turf.lineString(lineString)
-  lineString = turf.simplify(lineString, 0.01, false);
+  lineString = turf.lineString(lineString);
   return lineString;
 }
 
