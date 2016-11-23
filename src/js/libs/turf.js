@@ -50,7 +50,6 @@ function toLineStringCollection(fc) {
     lineString.push(fc.features[i].geometry.coordinates);
   }
   lineString = turf.lineString(lineString);
-  lineString = turf.simplify(lineString, 0.01, false);
   return lineString;
 }
 
