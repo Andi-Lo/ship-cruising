@@ -1,5 +1,3 @@
 **/bundle.js
 gulpfile.js
 src/js/libs/astar.js
-src/js/forces/forces.js
-src/js/forces/forceCanvas.js

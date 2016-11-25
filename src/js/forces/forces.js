@@ -8,34 +8,27 @@ let force = function(route) {
 
   let width = 960;
   let height = 500;
-  let padding = 1.5; // separation between same-color nodes
-  let clusterPadding = 6; // separation between different-color nodes
-  let maxRadius = 8;
+  let radius = 3;
 
-  let n = 200; // total number of nodes
-  let m = 10; // number of distinct clustersk
+  let m = 10;
 
   let color = d3.scaleSequential(d3.interpolateRainbow)
       .domain(d3.range(m));
 
-  // The largest node for each cluster.
-  let clusters = new Array(m);
-
   let getNodes = (route) => {
     let d = [];
     turf.meta.coordEach(route, function(coord) {
-        let i = Math.floor(Math.random() * m);
-        let r = Math.sqrt((i + 1) / m * -Math.log(Math.random())) * maxRadius;
+      let i = Math.floor(Math.random() * m);
       let pixel = mercator.posToPixel(coord);
       d.push({
-        radius: r,
+        radius: radius,
         cluster: i,
         x: pixel.x,
         y: pixel.y
       });
     });
     return d;
-  }
+  };
 
   let nodes = getNodes(route);
 
@@ -43,15 +36,9 @@ let force = function(route) {
 
   let simulation = d3.forceSimulation()
     // keep entire simulation balanced around screen center
-    .force('center', d3.forceCenter(width/2, height/2))
+    .force('many', d3.forceManyBody().strength(-1).distanceMax(6))
 
-    // cluster by section
-    .force('cluster', d3.forceCluster()
-      .centers(function (d) { return clusters[d.cluster]; })
-      .strength(0.5))
-
-    // apply collision with padding
-    .force('collide', d3.forceCollide(function (d) { return d.radius + padding; }))
+    .force('collide', d3.forceCollide(function(d) { return d.radius; }))
 
     .on('tick', layoutTick)
     .nodes(nodes);
@@ -63,14 +50,14 @@ let force = function(route) {
   let node = svg.selectAll('circle')
     .data(nodes)
     .enter().append('circle')
-      .style('fill', function (d) { return color(d.cluster/10); });
+      .style('fill', function(d) { return color(d.radius/10); });
 
-  function layoutTick (e) {
+  function layoutTick(e) {
     node
-      .attr('cx', function (d) { return d.x; })
-      .attr('cy', function (d) { return d.y; })
-      .attr('r', function (d) { return d.radius; });
+      .attr('cx', function(d) { return d.x; })
+      .attr('cy', function(d) { return d.y; })
+      .attr('r', function(d) { return d.radius; });
   }
-}
+};
 
 module.exports.force = force;
