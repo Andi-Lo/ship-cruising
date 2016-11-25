@@ -6,8 +6,6 @@ let canvasMap = require('./modules/canvasMap');
 let leafletMap = require('./modules/leafletMap');
 let defaults = require('./modules/options').defaults;
 
-// let force = require('./forces/forceCanvas');
-
 function shipcruising() {
   let elInteractive = window.document.getElementById('interactive-map');
 
@@ -15,7 +13,6 @@ function shipcruising() {
 
   canvasMap.createMap(defaults.width, defaults.height);
   canvasMap.init('./map/jamaica.geojson');
-  // force.forceCanvas();
 
   // Interactive map sector
   leafletMap.init(elInteractive, 'tone-map', 640, 640);
