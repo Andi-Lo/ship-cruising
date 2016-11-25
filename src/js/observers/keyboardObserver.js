@@ -4,6 +4,7 @@ let Observer = require('./observer').Observer;
 let Route = require('../modules/route').Route;
 let drawLeaflet = require('../modules/drawLeaflet');
 let canvasMap = require('../modules/canvasMap');
+let forces = require('../forces/forces');
 
 class KeyboardObserver extends Observer {
   constructor() {
@@ -21,6 +22,8 @@ class KeyboardObserver extends Observer {
             route.drawRoute(route._route);
             drawLeaflet.drawPolyline(route._route);
             drawLeaflet.drawMarkers(route._waypoints);
+
+            forces.force(route._route);
 
             canvasMap.setFeatures([]);
           }
