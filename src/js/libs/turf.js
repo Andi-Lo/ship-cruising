@@ -23,6 +23,7 @@ let iterateFeature = function* (fc, start = 0, end = -1) {
 };
 
 let equidistantLineString = function(fc) {
+  console.log('fc', fc);
   let pointOnLine = [];
 
   turf.meta.featureEach(fc, function(feature) {
@@ -31,12 +32,13 @@ let equidistantLineString = function(fc) {
     let steps = Math.floor(dist / length);
     // idea: calculate a dynamic step size, depending on the total line distance
     dist = dist + steps;
+    // console.log('dist', dist);
     let i = 0;
 
-    while(i < dist) {
-      pointOnLine.push(turf.along(feature, i, 'kilometers'));
-      i += steps/2;
-    }
+    // while(i < dist) {
+    //   pointOnLine.push(turf.along(feature, i, 'kilometers'));
+    //   i += steps/2;
+    // }
   });
   fc = turf.featureCollection(pointOnLine);
   lineString = toLineStringCollection(fc);
@@ -53,6 +55,15 @@ function toLineStringCollection(fc) {
   return lineString;
 }
 
+let multipolToLineString = function(fc) {
+  let lineString = [];
+  let unpacked = unpackMultiPolCoords(fc);
+  unpacked.forEach((feature) => {
+    lineString.push(turf.lineString(feature));
+  });
+  lineString = turf.featureCollection(lineString);
+  return lineString;
+};
 
 let unpackMultiPolCoords = function(features) {
   let data = [];
@@ -71,3 +82,4 @@ module.exports = turf;
 module.exports.iterateFeature = iterateFeature;
 module.exports.equidistantLineString = equidistantLineString;
 module.exports.unpackMultiPolCoords = unpackMultiPolCoords;
+module.exports.multipolToLineString = multipolToLineString;

@@ -5,6 +5,7 @@ let LeafletObserver = require('./observers/leafletObserver').LeafletObserver;
 let canvasMap = require('./modules/canvasMap');
 let leafletMap = require('./modules/leafletMap');
 let defaults = require('./modules/options').defaults;
+let Land = require('./modules/land').Land;
 
 function shipcruising() {
   new KeyboardObserver();
@@ -13,13 +14,14 @@ function shipcruising() {
 
   // initMap is an async func we wait for a promise object to return with data
   let map = canvasMap.initMap('./map/jamaica.geojson').then((map) => {
+    canvasMap.createPixelData();
+    canvasMap.setScale();
     return map;
   });
 
-  // if the promise got resolved successfully then()....
-  map.then(function(tset) {
-    canvasMap.createPixelData();
-    canvasMap.setScale();
+  // the promise got resolved successfully the map exists then...
+  map.then((fc) => {
+    new Land(fc);
   });
 
   // Interactive map sector

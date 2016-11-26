@@ -4,7 +4,7 @@ let mercator = require('../libs/mercator');
 let turf = require('../libs/turf');
 
 let force = function(route) {
-  console.log('route', route);
+  // console.log('route', route);
 
   let width = 960;
   let height = 500;
@@ -32,7 +32,7 @@ let force = function(route) {
 
   let nodes = getNodes(route);
 
-  console.log('nodes', nodes);
+  // console.log('nodes', nodes);
 
   let simulation = d3.forceSimulation()
     // keep entire simulation balanced around screen center
