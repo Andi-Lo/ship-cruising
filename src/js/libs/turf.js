@@ -53,6 +53,21 @@ function toLineStringCollection(fc) {
   return lineString;
 }
 
+
+let unpackMultiPolCoords = function(features) {
+  let data = [];
+  turf.meta.featureEach(features, function(feature) {
+    let coordCollection = feature.geometry.coordinates;
+    coordCollection.forEach(function(coords) {
+      coords.forEach(function(coord) {
+        data.push(coord);
+      });
+    });
+  });
+  return data;
+};
+
 module.exports = turf;
 module.exports.iterateFeature = iterateFeature;
 module.exports.equidistantLineString = equidistantLineString;
+module.exports.unpackMultiPolCoords = unpackMultiPolCoords;

@@ -5,20 +5,6 @@ let turf = require('../libs/turf');
 let defaults = require('./options').defaults;
 let canvasMap = require('./canvasMap');
 
-let unpackMultiPolCoords = function(features) {
-  let data = [];
-
-  turf.meta.featureEach(features, function(feature) {
-    let coordCollection = feature.geometry.coordinates;
-    coordCollection.forEach(function(coords) {
-      coords.forEach(function(coord) {
-        data.push(coord);
-      });
-    });
-  });
-  return data;
-};
-
 let drawLine = function(coord, isFirst, stroke = false) {
   let canvas = canvasMap.getCanvas();
   let ctx = canvas.getContext('2d');
@@ -46,7 +32,7 @@ let drawMultiPolygon = function(features, color) {
   ctx.fillStyle = color;
   let isFirst = true;
 
-  let coordinates = unpackMultiPolCoords(features);
+  let coordinates = turf.unpackMultiPolCoords(features);
   coordinates.forEach(function(coords) {
     coords.forEach(function(coord) {
       isFirst = drawLine(coord, isFirst);
