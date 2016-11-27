@@ -46,6 +46,24 @@ let equidistantLineString = function(fc) {
   return lineString;
 };
 
+let equidistantPointsOnLine = function(fc, spaceBetweenPoints) {
+  console.log(fc);
+  let pointsOnLine = [];
+
+  turf.meta.featureEach(fc, function(feature) {
+    let dist = turf.lineDistance(feature);
+
+    let i = 0;
+    while(i < dist) {
+      pointsOnLine.push(turf.along(feature, i, 'kilometers'));
+      i += spaceBetweenPoints;
+    }
+  });
+  fc = turf.featureCollection(pointsOnLine);
+
+  return fc;
+};
+
 function toLineStringCollection(fc) {
   let lineString = [];
   for(let i = 0; i < fc.features.length; i++) {
@@ -81,5 +99,6 @@ let unpackMultiPolCoords = function(features) {
 module.exports = turf;
 module.exports.iterateFeature = iterateFeature;
 module.exports.equidistantLineString = equidistantLineString;
+module.exports.equidistantPointsOnLine = equidistantPointsOnLine;
 module.exports.unpackMultiPolCoords = unpackMultiPolCoords;
 module.exports.multipolToLineString = multipolToLineString;

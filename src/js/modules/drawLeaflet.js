@@ -29,9 +29,22 @@ let drawMarkers = function(featureCollection) {
   });
 };
 
+let drawPoints = function(featureCollection, radius = 5) {
+  let maps = leafletMap.getMaps();
+
+  turf.meta.featureEach(featureCollection, function(feature) {
+    let coord = turf.invariant.getCoord(turf.flip(feature));
+    drawCircle(maps[0], coord, radius);
+  });
+};
+
 function drawMarker(map, coord) {
   return leaflet.marker(coord).addTo(map);
 };
+
+function drawCircle(map, coord, radius) {
+  leaflet.circle(coord, radius).addTo(map);
+}
 
 function bindMarkerPopup(marker, text) {
   marker.bindPopup(text);
@@ -39,3 +52,4 @@ function bindMarkerPopup(marker, text) {
 
 module.exports.drawPolyline = drawPolyline;
 module.exports.drawMarkers = drawMarkers;
+module.exports.drawPoints = drawPoints;
