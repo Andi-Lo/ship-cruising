@@ -3,6 +3,7 @@
 let turf = require('../libs/turf');
 let leafletMap = require('./leafletMap');
 let leaflet = require('leaflet');
+let circleCoastForces = [];
 
 let drawPolyline = function(featureCollection) {
   turf.meta.featureEach(featureCollection, function(feature) {
@@ -38,12 +39,31 @@ let drawPoints = function(featureCollection, radius = 5) {
   });
 };
 
+let drawPointsCoastForces = function(featureCollection, radius = 5) {
+  let maps = leafletMap.getMaps();
+  // Make sure the old points get erased
+  removeCoastCircles();
+
+  turf.meta.featureEach(featureCollection, function(feature) {
+    let coord = turf.invariant.getCoord(turf.flip(feature));
+    let circle = drawCircle(maps[0], coord, radius);
+    circleCoastForces.push(circle);
+  });
+};
+
+function removeCoastCircles() {
+  let maps = leafletMap.getMaps();
+  for(let i = 0; i < circleCoastForces.length; i++) {
+    maps[0].removeLayer(circleCoastForces[i]);
+  }
+}
+
 function drawMarker(map, coord) {
   return leaflet.marker(coord).addTo(map);
 };
 
 function drawCircle(map, coord, radius) {
-  leaflet.circle(coord, radius).addTo(map);
+  return leaflet.circle(coord, radius).addTo(map);
 }
 
 function bindMarkerPopup(marker, text) {
@@ -53,3 +73,4 @@ function bindMarkerPopup(marker, text) {
 module.exports.drawPolyline = drawPolyline;
 module.exports.drawMarkers = drawMarkers;
 module.exports.drawPoints = drawPoints;
+module.exports.drawPointsCoastForces = drawPointsCoastForces;

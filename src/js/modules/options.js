@@ -19,6 +19,11 @@ let leaflet = {
   'defaultTileStyle': leafletTileStyles.stamenTonerLight
 };
 
+let force = {
+  'pixelSpaceForces': 20
+};
+
 module.exports.defaults = defaults;
 module.exports.leaflet = leaflet;
 module.exports.leafletTileStyles = leafletTileStyles;
+module.exports.force = force;

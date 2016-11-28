@@ -21,13 +21,14 @@ function shipcruising() {
 
   // the promise got resolved successfully the map exists then...
   map.then((fc) => {
-    new Land(fc);
+    let land = new Land(fc);
+
+    new LeafletObserver(land);
   });
 
   // Interactive map sector
   let elInteractive = window.document.getElementById('interactive-map');
   leafletMap.init(elInteractive, 'tone-map', 640, 640);
-  new LeafletObserver();
 };
 
 shipcruising();
