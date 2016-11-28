@@ -5,10 +5,15 @@ let leafletMap = require('../modules/leafletMap');
 let L = require('leaflet');
 
 class LeafletObserver extends Observer {
-  constructor() {
+  constructor(land) {
     super();
     let maps = leafletMap.getMaps();
     maps[0].on('click', this.onMapClick);
+    maps[0].on('zoomend', function(e) {
+      // let maps = leafletMap.getMaps();
+
+      land.calculateLandInit(land._land);
+    });
   }
 
   onMapClick(e) {

@@ -2,6 +2,7 @@ let turf = require('@turf/turf');
 turf.meta = require('@turf/meta');
 turf.invariant = require('@turf/invariant');
 let _ = require('lodash/array');
+let options = require('../modules/options').force;
 
 
 /**
@@ -46,9 +47,9 @@ let equidistantLineString = function(fc) {
   return lineString;
 };
 
-let equidistantPointsOnLine = function(fc, spaceBetweenPoints) {
-  console.log(fc);
+let equidistantPointsOnLine = function(fc, spaceBetweenPointsInKm) {
   let pointsOnLine = [];
+
 
   turf.meta.featureEach(fc, function(feature) {
     let dist = turf.lineDistance(feature);
@@ -56,12 +57,18 @@ let equidistantPointsOnLine = function(fc, spaceBetweenPoints) {
     let i = 0;
     while(i < dist) {
       pointsOnLine.push(turf.along(feature, i, 'kilometers'));
-      i += spaceBetweenPoints;
+      i += spaceBetweenPointsInKm;
     }
   });
   fc = turf.featureCollection(pointsOnLine);
 
   return fc;
+};
+
+let equidistantPointsZoom = function(fc, metersPerPixel) {
+  // Pixel space between the points
+  let spaceBetweenPoints = (options.pixelSpaceForces * metersPerPixel) / 1000;
+  return equidistantPointsOnLine(fc, spaceBetweenPoints);
 };
 
 function toLineStringCollection(fc) {
@@ -100,5 +107,6 @@ module.exports = turf;
 module.exports.iterateFeature = iterateFeature;
 module.exports.equidistantLineString = equidistantLineString;
 module.exports.equidistantPointsOnLine = equidistantPointsOnLine;
+module.exports.equidistantPointsZoom = equidistantPointsZoom;
 module.exports.unpackMultiPolCoords = unpackMultiPolCoords;
 module.exports.multipolToLineString = multipolToLineString;
