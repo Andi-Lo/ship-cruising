@@ -79,9 +79,22 @@ let init = function(elementInteractive, divId,
   }
 };
 
+let getMetersPerPixel = function(map) {
+  // Get the y,x dimensions of the map
+  let y = map.getSize().y;
+  let x = map.getSize().x;
+  // calculate the distance the one side of
+  // the map to the other using the haversine formula
+  let maxMeters = map.containerPointToLatLng([0, y])
+                  .distanceTo( map.containerPointToLatLng([x, y]));
+  // calculate how many meters each pixel represents
+  return maxMeters/x;
+};
+
 function addScaleToMap(map) {
   leaflet.control.scale().addTo(map);
 };
 
 module.exports.init = init;
 module.exports.getMaps = getMaps;
+module.exports.getMetersPerPixel = getMetersPerPixel;
