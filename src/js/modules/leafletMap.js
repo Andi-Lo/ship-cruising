@@ -67,6 +67,8 @@ let init = function(elementInteractive, divId,
   let map = leaflet.map(divId)
       .setView([bounds.center[1], bounds.center[0]], bounds.zoom);
 
+  addScaleToMap(map);
+
   // Set the chosen tiles default style
   let defaultStyle = leafletOptions.defaultTileStyle;
   if(defaultStyle === leafletTileStyles.stamenTonerLight) {
@@ -75,6 +77,10 @@ let init = function(elementInteractive, divId,
   else if(defaultStyle === leafletTileStyles.mapboxStreet) {
     createMapboxMapDiv(elementInteractive, divId, map);
   }
+};
+
+function addScaleToMap(map) {
+  leaflet.control.scale().addTo(map);
 };
 
 module.exports.init = init;
