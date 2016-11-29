@@ -3,6 +3,7 @@
 let Observer = require('./observer').Observer;
 let Route = require('../modules/route').Route;
 let drawLeaflet = require('../modules/drawLeaflet');
+let drawCanvas = require('../modules/drawCanvas');
 let canvasMap = require('../modules/canvasMap');
 let forces = require('../forces/forces');
 
@@ -14,12 +15,17 @@ class KeyboardObserver extends Observer {
         return; // Do nothing if the evt was already processed
       }
 
+      let route = [];
+
       switch (evt.key) {
         case "Enter":
           try {
             let features = canvasMap.getFeatures();
-            let route = new Route(features);
-            route.drawRoute(route._route);
+            route = new Route(features);
+
+            drawCanvas.drawLineString(route._route);
+            drawCanvas.drawPixels(route._route);
+
             drawLeaflet.drawPolyline(route._route);
             drawLeaflet.drawMarkers(route._waypoints);
 
