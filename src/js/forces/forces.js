@@ -41,7 +41,7 @@ let force = function(route) {
 
   let simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.id; }))
-    .force("charge", d3.forceManyBody().distanceMax(40));
+    .force("charge", d3.forceManyBody());
 
   let nodes = getNodes(route);
   console.log('nodes', nodes);
