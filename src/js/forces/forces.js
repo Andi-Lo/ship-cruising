@@ -41,8 +41,9 @@ let getLinks = (nodes) => {
   return obj;
 };
 
-let force = function(route) {
+let force = function(route, landPoints) {
   console.log('route', route);
+  console.log('land', landPoints);
   let width = 960;
   let height = 500;
   let nodes = getNodes(route);

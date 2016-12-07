@@ -8,6 +8,7 @@ class Land {
   constructor(fc) {
     this._land = fc;
     this._radiusLeafletPoints = 5;
+    this._equidistantPoints;
     // this._land = this.calculateLandInit(fc);
     this.calculateLandInit(this._land);
   }
@@ -21,6 +22,7 @@ class Land {
     // let equidistant = turf.equidistantPointsOnLine(lineString, 10);
     let equidistant = turf.equidistantPointsZoom(lineString, metersPerPixel);
     drawLeaflet.drawPointsCoastForces(equidistant, this._radiusLeafletPoints);
+    this._equidistantPoints = equidistant;
     return equidistant;
   }
 

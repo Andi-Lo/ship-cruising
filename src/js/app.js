@@ -8,8 +8,6 @@ let defaults = require('./modules/options').defaults;
 let Land = require('./modules/land').Land;
 
 function shipcruising() {
-  new KeyboardObserver();
-
   canvasMap.createCanvas(defaults.width, defaults.height);
 
   // initMap is an async func we wait for a promise object to return with data
@@ -24,6 +22,7 @@ function shipcruising() {
     let land = new Land(fc);
 
     new LeafletObserver(land);
+    new KeyboardObserver(land);
   });
 
   // Interactive map sector
