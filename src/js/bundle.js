@@ -28717,6 +28717,19 @@ let getNodes = route => {
   return d;
 };
 
+let getNodesLand = land => {
+  let d = [];
+  let i = 0;
+  turf.meta.coordEach(land, function (coord) {
+    let pixel = mercator.posToPixel(coord);
+    d.push(createNode(i, pixel));
+    d[i].fx = pixel.x;
+    d[i].fy = pixel.y;
+    ++i;
+  });
+  return d;
+};
+
 let getLinks = nodes => {
   let next = 1;
   let prev = 0;
@@ -28731,11 +28744,12 @@ let getLinks = nodes => {
 
 let force = function (route, landPoints) {
   console.log('route', route);
-  console.log('land', landPoints);
   let width = 960;
   let height = 500;
   let nodes = getNodes(route);
+  let nodesLand = getNodesLand(landPoints);
   let links = getLinks(nodes);
+  nodes.push(nodesLand);
 
   let simulation = d3.forceSimulation().nodes(nodes).force("link", d3.forceLink().id(function (d) {
     return d.index;
