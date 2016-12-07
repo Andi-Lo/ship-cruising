@@ -28749,7 +28749,8 @@ let force = function (route, landPoints) {
   let nodes = getNodes(route);
   let nodesLand = getNodesLand(landPoints);
   let links = getLinks(nodes);
-  nodes.push(nodesLand);
+  console.log(nodes);
+  // nodes = nodes.concat(nodesLand);
 
   let simulation = d3.forceSimulation().nodes(nodes).force("link", d3.forceLink().id(function (d) {
     return d.index;
@@ -28765,7 +28766,7 @@ let force = function (route, landPoints) {
     return '#fabfab';
   });
 
-  simulation.nodes(nodes).on("tick", ticked);
+  simulation.nodes(nodes).on("tick", ticked).on("end", ended);
   simulation.force("link").links(links);
 
   function ticked() {
@@ -28783,6 +28784,10 @@ let force = function (route, landPoints) {
     }).attr("cy", function (d) {
       return d.y;
     });
+  }
+
+  function ended() {
+    console.log(nodes);
   }
 };
 
