@@ -21,10 +21,14 @@ let manyBody = d3.forceManyBody()
   .distanceMin(MB_DIST_MIN)
   .distanceMax(MB_DIST_MAX);
 
-let force = function(route) {
+let force = function(route, land) {
   let maps = leafletMap.getMaps();
   let nodes = Node.getNodes(route, maps[0]);
+  let nodesLand = Node.getNodes(land, maps[0]);
   let links = Link.getLinks(nodes);
+
+  // Add nodesLand after the route got linked
+  nodes = nodes.concat(nodesLand);
 
   let svg = d3.select(maps[0].getPanes().overlayPane).append('svg')
     .attr('width', 960)
