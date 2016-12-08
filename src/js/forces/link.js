@@ -8,13 +8,13 @@ class Link {
   static getLinks(nodes) {
     let next = 1;
     let prev = 0;
-    let obj = [];
+    let link = [];
     while(next < nodes.length) {
-      obj.push({source: prev, target: next});
+      link.push({source: prev, target: next});
       prev = next;
       ++next;
     }
-    return obj;
+    return link;
   }
 }
 

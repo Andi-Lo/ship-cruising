@@ -17,21 +17,21 @@ class Node {
   };
 
   static getNodes(route) {
-    let d = [];
+    let node = [];
     let i = 0;
     turf.meta.coordEach(route, function(coord) {
       let pixel = mercator.posToPixel(coord);
       if(i === 0 || i === route.geometry.coordinates.length-1) {
-        d.push(Node.createNode(pixel));
-        d[i].fx = pixel.x;
-        d[i].fy = pixel.y;
+        node.push(Node.createNode(pixel));
+        node[i].fx = pixel.x;
+        node[i].fy = pixel.y;
       }
       else {
-        d.push(Node.createNode(pixel));
+        node.push(Node.createNode(pixel));
       }
       ++i;
     });
-    return d;
+    return node;
   };
 
 }
