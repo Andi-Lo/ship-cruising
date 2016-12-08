@@ -78,8 +78,8 @@ let getMousePosition = function(event) {
   let canvas = getCanvas();
   let rectangle = canvas.getBoundingClientRect();
   return {
-    x: event.clientX - rectangle.left,
-    y: event.clientY - rectangle.top
+    x: Math.floor(event.clientX - rectangle.left),
+    y: Math.floor(event.clientY - rectangle.top)
   };
 };
 
