@@ -6,22 +6,31 @@
   "scripts": {
     "start": "gulp serve",
     "build": "gulp build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha ./tests/test.js"
   },
   "author": "Andreas Lorer and Kevin Klugmann",
   "dependencies": {
     "@turf/meta": "^3.5.2",
     "@turf/turf": "^3.5.2",
+    "d3": "^4.4.0",
+    "geo-viewport": "^0.2.1",
+    "leaflet": "^1.0.1",
+    "parse-float": "^0.1.1",
+    "sphericalmercator": "^1.0.5",
+    "underscore": "^1.8.3"
+  },
+  "license": "",
+  "repository": "https://github.com/Andi-Lo/ship-cruising",
+  "devDependencies": {
     "async": "^1.5.2",
     "babel-plugin-transform-async-to-generator": "^6.16.0",
     "babel-preset-es2017": "^6.16.0",
     "babelify": "^7.3.0",
     "browserify": "^12.0.1",
     "classnames": "^2.2.3",
-    "d3-force": "^1.0.3",
+    "chai": "^3.5.0",
     "eslint": "^3.8.1",
     "eslint-config-google": "^0.7.0",
-    "geo-viewport": "^0.2.1",
     "gulp": "^3.9.0",
     "gulp-connect": "^2.3.1",
     "gulp-eslint": "^3.0.1",
@@ -29,15 +38,9 @@
     "gulp-sourcemaps": "^2.1.1",
     "gulp-uglify": "^1.5.1",
     "gulp-watch": "^4.3.5",
-    "leaflet": "^1.0.1",
-    "parse-float": "^0.1.1",
     "run-sequence": "^1.2.2",
-    "sphericalmercator": "^1.0.5",
-    "underscore": "^1.8.3",
+    "mocha": "^3.2.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
-  },
-  "license": "",
-  "repository": "https://github.com/Andi-Lo/ship-cruising",
-  "devDependencies": {}
+  }
 }
