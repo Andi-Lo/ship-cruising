@@ -28691,6 +28691,8 @@ shipcruising();
 
 let mercator = require('../libs/mercator');
 let turf = require('../libs/turf');
+let leafletMap = require('../modules/leafletMap');
+let leaflet = require('leaflet');
 
 let createNode = function (id, coords) {
   return {
@@ -28700,11 +28702,13 @@ let createNode = function (id, coords) {
   };
 };
 
-let getNodes = route => {
+let getNodes = (route, map) => {
   let d = [];
   let i = 0;
   turf.meta.coordEach(route, function (coord) {
-    let pixel = mercator.posToPixel(coord);
+    // let pixel = mercator.posToPixel(coord);
+    let pixel = projectPoint(coord[0], coord[1], map);
+    console.log(coord);
     if (i === 0 || i === route.geometry.coordinates.length - 1) {
       d.push(createNode(i, pixel));
       d[i].fx = pixel.x;
@@ -28717,17 +28721,9 @@ let getNodes = route => {
   return d;
 };
 
-let getNodesLand = land => {
-  let d = [];
-  let i = 0;
-  turf.meta.coordEach(land, function (coord) {
-    let pixel = mercator.posToPixel(coord);
-    d.push(createNode(i, pixel));
-    d[i].fx = pixel.x;
-    d[i].fy = pixel.y;
-    ++i;
-  });
-  return d;
+// Use Leaflet to implement a D3 geometric transformation.
+let projectPoint = function (x, y, map) {
+  return map.latLngToLayerPoint(new L.LatLng(y, x));
 };
 
 let getLinks = nodes => {
@@ -28742,21 +28738,20 @@ let getLinks = nodes => {
   return obj;
 };
 
-let force = function (route, landPoints) {
+let force = function (route) {
   console.log('route', route);
-  let width = 960;
-  let height = 500;
-  let nodes = getNodes(route);
-  let nodesLand = getNodesLand(landPoints);
+  let width = 640;
+  let height = 640;
+  let maps = leafletMap.getMaps();
+  let nodes = getNodes(route, maps[0]);
   let links = getLinks(nodes);
-  console.log(nodes);
-  // nodes = nodes.concat(nodesLand);
 
   let simulation = d3.forceSimulation().nodes(nodes).force("link", d3.forceLink().id(function (d) {
     return d.index;
   })).force("charge", d3.forceManyBody());
 
-  let svg = d3.select('body').append('svg').attr('width', width).attr('height', height);
+  let svg = d3.select(maps[0].getPanes().overlayPane).append('svg').attr('width', width).attr('height', height);
+  let g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
   let link = svg.append("g").attr('class', 'link').selectAll('.link').data(links).enter().append('line').attr("stroke-width", 1);
 
@@ -28766,7 +28761,7 @@ let force = function (route, landPoints) {
     return '#fabfab';
   });
 
-  simulation.nodes(nodes).on("tick", ticked).on("end", ended);
+  simulation.nodes(nodes).on("tick", ticked);
   simulation.force("link").links(links);
 
   function ticked() {
@@ -28785,15 +28780,11 @@ let force = function (route, landPoints) {
       return d.y;
     });
   }
-
-  function ended() {
-    console.log(nodes);
-  }
 };
 
 module.exports.force = force;
 
-},{"../libs/mercator":311,"../libs/turf":313}],308:[function(require,module,exports){
+},{"../libs/mercator":311,"../libs/turf":313,"../modules/leafletMap":318,"leaflet":67}],308:[function(require,module,exports){
 // javascript-astar 0.4.1
 // http://github.com/bgrins/javascript-astar
 // Freely distributable under the MIT License.
