@@ -1,5 +1,15 @@
 canvas {
   border: 1px solid;
+  margin-right: 20px;
+  display: inline-block;
+}
+
+#tone-map {
+  display: inline-block;
+}
+
+#interactive-map {
+  display: inline-block;
 }
 
 .data-wrapper {

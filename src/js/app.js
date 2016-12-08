@@ -27,7 +27,7 @@ function shipcruising() {
   });
 
   // Interactive map sector
-  let elInteractive = window.document.getElementById('interactive-map');
+  let elInteractive = window.document.getElementById('ship-cruising');
   leafletMap.init(elInteractive, 'tone-map', 640, 640);
 };
 
