@@ -1,33 +1,37 @@
 'use strict';
 
 let Observer = require('./observer').Observer;
-let F = require('../forces/forces');
+let force = require('../forces/forces');
+let d3 = require('d3');
 
 class ForceObserver extends Observer {
-  constructor(route) {
+  constructor(simulation) {
     super();
-    this._route = route;
 
-    // let distElem = window.document.getElementById('distanceElem');
-    // let strengthElem = window.document.getElementById('strengthElem');
+    d3.select("#strengthElem").on("input", function() {
+      force.linkForce.strength(this.value);
+      simulation.alpha(0.5).restart();  // Re-heat the simulation
+    });
 
-    // strengthElem.addEventListener('click', function(evt) {
-    //   let strength = strengthElem.value;
-    //   let distance = distElem.value;
-    //   console.log('strength', strength);
-    //   // d3.select('force').selectAll("*").remove();
-    //   F.clearForces();
-    //   F.force(route, distance, strength);
-    // }, false);
+    d3.select("#distanceElem").on("input", function() {
+      force.linkForce.distance(this.value);
+      simulation.alpha(0.5).restart();
+    });
 
-    // distElem.addEventListener('click', function(evt) {
-    //   let strength = strengthElem.value;
-    //   let distance = distElem.value;
-    //   console.log('dist', distance);
-    //   // d3.select('force').selectAll("*").remove();
-    //   F.clearForces();
-    //   F.force(route, distance, strength);
-    // }, false);
+    d3.select("#mbSterngth").on("input", function() {
+      force.manyBody.strength(this.value);
+      simulation.alpha(0.5).restart();
+    });
+
+    d3.select("#mbMinDist").on("input", function() {
+      force.manyBody.distanceMin(this.value);
+      simulation.alpha(0.5).restart();
+    });
+
+    d3.select("#mbMaxDist").on("input", function() {
+      force.manyBody.distanceMax(this.value);
+      simulation.alpha(0.5).restart();
+    });
   }
 }
 

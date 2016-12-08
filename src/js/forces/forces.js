@@ -4,42 +4,33 @@ let d3 = require('d3');
 let Link = require('./link').Link;
 let Node = require('./node').Node;
 
+const LINK_STR = 2;
+const LINK_DIST = 1;
+const MB_STR = 2;
+const MB_DIST_MIN = 1;
+const MB_DIST_MAX = 10;
+
+let svg = d3.select('force').append('svg')
+  .attr('width', 960)
+  .attr('height', 500);
+
+let linkForce = d3.forceLink()
+  .id(function(d) { return d.index; })
+  .strength(LINK_STR)
+  .distance(LINK_DIST);
+
+let manyBody = d3.forceManyBody()
+  .strength(MB_STR)
+  .distanceMin(MB_DIST_MIN)
+  .distanceMax(MB_DIST_MAX);
+
 let force = function(route) {
-  let width = 960;
-  let height = 500;
   let nodes = Node.getNodes(route);
   let links = Link.getLinks(nodes);
-
-  d3.select("#strengthElem").on("input", function() {
-    linkForce.strength(this.value);
-    simulation.alpha(0.5).restart();  // Re-heat the simulation
-  });
-
-  d3.select("#distanceElem").on("input", function() {
-    linkForce.distance(this.value);
-    simulation.alpha(0.5).restart();  // Re-heat the simulation
-  });
-
-  d3.select("#mbSterngth").on("input", function() {
-    manyBody.strength(this.value);
-    simulation.alpha(0.5).restart();  // Re-heat the simulation
-  });
-
-  let linkForce = d3.forceLink()
-    .id(function(d) { return d.index; })
-    .strength(2)
-    .distance(1);
-
-  let manyBody = d3.forceManyBody()
-    .strength(2);
 
   let simulation = d3.forceSimulation().nodes(nodes)
     .force("link", linkForce)
     .force("charge", manyBody);
-
-  let svg = d3.select('force').append('svg')
-    .attr('width', width)
-    .attr('height', height);
 
   let link = svg.append("g")
       .attr('class', 'link')
@@ -90,6 +81,10 @@ let force = function(route) {
     d.fx = null;
     d.fy = null;
   }
+
+  return simulation;
 };
 
 module.exports.force = force;
+module.exports.linkForce = linkForce;
+module.exports.manyBody = manyBody;
