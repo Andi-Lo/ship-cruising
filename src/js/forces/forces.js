@@ -2,11 +2,12 @@
 
 let mercator = require('../libs/mercator');
 let turf = require('../libs/turf');
-let d3 = require("d3");
+let d3 = require('d3');
+let Link = require('./link').Link;
 
 let createNode = function(coords) {
   return {
-    radius: 4,
+    radius: 3,
     x: coords.x,
     y: coords.y,
   };
@@ -18,35 +19,25 @@ let getNodes = (route) => {
   turf.meta.coordEach(route, function(coord) {
     let pixel = mercator.posToPixel(coord);
     if(i === 0 || i === route.geometry.coordinates.length-1) {
-      d.push(createNode(i, pixel));
+      d.push(createNode(pixel));
       d[i].fx = pixel.x;
       d[i].fy = pixel.y;
     }
     else {
-      d.push(createNode(i, pixel));
+      d.push(createNode(pixel));
     }
     ++i;
   });
   return d;
 };
 
-let getLinks = (nodes) => {
-  let next = 1;
-  let prev = 0;
-  let obj = [];
-  while(next < nodes.length) {
-    obj.push({source: prev, target: next, value: 1});
-    prev = next;
-    ++next;
-  }
-  return obj;
-};
-
 let force = function(route) {
   let width = 960;
   let height = 500;
   let nodes = getNodes(route);
-  let links = getLinks(nodes);
+  let links = Link.getLinks(nodes);
+
+  console.log('nodes', nodes);
 
   d3.select("#strengthElem").on("input", function() {
     linkForce.strength(this.value);
