@@ -16,11 +16,12 @@ class Node {
     };
   };
 
-  static getNodes(route) {
+  static getNodes(route, map) {
     let node = [];
     let i = 0;
     turf.meta.coordEach(route, function(coord) {
-      let pixel = mercator.posToPixel(coord);
+      // let pixel = mercator.posToPixel(coord);
+      let pixel = Node.projectPoint(coord[0], coord[1], map);
       if(i === 0 || i === route.geometry.coordinates.length-1) {
         node.push(Node.createNode(pixel));
         node[i].fx = pixel.x;
@@ -32,6 +33,11 @@ class Node {
       ++i;
     });
     return node;
+  };
+
+  // Use Leaflet to implement a D3 geometric transformation.
+  static projectPoint(x, y, map) {
+    return map.latLngToLayerPoint(new L.LatLng(y, x));
   };
 
 }

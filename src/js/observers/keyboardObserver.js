@@ -9,7 +9,7 @@ let canvasMap = require('../modules/canvasMap');
 let forces = require('../forces/forces');
 
 class KeyboardObserver extends Observer {
-  constructor() {
+  constructor(land) {
     super();
     window.addEventListener("keydown", function(evt) {
       if(evt.defaultPrevented) {
@@ -30,8 +30,7 @@ class KeyboardObserver extends Observer {
             drawLeaflet.drawPolyline(route._route);
             drawLeaflet.drawMarkers(route._waypoints);
 
-            let simulation = forces.force(route._route);
-
+            let simulation = forces.force(route._route, land._equidistantPoints);
             new ForceObserver(simulation);
 
             canvasMap.setFeatures([]);

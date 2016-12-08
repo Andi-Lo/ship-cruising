@@ -3,16 +3,13 @@
 let d3 = require('d3');
 let Link = require('./link').Link;
 let Node = require('./node').Node;
+let leafletMap = require('../modules/leafletMap');
 
 const LINK_STR = 2;
 const LINK_DIST = 1;
 const MB_STR = 2;
 const MB_DIST_MIN = 1;
 const MB_DIST_MAX = 10;
-
-let svg = d3.select('force').append('svg')
-  .attr('width', 960)
-  .attr('height', 500);
 
 let linkForce = d3.forceLink()
   .id(function(d) { return d.index; })
@@ -25,12 +22,19 @@ let manyBody = d3.forceManyBody()
   .distanceMax(MB_DIST_MAX);
 
 let force = function(route) {
-  let nodes = Node.getNodes(route);
+  let maps = leafletMap.getMaps();
+  let nodes = Node.getNodes(route, maps[0]);
   let links = Link.getLinks(nodes);
+
+  let svg = d3.select(maps[0].getPanes().overlayPane).append('svg')
+    .attr('width', 960)
+    .attr('height', 500);
 
   let simulation = d3.forceSimulation().nodes(nodes)
     .force("link", linkForce)
     .force("charge", manyBody);
+
+  svg.append("g").attr("class", "leaflet-zoom-hide");
 
   let link = svg.append("g")
       .attr('class', 'link')
