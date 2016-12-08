@@ -6,14 +6,7 @@
     <title>Ship Cruising</title>
     <link rel="stylesheet" type="text/css" href="../css/main.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="https://unpkg.com/d3-force-cluster@latest"></script>
   </head>
-    <style>
-      canvas {
-        border: 1px solid;
-      }
-    </style>
   <body>
 
     <div id="ship-cruising"></div>
@@ -22,6 +15,11 @@
       <span id="scale"></span>
     </div>
     <div id="interactive-map"></div>
+    <div>Strength <input id="strengthElem" step="0.1" type="range" min="-1" max="3.5" /></div>
+    <div>Distance <input id="distanceElem" step="1" type="range" min="-5" max="50"/></div>
+    <div>mbStrength <input id="mbStrengthElem" step="0.1" type="range" min="-1" max="5"/></div>
+
+    <force style="width: 900; height: 700;"></svg>
 
     <script src="./js/bundle.js"></script>
   </body>

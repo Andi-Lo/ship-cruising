@@ -1,6 +1,7 @@
 'use strict';
 
 let Observer = require('./observer').Observer;
+let ForceObserver = require('./forceObserver').ForceObserver;
 let Route = require('../modules/route').Route;
 let drawLeaflet = require('../modules/drawLeaflet');
 let drawCanvas = require('../modules/drawCanvas');
@@ -30,6 +31,8 @@ class KeyboardObserver extends Observer {
             drawLeaflet.drawMarkers(route._waypoints);
 
             forces.force(route._route);
+
+            let forceObs = new ForceObserver(forces);
 
             canvasMap.setFeatures([]);
           }
