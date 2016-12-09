@@ -1,6 +1,19 @@
-"use strict";
+function importTest(name, path) {
+  describe(name, function() {
+    require(path);
+  });
+}
 
-let expect = require('chai').expect;
-let path = require('path');
-let _ = require('lodash');
+var common = require("./common");
 
+describe("Mocha Test Suite", function() {
+  beforeEach(function() {
+
+  });
+
+
+
+  after(function() {
+
+  });
+});
