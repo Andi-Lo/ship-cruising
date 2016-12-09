@@ -1,7 +1,10 @@
+'use strict';
+
 let turf = require('@turf/turf');
 turf.meta = require('@turf/meta');
 turf.invariant = require('@turf/invariant');
 let options = require('../modules/options').force;
+require("babel-polyfill");
 
 
 /**
