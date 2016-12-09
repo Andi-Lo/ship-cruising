@@ -4,6 +4,7 @@ let turf = require('./turf');
 let defaults = require('../modules/options').defaults;
 let SM = new (require('sphericalmercator'))();
 let bbox = require('./bbox');
+
 let bboxJamaika = [
   -91.14257812499999,
   7.493196470122287,
@@ -20,10 +21,13 @@ let bboxJamaika = [
 
 /**
  * Takes a long, lat coordinate
- * @param {[any,any]} coord
- * @returns a pixel position in form [p.x, p.y]
+ * @param [any,any] coord
+ * @returns {any, any} a pixel position object in form {p.x, p.y}
  */
 let positionToPixel = function(coord) {
+  if (typeof coord[0] !== 'number' || typeof coord[1] !== 'number') {
+    throw new Error('Argument should be an array [number, number]');
+  }
   let origin = getOrigin();
   let px = SM.px(coord, origin.zoom);
 
@@ -36,10 +40,13 @@ let positionToPixel = function(coord) {
 
 /**
  * Takes a pixel position of [num, num] and calculating the longLat for it
- * @param {[any, any]} pixelPos
- * @returns {[any, any]} a longLat position
+ * @param [any, any] pixelPos
+ * @returns {any, any} a longLat position object in form {p.x, p.y}
  */
 let pixelToPosition = function(pixelPos) {
+  if (typeof pixelPos[0] !== 'number' || typeof pixelPos[1] !== 'number') {
+    throw new Error('Argument should be an array [number, number]');
+  }
   let origin = getOrigin();
 
   let pixel = [];
