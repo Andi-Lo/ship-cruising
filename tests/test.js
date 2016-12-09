@@ -11,7 +11,7 @@ describe("Mocha Test Suite", function() {
 
   });
 
-
+  importTest("mercator.js", './libs/mercator');
 
   after(function() {
 
