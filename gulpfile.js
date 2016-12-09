@@ -54,6 +54,7 @@ gulp.task('build', ['lint'], function() {
 
 gulp.task('build-dev', function() {
   return $.browserify('./src/js/app.js')
+    .transform("babelify")
     .bundle()
     .pipe($.source('bundle.min.js'))
     .pipe($.buffer())
