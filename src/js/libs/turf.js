@@ -42,7 +42,7 @@ let equidistantLineString = function(fc) {
     }
   });
   fc = turf.featureCollection(pointOnLine);
-  lineString = toLineStringCollection(fc);
+  let lineString = toLineStringCollection(fc);
 
   return lineString;
 };
