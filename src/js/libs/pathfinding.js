@@ -74,10 +74,8 @@ function findPath(start, end, prevPoint) {
 
 
 function gridNodeToLinestring(gridNodes) {
-  console.log('gridNodes', gridNodes);
   let lineString = [];
   gridNodes.forEach((node) => {
-    console.log('node', node);
     let coord = mercator.pixelToPos([node.x, node.y]);
     lineString.push([coord[0], coord[1]]);
   });
