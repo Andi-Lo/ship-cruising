@@ -41,3 +41,19 @@ describe('#pixelToPosition', function() {
     expect(() => { pixelToPos([1, 2]); }).to.not.throw(Error);
   });
 });
+
+describe('#calculateScale', function() {
+  let calcScale = mercator.calcScale;
+
+  it('should return a number', function() {
+    expect(calcScale()).to.be.a("number");
+  });
+
+  it('should accept degrees, radians, miles, or kilometers as units', function() {
+    expect(() => { calcScale('foo'); }).to.throw(Error);
+    expect(() => { calcScale('degrees'); }).to.not.throw(Error);
+    expect(() => { calcScale('radians'); }).to.not.throw(Error);
+    expect(() => { calcScale('miles'); }).to.not.throw(Error);
+    expect(() => { calcScale('kilometers'); }).to.not.throw(Error);
+  });
+});

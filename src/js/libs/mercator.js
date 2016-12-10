@@ -12,13 +12,6 @@ let bboxJamaika = [
   25.839449402063185
 ];
 
-// let bboxKaribik = [
-//   -87.95654296875,
-//   9.709057068618208,
-//   -62.75390625,
-//   29.19053283229458
-// ];
-
 /**
  * Takes a long, lat coordinate
  * @param [any,any] coord
