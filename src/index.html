@@ -4,10 +4,35 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ship Cruising</title>
-    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" type="text/css" href="tool/css/main.css">
+    <link rel="stylesheet" type="text/css" href="tool/css/tool.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
   </head>
   <body>
+
+    <div class="tool-wrapper" id="tool">
+      <div class="container flex tool-content">
+        <div class="controllers flex-item">
+          <h3>Spring</h3>
+          <div class="control"><input id="strengthElem" step="0.1" type="range" min="-1" max="3.5" /><label>Strength</label> </div>
+          <div class="control"><input id="distanceElem" step="1" type="range" min="-5" max="50"/><label>Distance</label> </div>
+        </div>
+        <div class="controllers flex-item">
+          <h3>Many-Body</h3>
+          <div class="control"><input id="mbSterngth" step="0.1" type="range" min="-1" max="5"/><label>mbStrength</label> </div>
+          <div class="control"><input id="mbMinDist" step="0.1" type="range" min="1" max="50"/><label>mbMinDistance</label> </div>
+          <div class="control"><input id="mbMaxDist" step="0.1" type="range" min="1" max="50"/><label>mbMaxDistance</label> </div>
+        </div>
+      </div>
+
+      <div id="scrubber" class="widget-minimap-button widget-minimap-scrubber">
+        <div class="riffle"></div>
+      </div>
+      <div id="tool-map">
+
+      </div>
+    </div>
 
     <div id="ship-cruising"></div>
     <div class="data-wrapper">
@@ -15,14 +40,12 @@
       <span id="scale"></span>
     </div>
     <div id="interactive-map"></div>
-    <div>Strength <input id="strengthElem" step="0.1" type="range" min="-1" max="3.5" /></div>
-    <div>Distance <input id="distanceElem" step="1" type="range" min="-5" max="50"/></div>
-    <div>mbStrength <input id="mbSterngth" step="0.1" type="range" min="-1" max="5"/></div>
-    <div>mbMinDistance <input id="mbMinDist" step="0.1" type="range" min="1" max="50"/></div>
-    <div>mbMaxDistance <input id="mbMaxDist" step="0.1" type="range" min="1" max="50"/></div>
+
 
     <force style="width: 900; height: 700;"></force>
 
     <script src="./js/bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="./tool/js/tool.js"></script>
   </body>
 </html>

@@ -1,0 +1,97 @@
+input[type=range] {
+  display: inline-block;
+  width: initial;
+  vertical-align: middle;
+}
+
+body {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #333;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+h3 {
+    font-size: 24px;
+}
+
+h1, h2, h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.widget-minimap-scrubber {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  box-sizing: border-box;
+  left: 50%;
+  transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
+  bottom: -16px;
+  width: 40px;
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+
+.widget-minimap-button {
+  background-color: rgba(255,255,255,1);
+  border-radius: 2px;
+  display: block;
+  height: 25px;
+  right: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: 2;
+  box-sizing: border-box;
+  transition: background-color 0.16s ease-out;
+}
+
+.riffle {
+  background: no-repeat url('img/riffle.jpg') 11px 11px;
+  height: 17px;
+  width: 40px;
+}
+
+.tool-wrapper {
+  margin-bottom: 50px;
+  position: relative;
+  border: 1px solid lightgrey;
+  border-width: 0 0 1px 0;
+}
+
+.tool-content {
+  overflow: hidden;
+}
+
+.container {
+  width: 1170px;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.container.flex {
+  display: -webkit-flex;
+  -webkit-flex-direction: row;
+  display: flex;
+  flex-direction: row;
+}
+
+.container .flex-item {
+  flex-wrap: wrap;
+  flex-grow: 0;
+  max-height: 180px;
+}
+
+.controllers {
+  margin: 30px 0;
+  border: 1px solid lightgrey;
+  border-width: 0 1px 0 0;
+  padding: 0 25px;
+}
+
+.control label {
+  padding-left: 10px;
+}
