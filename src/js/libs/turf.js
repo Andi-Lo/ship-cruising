@@ -25,42 +25,19 @@ let iterateFeature = function* (fc, start = 0, end = -1) {
   if(start === end) return false;
 };
 
-let equidistantLineString = function(fc) {
-  let pointOnLine = [];
-
-  turf.meta.featureEach(fc, function(feature) {
-    let length = feature.geometry.coordinates.length;
-    let dist = turf.lineDistance(feature);
-    let steps = Math.floor(dist / length);
-    // idea: calculate a dynamic step size, depending on the total line distance
-    dist = dist + steps;
-    let i = 0;
-
-    while(i < dist) {
-      pointOnLine.push(turf.along(feature, i, 'kilometers'));
-      i += steps;
-    }
-  });
-  fc = turf.featureCollection(pointOnLine);
-  let lineString = toLineStringCollection(fc);
-
-  return lineString;
-};
-
-let equidistantPointsOnLine = function(fc, spaceBetweenPointsInKm) {
+let equidistant = function(fc, padding, toLineString = false) {
   let pointsOnLine = [];
 
   turf.meta.featureEach(fc, function(feature) {
     let dist = turf.lineDistance(feature);
-
-    let i = 0;
-    while(i < dist) {
+    for(let i = 0; i < dist; i += padding) {
       pointsOnLine.push(turf.along(feature, i, 'kilometers'));
-      i += spaceBetweenPointsInKm;
     }
   });
   fc = turf.featureCollection(pointsOnLine);
-
+  if(toLineString) {
+    fc = toLineString(fc);
+  }
   return fc;
 };
 
@@ -70,7 +47,7 @@ let equidistantPointsZoom = function(fc, metersPerPixel) {
   return equidistantPointsOnLine(fc, spaceBetweenPoints);
 };
 
-function toLineStringCollection(fc) {
+function toLineString(fc) {
   let lineString = [];
   for(let i = 0; i < fc.features.length; i++) {
     lineString.push(fc.features[i].geometry.coordinates);
@@ -104,8 +81,7 @@ let unpackMultiPolCoords = function(features) {
 
 module.exports = turf;
 module.exports.iterateFeature = iterateFeature;
-module.exports.equidistantLineString = equidistantLineString;
-module.exports.equidistantPointsOnLine = equidistantPointsOnLine;
+module.exports.equidistant = equidistant;
 module.exports.equidistantPointsZoom = equidistantPointsZoom;
 module.exports.unpackMultiPolCoords = unpackMultiPolCoords;
 module.exports.multipolToLineString = multipolToLineString;

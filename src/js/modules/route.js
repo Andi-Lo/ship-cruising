@@ -6,8 +6,8 @@ let pathfinding = require('../libs/pathfinding');
 class Route {
   constructor(features) {
     this._waypoints = turf.featureCollection(features);
-    this.calcRoute(this._waypoints).simplifyPath().smoothCurve();
-    this._route = turf.equidistantLineString(this._route);
+    this.calcRoute(this._waypoints).simplifyPath(0.1).smoothCurve();
+    this._route = turf.equidistantLineString(this._route, 50, true);
     return this;
   }
 
