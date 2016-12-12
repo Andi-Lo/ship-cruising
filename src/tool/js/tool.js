@@ -3,7 +3,6 @@ var toolMap = $('.tool-wrapper');
 var content = $(toolMap).find('.tool-content');
 
 var scrubber = document.getElementById('scrubber');
-console.log('scrubber', scrubber);
 
 scrubber.addEventListener('mousedown', function(evt) {
   document.addEventListener('mousemove', setHeight, false);

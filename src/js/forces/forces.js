@@ -5,11 +5,14 @@ let Link = require('./link').Link;
 let Node = require('./node').Node;
 let leafletMap = require('../modules/leafletMap');
 
-const LINK_STR = 2;
+const LINK_STR = 0.02;
 const LINK_DIST = 1;
-const MB_STR = 2;
+const MB_STR = -5;
 const MB_DIST_MIN = 1;
 const MB_DIST_MAX = 10;
+const COLLIDE_RADIUS = 5;
+const COLLIDE_STRENGTH = 0.2;
+const COLLIDE_ITERATIONS = 1;
 
 let linkForce = d3.forceLink()
   .id(function(d) { return d.index; })
@@ -20,6 +23,11 @@ let manyBody = d3.forceManyBody()
   .strength(MB_STR)
   .distanceMin(MB_DIST_MIN)
   .distanceMax(MB_DIST_MAX);
+
+let collide = d3.forceCollide()
+  .radius(COLLIDE_RADIUS)
+  .strength(COLLIDE_STRENGTH)
+  .iterations(COLLIDE_ITERATIONS);
 
 let force = function(route, land) {
   let maps = leafletMap.getMaps();
@@ -34,10 +42,14 @@ let force = function(route, land) {
     .attr('width', 960)
     .attr('height', 500);
 
+  linkForce.initialize(nodes);
+  manyBody.initialize(nodes);
+  collide.initialize(nodes);
+
   let simulation = d3.forceSimulation().nodes(nodes)
     .force("link", linkForce)
     .force("charge", manyBody)
-      .force("collision", d3.forceCollide(function() { return 5;}));
+    .force("collision", collide);
 
   svg.append("g").attr("class", "leaflet-zoom-hide");
 
@@ -97,3 +109,4 @@ let force = function(route, land) {
 module.exports.force = force;
 module.exports.linkForce = linkForce;
 module.exports.manyBody = manyBody;
+module.exports.collide = collide;
