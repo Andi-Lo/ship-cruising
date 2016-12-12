@@ -20,7 +20,7 @@ let leaflet = {
 };
 
 let force = {
-  'pixelSpaceForces': 20
+  'pixelSpaceForces': 10
 };
 
 module.exports.defaults = defaults;

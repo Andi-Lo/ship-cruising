@@ -28,7 +28,7 @@ class KeyboardObserver extends Observer {
             drawCanvas.drawPixels(route._route);
 
             drawLeaflet.drawPolyline(route._route);
-            drawLeaflet.drawMarkers(route._waypoints);
+            // drawLeaflet.drawMarkers(route._waypoints);
 
             let simulation = forces.force(route._route, land._equidistantPoints);
             new ForceObserver(simulation);

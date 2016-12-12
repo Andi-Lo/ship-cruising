@@ -36,7 +36,8 @@ let force = function(route, land) {
 
   let simulation = d3.forceSimulation().nodes(nodes)
     .force("link", linkForce)
-    .force("charge", manyBody);
+    .force("charge", manyBody)
+      .force("collision", d3.forceCollide(function() { return 5;}));
 
   svg.append("g").attr("class", "leaflet-zoom-hide");
 

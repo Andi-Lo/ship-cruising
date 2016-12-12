@@ -8,9 +8,9 @@ class Node {
 
   }
 
-  static createNode(coords) {
+  static createNode(coords, radius = 3) {
     return {
-      radius: 3,
+      radius: radius,
       x: coords.x,
       y: coords.y,
     };
@@ -33,7 +33,7 @@ class Node {
         }
       }
       else {
-        node.push(Node.createNode(pixel));
+        node.push(Node.createNode(pixel, 5));
         node[i].fx = pixel.x;
         node[i].fy = pixel.y;
       }
