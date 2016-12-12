@@ -43,6 +43,7 @@
     "gulp-uglify": "^1.5.1",
     "gulp-watch": "^4.3.5",
     "mocha": "^3.2.0",
+    "nyc": "^10.0.0",
     "rimraf": "^2.5.4",
     "run-sequence": "^1.2.2",
     "vinyl-buffer": "^1.0.0",
