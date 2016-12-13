@@ -7,7 +7,7 @@ class Route {
   constructor(features) {
     this._waypoints = turf.featureCollection(features);
     this.calcRoute(this._waypoints).simplifyPath(0.1).smoothCurve();
-    this._route = turf.equidistantLineString(this._route, 50, true);
+    this._route = turf.equidistant(this._route, 100, true);
     return this;
   }
 

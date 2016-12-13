@@ -36,7 +36,7 @@ let equidistant = function(fc, padding, toLineString = false) {
   });
   fc = turf.featureCollection(pointsOnLine);
   if(toLineString) {
-    fc = toLineString(fc);
+    fc = fcToLineString(fc);
   }
   return fc;
 };
@@ -44,10 +44,10 @@ let equidistant = function(fc, padding, toLineString = false) {
 let equidistantPointsZoom = function(fc, metersPerPixel) {
   // Pixel space between the points
   let spaceBetweenPoints = (options.pixelSpaceForces * metersPerPixel) / 1000;
-  return equidistantPointsOnLine(fc, spaceBetweenPoints);
+  return equidistant(fc, spaceBetweenPoints);
 };
 
-function toLineString(fc) {
+function fcToLineString(fc) {
   let lineString = [];
   for(let i = 0; i < fc.features.length; i++) {
     lineString.push(fc.features[i].geometry.coordinates);
