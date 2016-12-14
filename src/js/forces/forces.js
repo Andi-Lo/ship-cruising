@@ -6,6 +6,7 @@ let Node = require('./node').Node;
 let leafletMap = require('../modules/leafletMap');
 let turf = require('../libs/turf');
 let drawLeaflet = require('../modules/drawLeaflet');
+let options = require('../modules/options').force;
 
 const LINK_STR = 0.02;
 const LINK_DIST = 1;
@@ -32,7 +33,7 @@ let collide = d3.forceCollide()
   .iterations(COLLIDE_ITERATIONS);
 
 let force = function(route, land) {
-  console.log(route);
+  let globalFeatureCollection;
   let maps = leafletMap.getMaps();
   let nodes = Node.getNodes(route, maps[0]);
   let nodesLand = Node.getNodes(land, maps[0]);
@@ -75,15 +76,22 @@ let force = function(route, land) {
   simulation.nodes(nodes).on("tick", ticked).on("end", end);
   simulation.force("link").links(links);
   maps[0].on("zoomend", update);
-  let globalFeatureCollection;
 
   function update() {
     // Remove force points and just draw points in leaflet
     svg.selectAll("*").remove();
-
     // globalFeatureCollection will be initialized when simulation ended
-    drawLeaflet.drawPoints(globalFeatureCollection, 5, "#0000FF");
-    drawLeaflet.drawPointsCoastForces(land, 3, "#F23C00");
+    drawLeaflet.drawPoints(globalFeatureCollection,
+        options.zoomPointRouteSize,
+        options.zoomPointRouteColor);
+    drawLeaflet.drawPointsCoastForces(land,
+        options.zoomPointLandSize,
+        options.zoomPointLandColor);
+    drawLeaflet.drawPolyline(
+        turf.fcToLineString(globalFeatureCollection),
+        options.zoomLineColor,
+        3
+    );
   }
 
   function end() {
@@ -121,6 +129,7 @@ let force = function(route, land) {
         ]));
       }
     }
+
     return turf.featureCollection(features);
   }
 

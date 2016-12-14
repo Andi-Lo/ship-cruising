@@ -22,7 +22,13 @@ let leaflet = {
 let force = {
   'pixelSpaceForces': 10,
   'nodeColor': '#00B6F2',
-  'landColor': '#F23C00'
+  'landColor': '#11C400',
+  'zoomPointRouteColor': '#00B6F2',
+  // 'zoomPointLandColor': '#F23C00',
+  'zoomPointLandColor': '#11C400',
+  'zoomLineColor': '#0073C4',
+  'zoomPointRouteSize': 10000,
+  'zoomPointLandSize': 5000,
 };
 
 module.exports.defaults = defaults;

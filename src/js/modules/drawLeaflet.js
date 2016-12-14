@@ -5,13 +5,22 @@ let leafletMap = require('./leafletMap');
 let leaflet = require('leaflet');
 let circleCoastForces = [];
 
-let drawPolyline = function(featureCollection) {
+/**
+ * Draws a polyline in leaflet
+ * @param featureCollection has to be a lineString collection
+ * @param color
+ * @param weight
+ */
+let drawPolyline = function(featureCollection, color = '#3388ff', weight = 3) {
   turf.meta.featureEach(featureCollection, function(feature) {
     let swappedCords = turf.flip(feature);
     let maps = leafletMap.getMaps();
 
     for(let i = 0; i < maps.length; i++) {
-      leaflet.polyline(swappedCords.geometry.coordinates, {color: 'red'})
+      leaflet.polyline(swappedCords.geometry.coordinates, {
+        color: color,
+        weight: weight
+      })
              .addTo(maps[i]);
     }
   });
@@ -64,8 +73,11 @@ function drawMarker(map, coord) {
 
 function drawCircle(map, coord, radius, hexColor) {
   return leaflet.circle(coord, {
+    color: '#FFFFFF',
+    fillColor: hexColor,
     radius: radius,
-    color: hexColor
+    fillOpacity: 1,
+    stroke: false
   }).addTo(map);
 }
 

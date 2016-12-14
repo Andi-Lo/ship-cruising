@@ -47,14 +47,14 @@ let equidistantPointsZoom = function(fc, metersPerPixel) {
   return equidistant(fc, spaceBetweenPoints);
 };
 
-function fcToLineString(fc) {
+let fcToLineString = function(fc) {
   let lineString = [];
   for(let i = 0; i < fc.features.length; i++) {
     lineString.push(fc.features[i].geometry.coordinates);
   }
   lineString = turf.lineString(lineString);
   return lineString;
-}
+};
 
 let multipolToLineString = function(fc) {
   let lineString = [];
@@ -85,3 +85,4 @@ module.exports.equidistant = equidistant;
 module.exports.equidistantPointsZoom = equidistantPointsZoom;
 module.exports.unpackMultiPolCoords = unpackMultiPolCoords;
 module.exports.multipolToLineString = multipolToLineString;
+module.exports.fcToLineString = fcToLineString;

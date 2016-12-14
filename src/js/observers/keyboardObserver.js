@@ -8,6 +8,9 @@ let drawCanvas = require('../modules/drawCanvas');
 let canvasMap = require('../modules/canvasMap');
 let forces = require('../forces/forces');
 
+let routeLeafletColor = "red";
+let routeLeafletWeight = 1;
+
 class KeyboardObserver extends Observer {
   constructor(land) {
     super();
@@ -27,7 +30,9 @@ class KeyboardObserver extends Observer {
             drawCanvas.drawLineString(route._route);
             drawCanvas.drawPixels(route._route);
 
-            drawLeaflet.drawPolyline(route._route);
+            drawLeaflet.drawPolyline(route._route,
+                routeLeafletColor,
+                routeLeafletWeight);
             // drawLeaflet.drawMarkers(route._waypoints);
 
             let simulation = forces.force(route._route, land._equidistantPoints);
