@@ -21,7 +21,7 @@ class Land {
     // let equidistant = turf.equidistantLineString(lineString);
     // let equidistant = turf.equidistantPointsOnLine(lineString, 10);
     let equidistant = turf.equidistantPointsZoom(lineString, metersPerPixel);
-    drawLeaflet.drawPointsCoastForces(equidistant, this._radiusLeafletPoints);
+    // drawLeaflet.drawPointsCoastForces(equidistant, this._radiusLeafletPoints);
     this._equidistantPoints = equidistant;
     return equidistant;
   }

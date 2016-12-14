@@ -30,23 +30,23 @@ let drawMarkers = function(featureCollection) {
   });
 };
 
-let drawPoints = function(featureCollection, radius = 5) {
+let drawPoints = function(featureCollection, radius = 5, hexColor = "#F23C00") {
   let maps = leafletMap.getMaps();
 
   turf.meta.featureEach(featureCollection, function(feature) {
     let coord = turf.invariant.getCoord(turf.flip(feature));
-    drawCircle(maps[0], coord, radius);
+    drawCircle(maps[0], coord, radius, hexColor);
   });
 };
 
-let drawPointsCoastForces = function(featureCollection, radius = 5) {
+let drawPointsCoastForces = function(featureCollection, radius = 5, hexColor = "#F23C00") {
   let maps = leafletMap.getMaps();
   // Make sure the old points get erased
   removeCoastCircles();
 
   turf.meta.featureEach(featureCollection, function(feature) {
     let coord = turf.invariant.getCoord(turf.flip(feature));
-    let circle = drawCircle(maps[0], coord, radius);
+    let circle = drawCircle(maps[0], coord, radius, hexColor);
     circleCoastForces.push(circle);
   });
 };
@@ -62,8 +62,11 @@ function drawMarker(map, coord) {
   return leaflet.marker(coord).addTo(map);
 };
 
-function drawCircle(map, coord, radius) {
-  return leaflet.circle(coord, radius).addTo(map);
+function drawCircle(map, coord, radius, hexColor) {
+  return leaflet.circle(coord, {
+    radius: radius,
+    color: hexColor
+  }).addTo(map);
 }
 
 function bindMarkerPopup(marker, text) {

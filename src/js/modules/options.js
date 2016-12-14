@@ -20,7 +20,9 @@ let leaflet = {
 };
 
 let force = {
-  'pixelSpaceForces': 10
+  'pixelSpaceForces': 10,
+  'nodeColor': '#00B6F2',
+  'landColor': '#F23C00'
 };
 
 module.exports.defaults = defaults;

@@ -8,12 +8,12 @@ class LeafletObserver extends Observer {
   constructor(land) {
     super();
     let maps = leafletMap.getMaps();
-    maps[0].on('click', this.onMapClick);
-    maps[0].on('zoomend', function(e) {
-      // let maps = leafletMap.getMaps();
-
-      land.calculateLandInit(land._land);
-    });
+    // maps[0].on('click', this.onMapClick);
+    // maps[0].on('zoomend', function(e) {
+    //   // let maps = leafletMap.getMaps();
+    //
+    //   land.calculateLandInit(land._land);
+    // });
   }
 
   onMapClick(e) {
