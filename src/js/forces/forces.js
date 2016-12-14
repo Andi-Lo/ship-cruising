@@ -76,6 +76,8 @@ let force = function(route, land) {
   simulation.nodes(nodes).on("tick", ticked).on("end", end);
   simulation.force("link").links(links);
   maps[0].on("zoomend", update);
+  leafletMap.disableZoom(maps[0]);
+
 
   function update() {
     // Remove force points and just draw points in leaflet
@@ -110,7 +112,7 @@ let force = function(route, land) {
     globalFeatureCollection = convertSvgCirclesToFeatureCol(
         svgCircles
     );
-    console.log("end");
+    leafletMap.enableZoom(maps[0]);
   }
 
   function convertSvgCirclesToFeatureCol(svgCircles) {

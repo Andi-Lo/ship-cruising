@@ -64,7 +64,8 @@ let init = function(elementInteractive, divId,
 
   // Get center of bbox
   let bounds = bbox(box, defaults.width, defaults.height);
-  let map = leaflet.map(divId)
+  // let map = leaflet.map(divId)
+  let map = leaflet.map(divId, {zoomControl: true})
       .setView([bounds.center[1], bounds.center[0]], bounds.zoom);
 
   addScaleToMap(map);
@@ -95,6 +96,27 @@ function addScaleToMap(map) {
   leaflet.control.scale().addTo(map);
 };
 
+let disableZoom = function(map) {
+  map.touchZoom.disable();
+  map.doubleClickZoom.disable();
+  map.scrollWheelZoom.disable();
+  map.boxZoom.disable();
+  map.keyboard.disable();
+  map.removeControl(map.zoomControl);
+};
+
+let enableZoom = function(map) {
+  map.touchZoom.enable();
+  map.doubleClickZoom.enable();
+  map.scrollWheelZoom.enable();
+  map.boxZoom.enable();
+  map.keyboard.enable();
+  map.addControl(map.zoomControl);
+};
+
 module.exports.init = init;
 module.exports.getMaps = getMaps;
 module.exports.getMetersPerPixel = getMetersPerPixel;
+module.exports.disableZoom = disableZoom;
+module.exports.enableZoom = enableZoom;
+
