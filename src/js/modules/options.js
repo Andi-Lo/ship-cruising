@@ -27,8 +27,8 @@ let force = {
   // 'zoomPointLandColor': '#F23C00',
   'zoomPointLandColor': '#11C400',
   'zoomLineColor': '#0073C4',
-  'zoomPointRouteSize': 10000,
-  'zoomPointLandSize': 5000,
+  'zoomPointRouteSize': 4,
+  'zoomPointLandSize': 2,
 };
 
 module.exports.defaults = defaults;

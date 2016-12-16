@@ -44,7 +44,8 @@ let drawPoints = function(featureCollection, radius = 5, hexColor = "#F23C00") {
 
   turf.meta.featureEach(featureCollection, function(feature) {
     let coord = turf.invariant.getCoord(turf.flip(feature));
-    drawCircle(maps[0], coord, radius, hexColor);
+    // drawCircle(maps[0], coord, radius, hexColor);
+    drawCircleMarker(maps[0], coord, radius, hexColor);
   });
 };
 
@@ -55,7 +56,8 @@ let drawPointsCoastForces = function(featureCollection, radius = 5, hexColor = "
 
   turf.meta.featureEach(featureCollection, function(feature) {
     let coord = turf.invariant.getCoord(turf.flip(feature));
-    let circle = drawCircle(maps[0], coord, radius, hexColor);
+    // let circle = drawCircle(maps[0], coord, radius, hexColor);
+    let circle = drawCircleMarker(maps[0], coord, radius, hexColor);
     circleCoastForces.push(circle);
   });
 };
@@ -71,8 +73,18 @@ function drawMarker(map, coord) {
   return leaflet.marker(coord).addTo(map);
 };
 
-function drawCircle(map, coord, radius, hexColor) {
+/* function drawCircle(map, coord, radius, hexColor) {
   return leaflet.circle(coord, {
+    color: '#FFFFFF',
+    fillColor: hexColor,
+    radius: radius,
+    fillOpacity: 1,
+    stroke: false
+  }).addTo(map);
+}*/
+
+function drawCircleMarker(map, coord, radius, hexColor) {
+  return leaflet.circleMarker(coord, {
     color: '#FFFFFF',
     fillColor: hexColor,
     radius: radius,
