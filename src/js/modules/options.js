@@ -31,7 +31,15 @@ let force = {
   'zoomPointLandSize': 5000,
 };
 
+let calcClientRect = function() {
+  let heightToolbar = window.document.getElementsByClassName('tool-wrapper')[0].offsetHeight;
+  let height = window.innerHeight - heightToolbar;
+  let width = window.innerWidth;
+  return {height, width};
+};
+
 module.exports.defaults = defaults;
 module.exports.leaflet = leaflet;
 module.exports.leafletTileStyles = leafletTileStyles;
 module.exports.force = force;
+module.exports.calcClientRect = calcClientRect;

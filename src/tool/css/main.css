@@ -5,20 +5,17 @@ body {
 
 canvas {
   border: 1px solid;
-  margin-right: 20px;
-  display: inline-block;
-}
-
-#tone-map {
+  margin: 15px 15px 0 15px;
   display: inline-block;
 }
 
 #interactive-map {
-  display: inline-block;
+  /*user-select: none;*/
 }
 
 .data-wrapper {
   width: 320px;
+  margin-left: 15px;
 }
 
 #scale {

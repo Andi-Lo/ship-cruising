@@ -5,6 +5,7 @@ let LeafletObserver = require('./observers/leafletObserver').LeafletObserver;
 let canvasMap = require('./modules/canvasMap');
 let leafletMap = require('./modules/leafletMap');
 let defaults = require('./modules/options').defaults;
+let calcClientRect = require('./modules/options').calcClientRect;
 let Land = require('./modules/land').Land;
 
 function shipcruising() {
@@ -20,14 +21,14 @@ function shipcruising() {
   // the promise got resolved successfully the map exists then...
   map.then((fc) => {
     let land = new Land(fc);
-
     new LeafletObserver(land);
     new KeyboardObserver(land);
   });
 
   // Interactive map sector
-  let elInteractive = window.document.getElementById('ship-cruising');
-  leafletMap.init(elInteractive, 'tone-map', 640, 640);
+  let elInteractive = window.document.getElementById('interactive-map');
+  let clientRect = calcClientRect();
+  leafletMap.init(elInteractive, 'tone-map', clientRect.width, clientRect.height);
 };
 
 shipcruising();

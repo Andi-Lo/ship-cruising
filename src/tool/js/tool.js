@@ -13,7 +13,9 @@ document.addEventListener('mouseup', function(evt) {
 }, false);
 
 function setHeight(evt) {
-  var y = evt.clientY
+  var y = evt.clientY;
+  var map = $('#interactive-map');
+  var toneMap = $('#tone-map');
   if(evt.clientY < 15) {
     $(toolMap).css('height', 0);
     $(content).css('height', 0);
@@ -21,4 +23,7 @@ function setHeight(evt) {
     $(toolMap).css('height', y);
     $(content).css('height', y);
   }
+  $(map).css('height', window.innerHeight - evt.clientY);
+  $(toneMap).css('height', window.innerHeight - evt.clientY);
+  // console.log('window.screenY',);
 }

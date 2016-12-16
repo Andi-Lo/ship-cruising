@@ -10,7 +10,7 @@ body {
   line-height: 1.42857143;
   color: #333;
   background-color: #fff;
-  /* overflow: hidden;*/
+   overflow: hidden;
 }
 
 h3 {
@@ -42,7 +42,7 @@ h1, h2, h3 {
   right: 0;
   overflow: hidden;
   position: absolute;
-  z-index: 2;
+  z-index: 99999;
   box-sizing: border-box;
   transition: background-color 0.16s ease-out;
 }
@@ -54,10 +54,10 @@ h1, h2, h3 {
 }
 
 .tool-wrapper {
-  margin-bottom: 50px;
   position: relative;
   border: 1px solid lightgrey;
   border-width: 0 0 1px 0;
+  user-select: none;
 }
 
 .tool-content {
@@ -65,7 +65,7 @@ h1, h2, h3 {
 }
 
 .container {
-  width: 1170px;
+  width: 1600px;
   padding-right: 15px;
   padding-left: 15px;
   margin-right: auto;

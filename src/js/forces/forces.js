@@ -6,7 +6,7 @@ let Node = require('./node').Node;
 let leafletMap = require('../modules/leafletMap');
 let turf = require('../libs/turf');
 let drawLeaflet = require('../modules/drawLeaflet');
-let options = require('../modules/options').force;
+let options = require('../modules/options');
 
 const LINK_STR = 0.02;
 const LINK_DIST = 1;
@@ -38,12 +38,13 @@ let force = function(route, land) {
   let nodes = Node.getNodes(route, maps[0]);
   let nodesLand = Node.getNodes(land, maps[0]);
   let links = Link.getLinks(nodes);
+  let clientRect = options.calcClientRect();
 
   // Add nodesLand after the route got linked
   nodes = nodes.concat(nodesLand);
   let svg = d3.select(maps[0].getPanes().overlayPane).append('svg')
-    .attr('width', 640)
-    .attr('height', 640);
+    .attr('width', clientRect.width)
+    .attr('height', clientRect.height);
   // let g = svg.append("g").attr("class", "leaflet-zoom-hide");
   let g = svg.append("g");
 
@@ -55,6 +56,8 @@ let force = function(route, land) {
     .force("link", linkForce)
     .force("charge", manyBody)
     .force("collision", collide);
+
+  simulation.alphaDecay(0.1);
 
   let link = g.attr('class', 'link')
     .selectAll('.link')
@@ -84,14 +87,14 @@ let force = function(route, land) {
     svg.selectAll("*").remove();
     // globalFeatureCollection will be initialized when simulation ended
     drawLeaflet.drawPoints(globalFeatureCollection,
-        options.zoomPointRouteSize,
-        options.zoomPointRouteColor);
+        options.force.zoomPointRouteSize,
+        options.force.zoomPointRouteColor);
     drawLeaflet.drawPointsCoastForces(land,
-        options.zoomPointLandSize,
-        options.zoomPointLandColor);
+        options.force.zoomPointLandSize,
+        options.force.zoomPointLandColor);
     drawLeaflet.drawPolyline(
         turf.fcToLineString(globalFeatureCollection),
-        options.zoomLineColor,
+        options.force.zoomLineColor,
         3
     );
   }
