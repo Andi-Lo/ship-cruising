@@ -3,7 +3,6 @@
 let turf = require('@turf/turf');
 turf.meta = require('@turf/meta');
 turf.invariant = require('@turf/invariant');
-let _ = require('lodash/array');
 let options = require('../modules/options').force;
 require("babel-polyfill");
 
@@ -17,13 +16,17 @@ require("babel-polyfill");
  * @returns a feature on success else false
  */
 let iterateFeature = function* (fc, start = 0, end = -1) {
+  if(start < 0) {
+    throw new Error('Start can not be negative');
+  }
+  if(start === end) {
+    throw new Error('start value can not equal end');
+  }
   if(end === -1) end = fc.features.length;
 
   for(start; start < end; start++) {
     yield fc.features[start];
   }
-
-  if(start === end) return false;
 };
 
 /**

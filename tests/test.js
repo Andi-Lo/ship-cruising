@@ -12,6 +12,7 @@ describe("Mocha Test Suite", function() {
   });
 
   importTest("mercator.js", './libs/mercator');
+  importTest("turf.js", './libs/turf');
 
   after(function() {
 
