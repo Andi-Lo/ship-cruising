@@ -3,6 +3,7 @@
 let turf = require('@turf/turf');
 turf.meta = require('@turf/meta');
 turf.invariant = require('@turf/invariant');
+let _ = require('lodash/array');
 let options = require('../modules/options').force;
 require("babel-polyfill");
 
@@ -23,6 +24,60 @@ let iterateFeature = function* (fc, start = 0, end = -1) {
   }
 
   if(start === end) return false;
+};
+
+/**
+ * Takes a featureCollection of type LineString and fixes
+ * the start and end point of the route by resetting those
+ * points to their initial waypoint value. This should close gaps
+ * between the subsection of two routes.
+ *
+ * @param {featureCollection} featureCollection of type LineString
+ * @returns featureCollection
+ */
+let fixRoute = function(fc) {
+  turf.meta.featureEach(fc, function(feature) {
+    if(feature.properties.start && feature.properties.end) {
+      let length = feature.geometry.coordinates.length;
+      // there have to be at least 2 points for this to make sense
+      if(length > 0) {
+        feature.geometry.coordinates[0] = feature.properties.start;
+        feature.geometry.coordinates[length-1] = feature.properties.end;
+      }
+    }
+  });
+  return fc;
+};
+
+function equdistantParameters(feature, stepSize) {
+  if (stepSize < 0) {
+    throw new Error('StepSize can not be negative');
+  }
+  let dist = turf.lineDistance(feature);
+  // make sure we are not dividing by zero
+  let steps = (stepSize === 0) ? dist : Math.floor(dist / stepSize);
+  // this calculates a more exact step size value
+  let delta = Math.floor(dist - (steps * stepSize));
+  stepSize += delta / steps;
+  return {stepSize, steps};
+};
+
+let equidistantRoute = function(fc, stepSize) {
+  let features = [];
+  let i = 0;
+
+  turf.meta.featureEach(fc, function(feature) {
+    let pOnLine = [];
+    let param = equdistantParameters(feature, stepSize);
+    for(let j = 0; j <= param.steps; j++) {
+      let p = turf.along(feature, param.stepSize * j, 'kilometers');
+      pOnLine.push(p.geometry.coordinates);
+    }
+    features.push(turf.lineString(pOnLine));
+    features[i].properties = fc.features[i].properties;
+    i++;
+  });
+  return turf.featureCollection(features);
 };
 
 let equidistant = function(fc, padding, toLineString = false) {
@@ -82,6 +137,8 @@ let unpackMultiPolCoords = function(features) {
 module.exports = turf;
 module.exports.iterateFeature = iterateFeature;
 module.exports.equidistant = equidistant;
+module.exports.equidistantRoute = equidistantRoute;
+module.exports.fixRoute = fixRoute;
 module.exports.equidistantPointsZoom = equidistantPointsZoom;
 module.exports.unpackMultiPolCoords = unpackMultiPolCoords;
 module.exports.multipolToLineString = multipolToLineString;
