@@ -3,7 +3,6 @@
 let turf = require('@turf/turf');
 turf.meta = require('@turf/meta');
 turf.invariant = require('@turf/invariant');
-let _ = require('lodash/array');
 let options = require('../modules/options').force;
 require("babel-polyfill");
 
@@ -13,17 +12,21 @@ require("babel-polyfill");
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators
  * @param {any} featureCollection
  * @param {number} [start=0]
- * @param {any} [end=-1]
- * @returns a feature on success else false
+ * @param {number} [end=-1]
+ * @returns a feature on success else undefined
  */
 let iterateFeature = function* (fc, start = 0, end = -1) {
+  if(start < 0) {
+    throw new Error('Start can not be negative');
+  }
+  if(start === end) {
+    throw new Error('start value can not equal end');
+  }
   if(end === -1) end = fc.features.length;
 
   for(start; start < end; start++) {
     yield fc.features[start];
   }
-
-  if(start === end) return false;
 };
 
 /**
@@ -32,7 +35,7 @@ let iterateFeature = function* (fc, start = 0, end = -1) {
  * points to their initial waypoint value. This should close gaps
  * between the subsection of two routes.
  *
- * @param {featureCollection} featureCollection of type LineString
+ * @param {any} featureCollection of type LineString
  * @returns featureCollection
  */
 let fixRoute = function(fc) {
