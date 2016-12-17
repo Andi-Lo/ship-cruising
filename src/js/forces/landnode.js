@@ -8,8 +8,8 @@ let options = require('../modules/options').force;
 class Landnode extends Node {
   constructor(coords, latLng, radius = 3) {
     super(coords, latLng, radius);
-    this._isLand = true;
-    this._color = options.landColor;
+    this.isLand = true;
+    this.color = options.landColor;
     return this;
   }
 
