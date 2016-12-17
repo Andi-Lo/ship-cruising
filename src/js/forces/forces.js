@@ -3,6 +3,7 @@
 let d3 = require('d3');
 let Link = require('./link').Link;
 let Node = require('./node').Node;
+let Landnode = require('./Landnode').Landnode;
 let leafletMap = require('../modules/leafletMap');
 let turf = require('../libs/turf');
 let drawLeaflet = require('../modules/drawLeaflet');
@@ -36,7 +37,7 @@ let force = function(route, land) {
   let globalFeatureCollection;
   let maps = leafletMap.getMaps();
   let nodes = Node.getNodes(route, maps[0]);
-  let nodesLand = Node.getNodes(land, maps[0]);
+  let nodesLand = Landnode.getNodes(land, maps[0]);
   let links = Link.getLinks(nodes);
   let clientRect = options.calcClientRect();
 
