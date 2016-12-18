@@ -61,7 +61,8 @@ function findPath(start, end, prevPoint) {
   try {
     path = astar.search(graph, start, end, heuristic);
     if (path.length <= 0) {
-      throw new Error('At least one of the given positions is set falsly');
+      throw new Error(`At least one of the given positions is set falsly.
+         Meaning that one of the given points might lay inside of Land`);
     }
   }
   catch (error) {
