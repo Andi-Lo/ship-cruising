@@ -13,7 +13,7 @@ function shipcruising() {
   canvasMap.createCanvas(defaults.width, defaults.height);
 
   // initMap is an async func we wait for a promise object to return with data
-  let map = canvasMap.initMap('./map/jamaica.geojson').then((map) => {
+  let map = canvasMap.initMap('./map/coasts_50m.geojson').then((map) => {
     canvasMap.createPixelData();
     canvasMap.setScale();
     return map;

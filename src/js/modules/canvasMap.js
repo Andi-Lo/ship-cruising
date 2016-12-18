@@ -4,6 +4,7 @@ let defaults = require('./options').defaults;
 let turf = require('../libs/turf');
 let mercator = require('../libs/mercator');
 let erode = require('../libs/erode');
+let polygon2line = require('../libs/polygon-to-line');
 let draw = require('./drawCanvas');
 let CanvasObserver = require('../observers/canvasObserver').CanvasObserver;
 
@@ -30,7 +31,10 @@ let createCanvas = function(width, height) {
 let initMap = function(path) {
   return new Promise(function(resolve, reject) {
     fetch(path).then((parse) => parse.json()).then((geo) => {
+      console.log('geo', geo);
+      geo = polygon2line(geo);
       resolve(geo);
+      console.log('geo', geo);
       geo.features.forEach((features) => {
         switch (features.geometry.type) {
           case "Polygon":
@@ -42,6 +46,12 @@ let initMap = function(path) {
           case "MultiPolygon":
             draw.drawMultiPolygon(features, defaults.mapColor);
             break;
+          case "LineString":
+            draw.drawLineString(features, defaults.mapColor, 1, true);
+            break;
+          // case "MultiLineString":
+          //   draw.drawLineString(features, defaults.mapColor, 1, true);
+          //   break;
           default:
             console.log(features.geometry.type);
             break;

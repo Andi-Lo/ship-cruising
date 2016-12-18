@@ -41,18 +41,17 @@ let drawMultiPolygon = function(features, color) {
     ctx.closePath();
     ctx.fill();
   });
-
   ctx.closePath();
   ctx.fill();
 };
 
-let drawPolygon = function(ctx, features, color) {
+let drawPolygon = function(features, color) {
   ctx.fillStyle = color;
   let isFirst = true;
 
   turf.meta.featureEach(features, function(feature) {
     turf.meta.coordEach(feature, function(coord) {
-      isFirst = drawLine(ctx, coord, isFirst);
+      isFirst = drawLine(coord, isFirst);
     });
   });
 
@@ -88,16 +87,22 @@ let drawPixels = function(featureCollection) {
   });
 };
 
-let drawLineString = function(featureCollection) {
-  let canvas = canvasMap.getCanvas();
-  let ctx = canvas.getContext('2d');
+let drawMultiLineString = function(fc) {
+  console.log('drawMultiLineString', fc);
+  turf.meta.coordEach(fc, function(coord) {
+  });
+};
+
+let drawLineString = function(fc, color, lineWidth = 2, fill = false) {
+  console.log('fc', fc);
+  let ctx = canvasMap.getCanvas().getContext('2d');
   let length = 1;
   let isFirst = true;
-  ctx.fillStyle = defaults.strokeColor;
-  ctx.strokeStyle = defaults.strokeColor;
-  ctx.lineWidth = 2;
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
 
-  turf.meta.featureEach(featureCollection, function(feature) {
+  turf.meta.featureEach(fc, function(feature) {
     let routeLength = feature.geometry.coordinates.length;
     turf.meta.coordEach(feature, function(coord) {
       isFirst = drawLine(coord, isFirst, true);
@@ -106,7 +111,15 @@ let drawLineString = function(featureCollection) {
     });
     length = 1;
     isFirst = true;
+    ctx.closePath();
+    if(fill == true) {
+      ctx.fill();
+    }
   });
+  ctx.closePath();
+  if(fill == true) {
+    ctx.fill();
+  }
 };
 
 let drawRoute = function(ctx, route, color) {
@@ -120,7 +133,7 @@ let drawRoute = function(ctx, route, color) {
 
   turf.meta.featureEach(route, function(point) {
     let coord = turf.invariant.getCoord(point);
-    isFirst = drawLine(ctx, coord, isFirst, true);
+    isFirst = drawLine(coord, isFirst, true);
     if(routeLength === length) ctx.closePath();
     length++;
   });
@@ -143,4 +156,5 @@ exports.drawMultiPolygon = drawMultiPolygon;
 exports.drawRoute = drawRoute;
 exports.drawPixels = drawPixels;
 exports.drawLineString = drawLineString;
+exports.drawMultiLineString = drawMultiLineString;
 exports.drawRect = drawRect;

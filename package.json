@@ -7,7 +7,7 @@
     "start": "gulp serve",
     "build": "gulp build",
     "test": "mocha ./tests/test.js --compilers js:babel-core/register && rimraf coverage",
-      "covarage": "nyc --require babel-core/register mocha ./tests/test.js --compilers js:babel-core/register && rimraf coverage"
+    "covarage": "nyc --require babel-core/register mocha ./tests/test.js --compilers js:babel-core/register && rimraf coverage"
   },
   "author": "Andreas Lorer and Kevin Klugmann",
   "dependencies": {
@@ -19,6 +19,7 @@
     "leaflet": "^1.0.1",
     "parse-float": "^0.1.1",
     "sphericalmercator": "^1.0.5",
+    "turf-normalize": "^1.0.2",
     "underscore": "^1.8.3"
   },
   "license": "",
