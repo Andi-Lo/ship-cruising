@@ -126,7 +126,7 @@ let getCanvas = function() {
 };
 
 let getFeatures = function() {
-  return features;
+  return turf.featureCollection(features);
 };
 
 let setFeatures = function(val) {

@@ -20,8 +20,7 @@ let drawPolyline = function(featureCollection, color = '#3388ff', weight = 3) {
       leaflet.polyline(swappedCords.geometry.coordinates, {
         color: color,
         weight: weight
-      })
-             .addTo(maps[i]);
+      }).addTo(maps[i]);
     }
   });
 };

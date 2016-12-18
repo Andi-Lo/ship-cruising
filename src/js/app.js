@@ -2,6 +2,7 @@
 
 let KeyboardObserver = require('./observers/keyboardObserver').KeyboardObserver;
 let LeafletObserver = require('./observers/leafletObserver').LeafletObserver;
+let MouseObserver = require('./observers/MouseObserver').MouseObserver;
 let canvasMap = require('./modules/canvasMap');
 let leafletMap = require('./modules/leafletMap');
 let defaults = require('./modules/options').defaults;
@@ -23,6 +24,7 @@ function shipcruising() {
     let land = new Land(fc);
     new LeafletObserver(land);
     new KeyboardObserver(land);
+    new MouseObserver(land);
   });
 
   // Interactive map sector
