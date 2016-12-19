@@ -1,7 +1,7 @@
 node_modules/*
 npm-debug.log
-**bundle.js
-**bundle.js.map
+src/js/bundle.js
+src/js/bundle.js.map
 dist/
 .vscode
 .idea/

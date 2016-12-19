@@ -1,9 +1,7 @@
 'use strict';
 
 let leaflet = require('leaflet');
-let defaults = require('./options').defaults;
-let leafletOptions = require('./options').leaflet;
-let leafletTileStyles = require('./options').leafletTileStyles;
+let options = require('./options');
 let bbox = require('../libs/bbox');
 
 let box = [
@@ -14,70 +12,37 @@ let box = [
 ];
 
 // Gets initialized in init, with leaflet map
-let maps = [];
+let _map;
 
-const cssSizeUnit = 'px';
+let createToneMapDiv = function(map) {
+  _map = map;
 
-let createToneMapDiv = function(elementInteractive, divId, map) {
-  // Add map to map array
-  maps.push(map);
   // Add Stamen toner tile to leaflet map
-  leaflet.tileLayer('http://tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
-    attribution: `Map tiles by <a href="http://stamen.com">Stamen Design</a>,
-                  under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
-                  Data by <a href="http://openstreetmap.org">OpenStreetMap</a>,
-                  under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.`,
-    maxZoom: 18
+  leaflet.tileLayer(options.leaflet.tileLayer, {
+    'attribution': options.leaflet.attribution,
+    'maxZoom': options.leaflet.maxZoom
   }).addTo(map);
 };
 
-let createMapboxMapDiv = function(elementInteractive, divId, map) {
-  // Add map to map array
-  maps.push(map);
-
-  // Add OpenStreetMap tiles
-  leaflet.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    maxZoom: 18,
-    id: 'your.mapbox.project.id',
-    accessToken: 'pk.' +
-                'eyJ1Ijoia2V2aW5rbCIsImEiOiJjaXZ' +
-                'pNnB2aWowMDljMm9xZGNzNWt0NXk0In0.' +
-                'bneQSkZQkVBBKl2-YZX43Q'
-  }).addTo(map);
+let getMap = function() {
+  return _map;
 };
 
-let getMaps = function() {
-  return maps;
-};
-
-let init = function(elementInteractive, divId,
-              divWidth = defaults.width,
-              divHeight = defaults.height) {
-  // Create new leaflet div with a css class
-  // Like in the tutorial
+let init = function(divId, width, height) {
+  let div = window.document.getElementById('interactive-map');
   let divLeaflet = document.createElement('div');
   divLeaflet.setAttribute('id', divId);
-  divLeaflet.style.width = divWidth + cssSizeUnit;
-  divLeaflet.style.height = divHeight + cssSizeUnit;
-  elementInteractive.appendChild(divLeaflet);
+  divLeaflet.style.width = width + 'px';
+  divLeaflet.style.height = height + 'px';
+  div.appendChild(divLeaflet);
 
   // Get center of bbox
-  let bounds = bbox(box, defaults.width, defaults.height);
-  // let map = leaflet.map(divId)
+  let bounds = bbox(box, width, height);
   let map = leaflet.map(divId, {zoomControl: true})
       .setView([bounds.center[1], bounds.center[0]], bounds.zoom);
 
   addScaleToMap(map);
-
-  // Set the chosen tiles default style
-  let defaultStyle = leafletOptions.defaultTileStyle;
-  if(defaultStyle === leafletTileStyles.stamenTonerLight) {
-    createToneMapDiv(elementInteractive, divId, map);
-  }
-  else if(defaultStyle === leafletTileStyles.mapboxStreet) {
-    createMapboxMapDiv(elementInteractive, divId, map);
-  }
+  createToneMapDiv(map);
 };
 
 let getMetersPerPixel = function(map) {
@@ -115,7 +80,7 @@ let enableZoom = function(map) {
 };
 
 module.exports.init = init;
-module.exports.getMaps = getMaps;
+module.exports.getMap = getMap;
 module.exports.getMetersPerPixel = getMetersPerPixel;
 module.exports.disableZoom = disableZoom;
 module.exports.enableZoom = enableZoom;

@@ -7,30 +7,28 @@ let circleCoastForces = [];
 
 /**
  * Draws a polyline in leaflet
- * @param featureCollection has to be a lineString collection
+ * @param fc has to be a lineString collection
  * @param color
  * @param weight
  */
-let drawPolyline = function(featureCollection, color = '#3388ff', weight = 3) {
-  turf.meta.featureEach(featureCollection, function(feature) {
+let drawPolyline = function(fc, color = '#3388ff', weight = 3) {
+  turf.meta.featureEach(fc, function(feature) {
     let swappedCords = turf.flip(feature);
-    let maps = leafletMap.getMaps();
+    let maps = leafletMap.getMap();
 
-    for(let i = 0; i < maps.length; i++) {
-      leaflet.polyline(swappedCords.geometry.coordinates, {
-        color: color,
-        weight: weight
-      }).addTo(maps[i]);
-    }
+    leaflet.polyline(swappedCords.geometry.coordinates, {
+      color: color,
+      weight: weight
+    }).addTo(maps);
   });
 };
 
-let drawMarkers = function(featureCollection) {
-  let maps = leafletMap.getMaps();
+let drawMarkers = function(fc) {
+  let maps = leafletMap.getMap();
 
-  turf.meta.featureEach(featureCollection, function(feature) {
+  turf.meta.featureEach(fc, function(feature) {
     let coord = turf.invariant.getCoord(turf.flip(feature));
-    let marker = drawMarker(maps[0], coord);
+    let marker = drawMarker(maps, coord);
     // using es6 template literals (` `) here
     let text = `<b>${feature.properties.name}</b><br>
                 ${coord[1]} "lat "  ${coord[0]}`;
@@ -38,33 +36,36 @@ let drawMarkers = function(featureCollection) {
   });
 };
 
-let drawPoints = function(featureCollection, radius = 5, hexColor = "#F23C00") {
-  let maps = leafletMap.getMaps();
+let drawPoints = function(fc, radius = 5, hexColor = "#F23C00") {
+  let maps = leafletMap.getMap();
 
-  turf.meta.featureEach(featureCollection, function(feature) {
+  turf.meta.featureEach(fc, function(feature) {
     let coord = turf.invariant.getCoord(turf.flip(feature));
-    // drawCircle(maps[0], coord, radius, hexColor);
-    drawCircleMarker(maps[0], coord, radius, hexColor);
+    drawCircleMarker(maps, coord, radius, hexColor);
   });
 };
 
-let drawPointsCoastForces = function(featureCollection, radius = 5, hexColor = "#F23C00") {
-  let maps = leafletMap.getMaps();
+let drawPointsCoastForces = function(fc, radius = 5, hexColor = "#F23C00") {
+  let maps = leafletMap.getMap();
   // Make sure the old points get erased
   removeCoastCircles();
 
-  turf.meta.featureEach(featureCollection, function(feature) {
-    let coord = turf.invariant.getCoord(turf.flip(feature));
-    // let circle = drawCircle(maps[0], coord, radius, hexColor);
-    let circle = drawCircleMarker(maps[0], coord, radius, hexColor);
-    circleCoastForces.push(circle);
+  turf.meta.featureEach(fc, function(feature) {
+    turf.meta.coordEach(feature, function(coord) {
+      let circle = drawCircleMarker(
+        maps,
+        [coord[1], coord[0]],
+        radius,
+        hexColor);
+      circleCoastForces.push(circle);
+    });
   });
 };
 
 function removeCoastCircles() {
-  let maps = leafletMap.getMaps();
+  let maps = leafletMap.getMap();
   for(let i = 0; i < circleCoastForces.length; i++) {
-    maps[0].removeLayer(circleCoastForces[i]);
+    maps.removeLayer(circleCoastForces[i]);
   }
 }
 

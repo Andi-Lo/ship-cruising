@@ -7,7 +7,7 @@ class Route {
   constructor(fc) {
     this._waypoints = fc;
     this.calcRoute(this._waypoints).simplifyPath(0.1).smoothCurve();
-    this._route = turf.equidistantRoute(this._route, 60);
+    this._route = turf.equidistant(this._route, 60);
     this._route = turf.fixRoute(this._route);
     return this;
   }

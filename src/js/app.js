@@ -28,9 +28,8 @@ function shipcruising() {
   });
 
   // Interactive map sector
-  let elInteractive = window.document.getElementById('interactive-map');
   let clientRect = calcClientRect();
-  leafletMap.init(elInteractive, 'tone-map', clientRect.width, clientRect.height);
+  leafletMap.init('tone-map', clientRect.width, clientRect.height);
 };
 
 shipcruising();

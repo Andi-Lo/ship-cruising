@@ -2,48 +2,48 @@
 
 let Observer = require('./observer').Observer;
 let force = require('../forces/forces');
-let d3 = require('d3');
+let select = require('d3-selection').select;
 
 class ForceObserver extends Observer {
   constructor(simulation) {
     super();
 
-    d3.select("#strengthElem").on("input", function() {
+    select("#strengthElem").on("input", function() {
       force.linkForce.strength(this.value);
       simulation.alpha(0.5).restart();  // Re-heat the simulation
     });
 
-    d3.select("#distanceElem").on("input", function() {
+    select("#distanceElem").on("input", function() {
       force.linkForce.distance(this.value);
       simulation.alpha(0.5).restart();
     });
 
-    d3.select("#mbSterngth").on("input", function() {
+    select("#mbSterngth").on("input", function() {
       force.manyBody.strength(this.value);
       simulation.alpha(0.5).restart();
     });
 
-    d3.select("#mbMinDist").on("input", function() {
+    select("#mbMinDist").on("input", function() {
       force.manyBody.distanceMin(this.value);
       simulation.alpha(0.5).restart();
     });
 
-    d3.select("#mbMaxDist").on("input", function() {
+    select("#mbMaxDist").on("input", function() {
       force.manyBody.distanceMax(this.value);
       simulation.alpha(0.5).restart();
     });
 
-    d3.select("#colStrength").on("input", function() {
+    select("#colStrength").on("input", function() {
       force.collide.strength(this.value);
       simulation.alpha(0.5).restart();
     });
 
-    d3.select("#colRadius").on("input", function() {
+    select("#colRadius").on("input", function() {
       force.collide.radius(this.value);
       simulation.alpha(0.5).restart();
     });
 
-    d3.select("#colIterations").on("input", function() {
+    select("#colIterations").on("input", function() {
       force.collide.iterations(this.value);
       simulation.alpha(0.5).restart();
     });

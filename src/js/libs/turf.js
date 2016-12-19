@@ -57,15 +57,20 @@ function equdistantParameters(feature, stepSize) {
     throw new Error('StepSize can not be negative');
   }
   let dist = turf.lineDistance(feature);
+  // console.log('dist', dist);
   // make sure we are not dividing by zero
   let steps = (stepSize === 0) ? dist : Math.floor(dist / stepSize);
+  if( steps === 0) {
+    steps = 1;
+  }
+  // console.log('stepsSize', dist / stepSize);
   // this calculates a more exact step size value
   let delta = Math.floor(dist - (steps * stepSize));
   stepSize += delta / steps;
   return {stepSize, steps};
 };
 
-let equidistantRoute = function(fc, stepSize) {
+let equidistant = function(fc, stepSize) {
   let features = [];
   let i = 0;
 
@@ -83,24 +88,7 @@ let equidistantRoute = function(fc, stepSize) {
   return turf.featureCollection(features);
 };
 
-let equidistant = function(fc, padding, toLineString = false) {
-  let pointsOnLine = [];
-
-  turf.meta.featureEach(fc, function(feature) {
-    let dist = turf.lineDistance(feature);
-    for(let i = 0; i < dist; i += padding) {
-      pointsOnLine.push(turf.along(feature, i, 'kilometers'));
-    }
-  });
-  fc = turf.featureCollection(pointsOnLine);
-  if(toLineString) {
-    fc = fcToLineString(fc);
-  }
-  return fc;
-};
-
 let equidistantPointsZoom = function(fc, metersPerPixel) {
-  // Pixel space between the points
   let spaceBetweenPoints = (options.pixelSpaceForces * metersPerPixel) / 1000;
   return equidistant(fc, spaceBetweenPoints);
 };
@@ -140,7 +128,6 @@ let unpackMultiPolCoords = function(features) {
 module.exports = turf;
 module.exports.iterateFeature = iterateFeature;
 module.exports.equidistant = equidistant;
-module.exports.equidistantRoute = equidistantRoute;
 module.exports.fixRoute = fixRoute;
 module.exports.equidistantPointsZoom = equidistantPointsZoom;
 module.exports.unpackMultiPolCoords = unpackMultiPolCoords;

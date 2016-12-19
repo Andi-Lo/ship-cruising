@@ -1,6 +1,7 @@
 'use strict';
 
-let d3 = require('d3');
+let d3 = require('d3-force');
+d3.select = require('d3-selection').select;
 let Link = require('./link').Link;
 let Node = require('./node').Node;
 let Landnode = require('./Landnode').Landnode;
@@ -35,15 +36,15 @@ let collide = d3.forceCollide()
 
 let force = function(route, land) {
   let globalFeatureCollection;
-  let maps = leafletMap.getMaps();
-  let nodes = Node.getNodes(route, maps[0]);
-  let nodesLand = Landnode.getNodes(land, maps[0]);
+  let maps = leafletMap.getMap();
+  let nodes = Node.getNodes(route, maps);
+  let nodesLand = Landnode.getNodes(land, maps);
   let links = Link.getLinks(nodes);
   let clientRect = options.calcClientRect();
 
   // Add nodesLand after the route got linked
   nodes = nodes.concat(nodesLand);
-  let svg = d3.select(maps[0].getPanes().overlayPane).append('svg')
+  let svg = d3.select(maps.getPanes().overlayPane).append('svg')
     .attr('width', clientRect.width)
     .attr('height', clientRect.height);
   // let g = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -71,17 +72,12 @@ let force = function(route, land) {
     .data(nodes)
     .enter().append("circle")
       .attr("r", function(d) { return d.radius; })
-      .attr("fill", function(d) { return d.color; })
-      .call(d3.drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended));
+      .attr("fill", function(d) { return d.color; });
 
   simulation.nodes(nodes).on("tick", ticked).on("end", end);
   simulation.force("link").links(links);
-  maps[0].on("zoomend", update);
-  leafletMap.disableZoom(maps[0]);
-
+  maps.on("zoomend", update);
+  leafletMap.disableZoom(maps);
 
   function update() {
     // Remove force points and just draw points in leaflet
@@ -116,7 +112,7 @@ let force = function(route, land) {
     globalFeatureCollection = convertSvgCirclesToFeatureCol(
         svgCircles
     );
-    leafletMap.enableZoom(maps[0]);
+    leafletMap.enableZoom(maps);
   }
 
   function convertSvgCirclesToFeatureCol(svgCircles) {
@@ -127,7 +123,7 @@ let force = function(route, land) {
       if(!svgCircles[i].isLand) {
         let cx = svgCircles[i].x;
         let cy = svgCircles[i].y;
-        let latLng = maps[0].layerPointToLatLng([cx, cy]);
+        let latLng = maps.layerPointToLatLng([cx, cy]);
 
         features.push(turf.point([
           latLng.lng,
@@ -148,23 +144,6 @@ let force = function(route, land) {
     node
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; });
-  }
-
-  function dragstarted(d) {
-    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-  }
-
-  function dragged(d) {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
-  }
-
-  function dragended(d) {
-    if (!d3.event.active) simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
   }
 
   return simulation;

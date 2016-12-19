@@ -1,7 +1,6 @@
 'use strict';
 
 let turf = require('../libs/turf');
-let drawLeaflet = require('./drawLeaflet');
 let leafletMap = require('./leafletMap');
 
 class Land {
@@ -9,19 +8,14 @@ class Land {
     this._land = fc;
     this._radiusLeafletPoints = 5;
     this._equidistantPoints;
-    // this._land = this.calculateLandInit(fc);
     this.calculateLandInit(this._land);
   }
 
   calculateLandInit(fc) {
-    let map = leafletMap.getMaps()[0];
+    let map = leafletMap.getMap();
     let metersPerPixel = leafletMap.getMetersPerPixel(map);
-    // transforming the multiPolygon fc to a lineString fc
     let lineString = turf.multipolToLineString(fc);
-    // let equidistant = turf.equidistantLineString(lineString);
-    // let equidistant = turf.equidistantPointsOnLine(lineString, 10);
     let equidistant = turf.equidistantPointsZoom(lineString, metersPerPixel);
-    // drawLeaflet.drawPointsCoastForces(equidistant, this._radiusLeafletPoints);
     this._equidistantPoints = equidistant;
     return equidistant;
   }
