@@ -1,6 +1,7 @@
 'use strict';
 
-let d3 = require('d3');
+let d3 = require('d3-force');
+d3.select = require('d3-selection').select;
 let Link = require('./link').Link;
 let Node = require('./node').Node;
 let Landnode = require('./Landnode').Landnode;
@@ -71,17 +72,12 @@ let force = function(route, land) {
     .data(nodes)
     .enter().append("circle")
       .attr("r", function(d) { return d.radius; })
-      .attr("fill", function(d) { return d.color; })
-      .call(d3.drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended));
+      .attr("fill", function(d) { return d.color; });
 
   simulation.nodes(nodes).on("tick", ticked).on("end", end);
   simulation.force("link").links(links);
   maps[0].on("zoomend", update);
   leafletMap.disableZoom(maps[0]);
-
 
   function update() {
     // Remove force points and just draw points in leaflet
@@ -148,23 +144,6 @@ let force = function(route, land) {
     node
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; });
-  }
-
-  function dragstarted(d) {
-    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-  }
-
-  function dragged(d) {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
-  }
-
-  function dragended(d) {
-    if (!d3.event.active) simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
   }
 
   return simulation;

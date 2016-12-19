@@ -7,14 +7,15 @@
     "start": "gulp serve",
     "build": "gulp build",
     "test": "mocha ./tests/test.js --compilers js:babel-core/register && rimraf coverage",
-      "covarage": "nyc --require babel-core/register mocha ./tests/test.js --compilers js:babel-core/register && rimraf coverage"
+    "covarage": "nyc --require babel-core/register mocha ./tests/test.js --compilers js:babel-core/register && rimraf coverage"
   },
   "author": "Andreas Lorer and Kevin Klugmann",
   "dependencies": {
     "@turf/meta": "^3.5.2",
     "@turf/turf": "^3.5.2",
     "babel-polyfill": "^6.20.0",
-    "d3": "^4.4.0",
+    "d3-force": "^1.0.4",
+    "d3-selection": "^1.0.3",
     "geo-viewport": "^0.2.1",
     "leaflet": "^1.0.1",
     "parse-float": "^0.1.1",
