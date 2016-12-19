@@ -36,15 +36,15 @@ let collide = d3.forceCollide()
 
 let force = function(route, land) {
   let globalFeatureCollection;
-  let maps = leafletMap.getMaps();
-  let nodes = Node.getNodes(route, maps[0]);
-  let nodesLand = Landnode.getNodes(land, maps[0]);
+  let maps = leafletMap.getMap();
+  let nodes = Node.getNodes(route, maps);
+  let nodesLand = Landnode.getNodes(land, maps);
   let links = Link.getLinks(nodes);
   let clientRect = options.calcClientRect();
 
   // Add nodesLand after the route got linked
   nodes = nodes.concat(nodesLand);
-  let svg = d3.select(maps[0].getPanes().overlayPane).append('svg')
+  let svg = d3.select(maps.getPanes().overlayPane).append('svg')
     .attr('width', clientRect.width)
     .attr('height', clientRect.height);
   // let g = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -76,8 +76,8 @@ let force = function(route, land) {
 
   simulation.nodes(nodes).on("tick", ticked).on("end", end);
   simulation.force("link").links(links);
-  maps[0].on("zoomend", update);
-  leafletMap.disableZoom(maps[0]);
+  maps.on("zoomend", update);
+  leafletMap.disableZoom(maps);
 
   function update() {
     // Remove force points and just draw points in leaflet
@@ -112,7 +112,7 @@ let force = function(route, land) {
     globalFeatureCollection = convertSvgCirclesToFeatureCol(
         svgCircles
     );
-    leafletMap.enableZoom(maps[0]);
+    leafletMap.enableZoom(maps);
   }
 
   function convertSvgCirclesToFeatureCol(svgCircles) {
@@ -123,7 +123,7 @@ let force = function(route, land) {
       if(!svgCircles[i].isLand) {
         let cx = svgCircles[i].x;
         let cy = svgCircles[i].y;
-        let latLng = maps[0].layerPointToLatLng([cx, cy]);
+        let latLng = maps.layerPointToLatLng([cx, cy]);
 
         features.push(turf.point([
           latLng.lng,

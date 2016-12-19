@@ -10,13 +10,17 @@ let defaults = {
   'height': 320
 };
 
-let leafletTileStyles = {
-  'stamenTonerLight': 0,
-  'mapboxStreet': 1
-};
-
 let leaflet = {
-  'defaultTileStyle': leafletTileStyles.stamenTonerLight
+  'leafletTileStyles': {
+    'stamenTonerLight': 0,
+    'mapboxStreet': 1
+  },
+  'tileLayer': 'http://tile.stamen.com/toner-lite/{z}/{x}/{y}.png',
+  'attribution': `Map tiles by <a href="http://stamen.com">Stamen Design</a>,
+                  under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
+                  Data by <a href="http://openstreetmap.org">OpenStreetMap</a>,
+                  under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.`,
+  'maxZoom': 18
 };
 
 let force = {
@@ -40,6 +44,5 @@ let calcClientRect = function() {
 
 module.exports.defaults = defaults;
 module.exports.leaflet = leaflet;
-module.exports.leafletTileStyles = leafletTileStyles;
 module.exports.force = force;
 module.exports.calcClientRect = calcClientRect;

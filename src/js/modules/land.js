@@ -12,7 +12,7 @@ class Land {
   }
 
   calculateLandInit(fc) {
-    let map = leafletMap.getMaps()[0];
+    let map = leafletMap.getMap();
     let metersPerPixel = leafletMap.getMetersPerPixel(map);
     let lineString = turf.multipolToLineString(fc);
     let equidistant = turf.equidistantPointsZoom(lineString, metersPerPixel);

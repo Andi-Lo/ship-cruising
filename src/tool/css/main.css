@@ -9,10 +9,6 @@ canvas {
   display: inline-block;
 }
 
-#interactive-map {
-  /*user-select: none;*/
-}
-
 .data-wrapper {
   width: 320px;
   margin-left: 15px;
