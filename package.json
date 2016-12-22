@@ -21,6 +21,7 @@
     "parse-float": "^0.1.1",
     "sphericalmercator": "^1.0.5",
     "turf-normalize": "^1.0.2",
+    "turf-size": "^1.1.1",
     "underscore": "^1.8.3"
   },
   "license": "",
