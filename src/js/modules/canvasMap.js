@@ -2,6 +2,7 @@
 
 let defaults = require('./options').defaults;
 let turf = require('../libs/turf');
+turf.size = require('turf-size');
 let mercator = require('../libs/mercator');
 let erode = require('../libs/erode');
 let polygon2line = require('../libs/polygon-to-line');
@@ -20,38 +21,75 @@ let createCanvas = function(width, height) {
   canvas.height = height;
 
   new CanvasObserver(canvas);
-
-  // Draw the whole canvas black
   draw.drawRect(defaults.mapBackgroundColor, defaults.width, defaults.height);
-
   el.appendChild(canvas);
+
   return canvas;
 };
+
+
+/**
+ * Takes a set of points and a set of polygons and returns
+ * the points that fall within the polygons.
+ * This function is a modified version of the official turf.within function
+ *
+ * @param {Array<Points>} points
+ * @param {FeatureCollection<Polygon>} polygons
+ * @returns FeatureCollection<LineString> with matching points
+ */
+function within(points, polygons) {
+  let pointsWithin = [];
+  for (let i = 0; i < polygons.features.length; i++) {
+    for (let j = 0; j < points.length; j++) {
+      let isInside = turf.inside(points[j], polygons.features[i]);
+      if (isInside) {
+        pointsWithin.push(points[j]);
+      }
+    }
+  }
+  if(pointsWithin.length > 0) {
+    return turf.lineString(pointsWithin);
+  }
+  else {
+    return false;
+  }
+};
+
+function bboxClip(feature, bbox) {
+  let points = turf.meta.coordAll(feature);
+  let isWithin = within(points, bbox);
+  return isWithin;
+};
+
+function clip(fc) {
+  // expand the bbox size by factor 2
+  let bbox = turf.size(defaults.bbox, 1);
+  let polygon = turf.featureCollection([turf.bboxPolygon(bbox)]);
+  fc = polygon2line(fc);
+
+  let pointsWithin = turf.featureCollection([]);
+  let intersection;
+  turf.meta.featureEach(fc, function(feature) {
+    intersection = bboxClip(feature, polygon);
+    if(intersection !== false) {
+      pointsWithin.features.push(intersection);
+    }
+  });
+  return pointsWithin;
+}
 
 let initMap = function(path) {
   return new Promise(function(resolve, reject) {
     fetch(path).then((parse) => parse.json()).then((geo) => {
-      console.log('geo', geo);
-      geo = polygon2line(geo);
+      // return the relevant map points that lay in the viewport
+      geo = clip(geo);
+      // resolve promise object with the map data
       resolve(geo);
-      console.log('geo', geo);
       geo.features.forEach((features) => {
         switch (features.geometry.type) {
-          case "Polygon":
-            draw.drawPolygon(features, defaults.mapColor);
-            break;
-          case "Point":
-            draw.drawPoint(features, defaults.pointColor, 4);
-            break;
-          case "MultiPolygon":
-            draw.drawMultiPolygon(features, defaults.mapColor);
-            break;
           case "LineString":
-            draw.drawLineString(features, defaults.mapColor, 1, true);
+            draw.drawLineString(features, defaults.mapColor, true, 1);
             break;
-          // case "MultiLineString":
-          //   draw.drawLineString(features, defaults.mapColor, 1, true);
-          //   break;
           default:
             console.log(features.geometry.type);
             break;
@@ -96,15 +134,15 @@ let getMousePosition = function(event) {
 /**
  * Creates a 2D binary array of the canvas that will serve us as a
  * per pixel based look-up-table for land and water.
- * If the lookup leads to a 1 it is water
- * If the lookup leads to a 0 it is land
+ * If the color lookup leads to a 1 it is water
+ * If the color lookup leads to a 0 it is land
  * @returns a 2D binary array
  */
 let createPixelData = function() {
   let canvas = getCanvas();
   let ctx = canvas.getContext('2d');
   let imageData = ctx.getImageData(0, 0, defaults.width, defaults.height);
-  let mapColor = convertColorStringToObj(defaults.mapColor);
+  let mapColor = colorToObject(defaults.mapColor);
 
   let colorData = [];
   let rowIndex = 0;
@@ -151,8 +189,7 @@ let getColorData = function() {
   return colorData;
 };
 
-// TODO: find a better function name
-let convertColorStringToObj = function(rgbaString) {
+let colorToObject = function(rgbaString) {
   rgbaString = rgbaString.substring(5, rgbaString.length-1)
       .replace(/ /g, '')
       .split(',');

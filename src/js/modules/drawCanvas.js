@@ -6,8 +6,7 @@ let defaults = require('./options').defaults;
 let canvasMap = require('./canvasMap');
 
 let drawLine = function(coord, isFirst, stroke = false) {
-  let canvas = canvasMap.getCanvas();
-  let ctx = canvas.getContext('2d');
+  let ctx = canvasMap.getCanvas().getContext('2d');
   let pixel = mercator.posToPixel(coord);
 
   if(pixel.x > 0 || pixel.y > 0) {
@@ -27,8 +26,7 @@ let drawLine = function(coord, isFirst, stroke = false) {
 };
 
 let drawMultiPolygon = function(features, color) {
-  let canvas = canvasMap.getCanvas();
-  let ctx = canvas.getContext('2d');
+  let ctx = canvasMap.getCanvas().getContext('2d');
   ctx.fillStyle = color;
   let isFirst = true;
 
@@ -59,10 +57,10 @@ let drawPolygon = function(features, color) {
   ctx.fill();
 };
 
-let drawPoint = function(ctx, features, color, lineWidth) {
+let drawPoint = function(features, color, lineWidth) {
+  let ctx = canvasMap.getCanvas().getContext('2d');
   let point = features.geometry.coordinates;
   let pixel = mercator.posToPixel(point);
-  // ctx.globalCompositeOperation = 'destination-over';
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
   ctx.lineWidth = lineWidth;
@@ -75,8 +73,7 @@ let drawPoint = function(ctx, features, color, lineWidth) {
 };
 
 let drawPixels = function(featureCollection) {
-  let canvas = canvasMap.getCanvas();
-  let ctx = canvas.getContext('2d');
+  let ctx = canvasMap.getCanvas().getContext('2d');
   ctx.fillStyle = defaults.pixelColor;
 
   turf.meta.featureEach(featureCollection, function(feature) {
@@ -87,20 +84,13 @@ let drawPixels = function(featureCollection) {
   });
 };
 
-let drawMultiLineString = function(fc) {
-  console.log('drawMultiLineString', fc);
-  turf.meta.coordEach(fc, function(coord) {
-  });
-};
-
-let drawLineString = function(fc, color, lineWidth = 2, fill = false) {
-  console.log('fc', fc);
+let drawLineString = function(fc, color, fill = false) {
   let ctx = canvasMap.getCanvas().getContext('2d');
   let length = 1;
   let isFirst = true;
+  ctx.lineWidth = 2;
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
-  ctx.lineWidth = lineWidth;
 
   turf.meta.featureEach(fc, function(feature) {
     let routeLength = feature.geometry.coordinates.length;
@@ -111,10 +101,6 @@ let drawLineString = function(fc, color, lineWidth = 2, fill = false) {
     });
     length = 1;
     isFirst = true;
-    ctx.closePath();
-    if(fill == true) {
-      ctx.fill();
-    }
   });
   ctx.closePath();
   if(fill == true) {
@@ -122,7 +108,8 @@ let drawLineString = function(fc, color, lineWidth = 2, fill = false) {
   }
 };
 
-let drawRoute = function(ctx, route, color) {
+let drawRoute = function(route, color) {
+  let ctx = canvasMap.getCanvas().getContext('2d');
   let routeLength = route.features.length;
   let length = 1;
   let isFirst = true;
@@ -140,8 +127,7 @@ let drawRoute = function(ctx, route, color) {
 };
 
 let drawRect = function(color, width, height) {
-  let canvas = canvasMap.getCanvas();
-  let ctx = canvas.getContext('2d');
+  let ctx = canvasMap.getCanvas().getContext('2d');
 
   ctx.beginPath();
   ctx.rect(0, 0, width, height);
@@ -156,5 +142,4 @@ exports.drawMultiPolygon = drawMultiPolygon;
 exports.drawRoute = drawRoute;
 exports.drawPixels = drawPixels;
 exports.drawLineString = drawLineString;
-exports.drawMultiLineString = drawMultiLineString;
 exports.drawRect = drawRect;
