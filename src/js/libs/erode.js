@@ -19,20 +19,21 @@
 module.exports = function(binaryImage, w, h, threshold = 5) {
   let result = binaryImage;
   let neighbours = [];
+  console.log('binaryImage', binaryImage);
 
   for(let x = 0; x < w; x++) {
     for(let y = 0; y < h; y++) {
-      let pix = binaryImage[x][y];
+      let pix = binaryImage[y][x];
       if(pix === 1) {
         neighbours = kernel(binaryImage, w, h, x, y);
         let sum = neighbours.reduce((a, b) => {
           return a + b;
         }, 0);
         if(sum < threshold)
-          result[x][y] = 0;
+          result[y][x] = 0;
       }
       else {
-        result[x][y] = pix;
+        result[y][x] = pix;
       }
     }
   }
@@ -56,20 +57,20 @@ function kernel(pixels, w, h, x, y) {
   h = h - 1;
   let pixs = [];
 
-  pixs.push(pixels[((x-1) % w) < 0 ? w : x % w][((y-1) % h) < 0 ? h : x % h]);
-  pixs.push(pixels[x][((y-1) % h) < 0 ? h : x % h]);
-  pixs.push(pixels[(x+1) % w][((y-1) % h) < 0 ? h : x % h]);
+  pixs.push(pixels[((y-1) % h) < 0 ? h : x % h][((x-1) % w) < 0 ? w : x % w]);
+  pixs.push(pixels[((y-1) % h) < 0 ? h : x % h][x]);
+  pixs.push(pixels[((y-1) % h) < 0 ? h : x % h][(x+1) % w]);
 
-  pixs.push(pixels[((x-1) % w) < 0 ? w : x % w][y]);
-  pixs.push(pixels[(x+1) % w][y]);
+  pixs.push(pixels[y][((x-1) % w) < 0 ? w : x % w]);
+  pixs.push(pixels[y][(x+1) % w]);
 
-  pixs.push(pixels[((x-1) % w) < 0 ? w : x % w][(y+1) % h]);
-  pixs.push(pixels[x][(y+1) % h]);
-  pixs.push(pixels[(x+1) % w][(y+1) % h]);
+  pixs.push(pixels[(y+1) % h][((x-1) % w) < 0 ? w : x % w]);
+  pixs.push(pixels[(y+1) % h][x]);
+  pixs.push(pixels[(y+1) % h][(x+1) % w]);
 
   pixs = pixs.filter(isNull);
 
-  pixs.push(pixels[x][y]);
+  pixs.push(pixels[y][x]);
   return pixs;
 };
 
