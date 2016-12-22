@@ -7,7 +7,13 @@ let defaults = {
   'mapColor': 'rgba(255, 255, 255, 1)',
   'mapBackgroundColor': 'rgba(0, 0, 0, 1)',
   'width': 320,
-  'height': 320
+  'height': 320,
+  'bbox': [
+    -91.14257812499999,
+    7.493196470122287,
+    -64.8193359375,
+    25.839449402063185
+  ]
 };
 
 let leaflet = {
@@ -36,8 +42,8 @@ let force = {
 };
 
 let calcClientRect = function() {
-  let heightToolbar = window.document.getElementsByClassName('tool-wrapper')[0].offsetHeight;
-  let height = window.innerHeight - heightToolbar;
+  let h = window.document.getElementsByClassName('tool-wrapper')[0];
+  let height = window.innerHeight - h.offsetHeight;
   let width = window.innerWidth;
   return {height, width};
 };

@@ -5,13 +5,6 @@ let defaults = require('../modules/options').defaults;
 let SM = new (require('sphericalmercator'))();
 let bbox = require('./bbox');
 
-let bboxJamaika = [
-  -91.14257812499999,
-  7.493196470122287,
-  -64.8193359375,
-  25.839449402063185
-];
-
 /**
  * Takes a long, lat coordinate
  * @param [any,any] coord
@@ -60,7 +53,7 @@ let pixelToPosition = function(pixelPos) {
  * @param {[any,any,any,any]} box
  * @returns the scale of 1px in units
  */
-let calculateScale = function(units = 'kilometers', box = bboxJamaika) {
+let calculateScale = function(units = 'kilometers', box = defaults.bbox) {
   let bounds = bbox(box, defaults.width, defaults.height);
   let start = turf.point([bounds.minX, bounds.minY]);
   let end = turf.point([bounds.maxX, bounds.minY]);
@@ -76,7 +69,7 @@ let calculateScale = function(units = 'kilometers', box = bboxJamaika) {
  * @param {bbox} [box=bboxJamaika]
  * @returns {[num, num, zoom]}
  */
-function getOrigin(box = bboxJamaika) {
+function getOrigin(box = defaults.bbox) {
   let bounds = bbox(box, defaults.width, defaults.height);
   let center = SM.px(bounds.center, bounds.zoom);
 
