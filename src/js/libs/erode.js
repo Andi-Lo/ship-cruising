@@ -2,6 +2,8 @@
 
 // https://en.wikipedia.org/wiki/Erosion_(morphology)
 
+let kernel = require('./kernel');
+
 /**
  * Takes a two dimensional array (so to speak a binary image)
  * like this:
@@ -19,7 +21,6 @@
 module.exports = function(binaryImage, w, h, threshold = 5) {
   let result = binaryImage;
   let neighbours = [];
-  console.log('binaryImage', binaryImage);
 
   for(let x = 0; x < w; x++) {
     for(let y = 0; y < h; y++) {
@@ -40,40 +41,3 @@ module.exports = function(binaryImage, w, h, threshold = 5) {
   return result;
 };
 
-/**
- * Searches the neighbours of a given binary image by search pattern
- * 0 0 0
- * 0 1 0
- * 0 0 0
- * @param {any} pixels
- * @param {any} w
- * @param {any} h
- * @param {any} x
- * @param {any} y
- * @returns an array containing the neighbours values
- */
-function kernel(pixels, w, h, x, y) {
-  w = w - 1;
-  h = h - 1;
-  let pixs = [];
-
-  pixs.push(pixels[((y-1) % h) < 0 ? h : x % h][((x-1) % w) < 0 ? w : x % w]);
-  pixs.push(pixels[((y-1) % h) < 0 ? h : x % h][x]);
-  pixs.push(pixels[((y-1) % h) < 0 ? h : x % h][(x+1) % w]);
-
-  pixs.push(pixels[y][((x-1) % w) < 0 ? w : x % w]);
-  pixs.push(pixels[y][(x+1) % w]);
-
-  pixs.push(pixels[(y+1) % h][((x-1) % w) < 0 ? w : x % w]);
-  pixs.push(pixels[(y+1) % h][x]);
-  pixs.push(pixels[(y+1) % h][(x+1) % w]);
-
-  pixs = pixs.filter(isNull);
-
-  pixs.push(pixels[y][x]);
-  return pixs;
-};
-
-function isNull(value) {
-  return value != 0;
-}
