@@ -57,13 +57,11 @@ function equdistantParameters(feature, stepSize) {
     throw new Error('StepSize can not be negative');
   }
   let dist = turf.lineDistance(feature);
-  // console.log('dist', dist);
   // make sure we are not dividing by zero
   let steps = (stepSize === 0) ? dist : Math.floor(dist / stepSize);
   if( steps === 0) {
     steps = 1;
   }
-  // console.log('stepsSize', dist / stepSize);
   // this calculates a more exact step size value
   let delta = Math.floor(dist - (steps * stepSize));
   stepSize += delta / steps;
