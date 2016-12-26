@@ -169,6 +169,15 @@ let createPixelData = function() {
   return colorData;
 };
 
+/**
+ * Returns a rectangular polygon feature that encompasses all vertices
+ * @param route a Feature or FeatureCollection
+ */
+let calcBbox = function(route) {
+  let feature = turf.envelope(route);
+  return turf.bbox(feature);
+};
+
 let getCanvas = function() {
   return canvas;
 };
@@ -212,3 +221,4 @@ module.exports.setFeatures = setFeatures;
 module.exports.initMap = initMap;
 module.exports.updateVal = updateVal;
 module.exports.registerClick = registerClick;
+module.exports.calcBbox = calcBbox;
