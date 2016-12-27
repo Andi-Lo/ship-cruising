@@ -78,11 +78,42 @@ function clip(fc) {
   return pointsWithin;
 }
 
-let initMap = function(path) {
+let initMap = function() {
+  return new Promise(function(resolve, reject) {
+    fetch('./map/route_test.geojson').then((parse) => parse.json()).then((geoRoute) => {
+      fetch('./map/coasts_50m.geojson').then((parse) => parse.json()).then((geoMap) => {
+        // Set bbox according to route
+        defaults.bbox = calcBbox(geoRoute);
+
+        // Return the relevant map points that lay in the viewport
+        let coastFcPoints = calcRelevantCoastPoints(geoRoute, geoMap);
+        let coastFcPolygon = turf.fcToFcPolygon(coastFcPoints);
+        // Just for testing it on geojson.io
+        console.log(JSON.stringify(coastFcPolygon));
+        let geo = polygon2line(coastFcPolygon);
+        // resolve promise object with the map data
+        resolve(geo);
+        geo.features.forEach((features) => {
+          switch (features.geometry.type) {
+            case "LineString":
+              draw.drawLineString(features, defaults.mapColor, true, 1);
+              break;
+            default:
+              console.log(features.geometry.type);
+              break;
+          }
+        });
+      });
+    });
+  });
+};
+
+/* let initMap = function(path) {
   return new Promise(function(resolve, reject) {
     fetch(path).then((parse) => parse.json()).then((geo) => {
       // return the relevant map points that lay in the viewport
-      geo = clip(geo);
+      // geo = clip(geo);
+      geo = polygon2line(geo);
       // resolve promise object with the map data
       resolve(geo);
       geo.features.forEach((features) => {
@@ -97,7 +128,7 @@ let initMap = function(path) {
       });
     });
   });
-};
+};*/
 
 let updateVal = function(event) {
   let coord = document.getElementById('coordinates');
@@ -173,9 +204,19 @@ let createPixelData = function() {
  * Returns a rectangular polygon feature that encompasses all vertices
  * @param route a Feature or FeatureCollection
  */
-let calcBbox = function(route) {
+function calcBbox(route) {
   let feature = turf.envelope(route);
   return turf.bbox(feature);
+};
+
+let calcRelevantCoastPoints = function(route, map) {
+  // Get a polygon of the route points
+  let routePol = turf.envelope(route);
+  // "routePol" needs to be in an array
+  // otherwise the "within" function won't work
+  let searchWithin = turf.featureCollection([routePol]);
+  let pointFc = turf.fcToFcPoints(map);
+  return turf.within(pointFc, searchWithin);
 };
 
 let getCanvas = function() {
@@ -221,4 +262,4 @@ module.exports.setFeatures = setFeatures;
 module.exports.initMap = initMap;
 module.exports.updateVal = updateVal;
 module.exports.registerClick = registerClick;
-module.exports.calcBbox = calcBbox;
+module.exports.calcRelevantCoastPoints = calcRelevantCoastPoints;
