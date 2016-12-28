@@ -92,8 +92,8 @@ let initMap = function() {
 
             // Return the relevant map polygons that lay in the viewport
             // of the route
-            let coastFcPolygons = calcRelevantCoastPolygons(geoRoute, geoMap);
-            let geo = polygon2line(coastFcPolygons);
+            let geo = calcRelevantCoastPolygons(geoRoute, geoMap, 100);
+            // let geo = polygon2line(coastFcPolygons);
             // resolve promise object with the map data
             resolve(geo);
             geo.features.forEach((features) => {
@@ -217,12 +217,16 @@ function calcBbox(route) {
  * @param route feature collection of points. The points represent the harbors
  * @param map feature collection of the coastlines
  * (MultiLineStrings or MultiPolygons)
+ * @param buffer adds a buffer in kilometers to the route bbox
  * @returns turf feature collection with polygons.
  * This polygons represent the relevant coasts.
  */
-let calcRelevantCoastPolygons = function(route, map) {
+let calcRelevantCoastPolygons = function(route, map, buffer = 0) {
   // Get a polygon of the route points
   let routePol = turf.envelope(route);
+  // Add the buffer to the route
+  routePol = turf.buffer(routePol, buffer, 'kilometers');
+
   // "routePol" needs to be in an array
   // otherwise the "within" function won't work
   let searchWithin = turf.featureCollection([routePol]);
@@ -235,8 +239,8 @@ let calcRelevantCoastPolygons = function(route, map) {
 
     // If no point will be returned don't use the polygon
     if(pointsWithin.features.length != 0) {
-      let polygonWithin = turf.fcToFcPolygon(pointsWithin);
-      features.push(polygonWithin);
+      let lineStringWithin = turf.fcToLineString(pointsWithin);
+      features.push(lineStringWithin);
     }
   });
   return turf.featureCollection(features);

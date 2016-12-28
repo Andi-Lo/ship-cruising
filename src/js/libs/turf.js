@@ -131,17 +131,6 @@ let fcToFcPoints = function(fc) {
   return turf.featureCollection(points);
 };
 
-let fcToFcPolygon = function(fc) {
-  let coords = [];
-  turf.meta.coordEach(fc, function(coord) {
-    coords.push(coord);
-  });
-  if(coords[0] != coords[coords.length -1]) {
-    coords.push(coords[0]);
-  }
-  return turf.polygon([coords]);
-};
-
 module.exports = turf;
 module.exports.iterateFeature = iterateFeature;
 module.exports.equidistant = equidistant;
@@ -151,4 +140,3 @@ module.exports.unpackMultiPolCoords = unpackMultiPolCoords;
 module.exports.multipolToLineString = multipolToLineString;
 module.exports.fcToLineString = fcToLineString;
 module.exports.fcToFcPoints = fcToFcPoints;
-module.exports.fcToFcPolygon = fcToFcPolygon;
