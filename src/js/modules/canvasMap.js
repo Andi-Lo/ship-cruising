@@ -79,6 +79,9 @@ function clip(fc) {
 }
 
 let initMap = function() {
+  // TODO make bbox and envelope bigger as the actual route
+  // TODO keep polygons (lands) at the converting from polygons
+  // to points
   return new Promise(function(resolve, reject) {
     fetch('./map/route_test.geojson').then((parse) => parse.json()).then((geoRoute) => {
       fetch('./map/coasts_50m.geojson').then((parse) => parse.json()).then((geoMap) => {
