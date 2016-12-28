@@ -2,7 +2,7 @@
 
 let KeyboardObserver = require('./observers/keyboardObserver').KeyboardObserver;
 let LeafletObserver = require('./observers/leafletObserver').LeafletObserver;
-let MouseObserver = require('./observers/MouseObserver').MouseObserver;
+let MouseObserver = require('./observers/mouseObserver').MouseObserver;
 let canvasMap = require('./modules/canvasMap');
 let leafletMap = require('./modules/leafletMap');
 let defaults = require('./modules/options').defaults;
