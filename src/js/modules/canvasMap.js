@@ -83,31 +83,31 @@ let initMap = function() {
   // TODO keep polygons (lands) at the converting from polygons
   // to points
   return new Promise(function(resolve, reject) {
-    fetch('./map/route_test.geojson').then((parse) => parse.json()).then((geoRoute) => {
-      fetch('./map/coasts_50m.geojson').then((parse) => parse.json()).then((geoMap) => {
-        // Set bbox according to route
-        defaults.bbox = calcBbox(geoRoute);
+    fetch('./map/route_test.geojson')
+      .then((parse) => parse.json()).then((geoRoute) => {
+        fetch('./map/coasts_50m.geojson')
+          .then((parse) => parse.json()).then((geoMap) => {
+            // Set bbox according to route
+            defaults.bbox = calcBbox(geoRoute);
 
-        // Return the relevant map points that lay in the viewport
-        let coastFcPoints = calcRelevantCoastPoints(geoRoute, geoMap);
-        let coastFcPolygon = turf.fcToFcPolygon(coastFcPoints);
-        // Just for testing it on geojson.io
-        console.log(JSON.stringify(coastFcPolygon));
-        let geo = polygon2line(coastFcPolygon);
-        // resolve promise object with the map data
-        resolve(geo);
-        geo.features.forEach((features) => {
-          switch (features.geometry.type) {
-            case "LineString":
-              draw.drawLineString(features, defaults.mapColor, true, 1);
-              break;
-            default:
-              console.log(features.geometry.type);
-              break;
-          }
-        });
+            // Return the relevant map polygons that lay in the viewport
+            // of the route
+            let coastFcPolygons = calcRelevantCoastPolygons(geoRoute, geoMap);
+            let geo = polygon2line(coastFcPolygons);
+            // resolve promise object with the map data
+            resolve(geo);
+            geo.features.forEach((features) => {
+              switch (features.geometry.type) {
+                case "LineString":
+                  draw.drawLineString(features, defaults.mapColor, true, 1);
+                  break;
+                default:
+                  console.log(features.geometry.type);
+                  break;
+              }
+            });
+          });
       });
-    });
   });
 };
 
@@ -212,14 +212,34 @@ function calcBbox(route) {
   return turf.bbox(feature);
 };
 
-let calcRelevantCoastPoints = function(route, map) {
+/**
+ * Calculates the relevant coast polygons that are in the bbox of the route.
+ * @param route feature collection of points. The points represent the harbors
+ * @param map feature collection of the coastlines
+ * (MultiLineStrings or MultiPolygons)
+ * @returns turf feature collection with polygons.
+ * This polygons represent the relevant coasts.
+ */
+let calcRelevantCoastPolygons = function(route, map) {
   // Get a polygon of the route points
   let routePol = turf.envelope(route);
   // "routePol" needs to be in an array
   // otherwise the "within" function won't work
   let searchWithin = turf.featureCollection([routePol]);
-  let pointFc = turf.fcToFcPoints(map);
-  return turf.within(pointFc, searchWithin);
+  // Do "within" with every single polygon of the map
+  // to keep each polygon
+  let features = [];
+  turf.meta.featureEach(map, function(feature) {
+    let pointFc = turf.fcToFcPoints(feature);
+    let pointsWithin = turf.within(pointFc, searchWithin);
+
+    // If no point will be returned don't use the polygon
+    if(pointsWithin.features.length != 0) {
+      let polygonWithin = turf.fcToFcPolygon(pointsWithin);
+      features.push(polygonWithin);
+    }
+  });
+  return turf.featureCollection(features);
 };
 
 let getCanvas = function() {
@@ -265,4 +285,4 @@ module.exports.setFeatures = setFeatures;
 module.exports.initMap = initMap;
 module.exports.updateVal = updateVal;
 module.exports.registerClick = registerClick;
-module.exports.calcRelevantCoastPoints = calcRelevantCoastPoints;
+module.exports.calcRelevantCoastPolygons = calcRelevantCoastPolygons;
