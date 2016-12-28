@@ -3,9 +3,11 @@
 let turf = require('@turf/turf');
 turf.meta = require('@turf/meta');
 turf.invariant = require('@turf/invariant');
+turf.size = require('turf-size');
 let options = require('../modules/options').force;
+let polygon2line = require('./to-lineString');
+let lineclip = require('lineclip');
 require("babel-polyfill");
-
 
 /**
  * ES6 Generator iterates over the features of the featureCollection
@@ -40,13 +42,32 @@ let iterateFeature = function* (fc, start = 0, end = -1) {
  */
 let fixRoute = function(fc) {
   turf.meta.featureEach(fc, function(feature) {
+    let length = feature.geometry.coordinates.length;
     if(feature.properties.start && feature.properties.end) {
-      let length = feature.geometry.coordinates.length;
       // there have to be at least 2 points for this to make sense
       if(length > 0) {
         feature.geometry.coordinates[0] = feature.properties.start;
         feature.geometry.coordinates[length-1] = feature.properties.end;
       }
+    }
+    else {
+      let first = feature.geometry.coordinates[0];
+      let last = feature.geometry.coordinates[length-1];
+      if(first[0] !== last[0] || first[1] !== last[1]) {
+        feature.geometry.coordinates.push(first);
+      }
+    }
+  });
+  return fc;
+};
+
+let fixLineString = function(fc) {
+  turf.meta.featureEach(fc, function(feature) {
+    let length = feature.geometry.coordinates.length;
+    let first = feature.geometry.coordinates[0];
+    let last = feature.geometry.coordinates[length-1];
+    if(first[0] !== last[0] || first[1] !== last[1]) {
+      feature.geometry.coordinates.push(first);
     }
   });
   return fc;
@@ -123,10 +144,81 @@ let unpackMultiPolCoords = function(features) {
   return data;
 };
 
+
+/**
+ * Takes a set of points and a set of polygons and returns
+ * the points that fall within the polygons.
+ * This function is a modified version of the official turf.within function
+ *
+ * @param {Array<Points>} points
+ * @param {FeatureCollection<Polygon>} polygons
+ * @returns FeatureCollection<LineString> with matching points
+ */
+let within = function(points, polygons) {
+  let pointsWithin = [];
+  for (let i = 0; i < polygons.features.length; i++) {
+    for (let j = 0; j < points.length; j++) {
+      let isInside = turf.inside(points[j], polygons.features[i]);
+      if (isInside) {
+        pointsWithin.push(points[j]);
+      }
+    }
+  }
+  if(pointsWithin.length > 0) {
+    return turf.lineString(pointsWithin);
+  }
+  else {
+    return false;
+  }
+};
+
+function clip(feature, polygon) {
+  let points = turf.meta.coordAll(feature);
+  let isWithin = within(points, polygon);
+  return isWithin;
+};
+
+let bboxClip = function(fc, bbox = defaults.bbox, bboxSize = 1) {
+  // expand the bbox size by factor n
+  bbox = turf.size(bbox, bboxSize);
+  let polygon = turf.featureCollection([turf.bboxPolygon(bbox)]);
+  fc = polygon2line(fc);
+
+  let pointsWithin = turf.featureCollection([]);
+  let intersection;
+  turf.meta.featureEach(fc, function(feature) {
+    intersection = clip(feature, polygon);
+    if(intersection !== false) {
+      pointsWithin.features.push(intersection);
+    }
+  });
+  return pointsWithin;
+};
+
+let clipPolygon = function(fc, bbox) {
+  let points;
+  let polygon;
+  bbox = turf.size(bbox, 1);
+  let clipped = turf.featureCollection([]);
+  turf.meta.featureEach(fc, function(feature) {
+    points = turf.meta.coordAll(feature);
+    polygon = lineclip.polygon(points, bbox);
+    if(polygon.length > 0) {
+      clipped.features.push(turf.lineString(polygon));
+    }
+  });
+  clipped = turf.fixLineString(clipped);
+  return clipped;
+};
+
 module.exports = turf;
+module.exports.bboxClip = bboxClip;
+module.exports.clipPolygon = clipPolygon;
+module.exports.within = within;
 module.exports.iterateFeature = iterateFeature;
 module.exports.equidistant = equidistant;
 module.exports.fixRoute = fixRoute;
+module.exports.fixLineString = fixLineString;
 module.exports.equidistantPointsZoom = equidistantPointsZoom;
 module.exports.unpackMultiPolCoords = unpackMultiPolCoords;
 module.exports.multipolToLineString = multipolToLineString;

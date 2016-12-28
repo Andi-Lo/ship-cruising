@@ -2,10 +2,8 @@
 
 let defaults = require('./options').defaults;
 let turf = require('../libs/turf');
-turf.size = require('turf-size');
 let mercator = require('../libs/mercator');
 let erode = require('../libs/erode');
-let polygon2line = require('../libs/polygon-to-line');
 let draw = require('./drawCanvas');
 let CanvasObserver = require('../observers/canvasObserver').CanvasObserver;
 
@@ -27,62 +25,12 @@ let createCanvas = function(width, height) {
   return canvas;
 };
 
-
-/**
- * Takes a set of points and a set of polygons and returns
- * the points that fall within the polygons.
- * This function is a modified version of the official turf.within function
- *
- * @param {Array<Points>} points
- * @param {FeatureCollection<Polygon>} polygons
- * @returns FeatureCollection<LineString> with matching points
- */
-function within(points, polygons) {
-  let pointsWithin = [];
-  for (let i = 0; i < polygons.features.length; i++) {
-    for (let j = 0; j < points.length; j++) {
-      let isInside = turf.inside(points[j], polygons.features[i]);
-      if (isInside) {
-        pointsWithin.push(points[j]);
-      }
-    }
-  }
-  if(pointsWithin.length > 0) {
-    return turf.lineString(pointsWithin);
-  }
-  else {
-    return false;
-  }
-};
-
-function bboxClip(feature, bbox) {
-  let points = turf.meta.coordAll(feature);
-  let isWithin = within(points, bbox);
-  return isWithin;
-};
-
-function clip(fc) {
-  // expand the bbox size by factor 2
-  let bbox = turf.size(defaults.bbox, 1);
-  let polygon = turf.featureCollection([turf.bboxPolygon(bbox)]);
-  fc = polygon2line(fc);
-
-  let pointsWithin = turf.featureCollection([]);
-  let intersection;
-  turf.meta.featureEach(fc, function(feature) {
-    intersection = bboxClip(feature, polygon);
-    if(intersection !== false) {
-      pointsWithin.features.push(intersection);
-    }
-  });
-  return pointsWithin;
-}
-
 let initMap = function(path) {
   return new Promise(function(resolve, reject) {
     fetch(path).then((parse) => parse.json()).then((geo) => {
-      // return the relevant map points that lay in the viewport
-      geo = clip(geo);
+      // clip the relevant map points that lay in the viewport
+      geo = turf.clipPolygon(geo, defaults.bbox);
+
       // resolve promise object with the map data
       resolve(geo);
       geo.features.forEach((features) => {

@@ -9,6 +9,7 @@ let leafletMap = require('../modules/leafletMap');
 let turf = require('../libs/turf');
 let drawLeaflet = require('../modules/drawLeaflet');
 let options = require('../modules/options');
+let calcClientRect = require('../libs/helpers').calcClientRect;
 
 const LINK_STR = 0.02;
 const LINK_DIST = 1;
@@ -40,7 +41,7 @@ let force = function(route, land) {
   let nodes = Node.getNodes(route, maps);
   let nodesLand = Landnode.getNodes(land, maps);
   let links = Link.getLinks(nodes);
-  let clientRect = options.calcClientRect();
+  let clientRect = calcClientRect();
 
   // Add nodesLand after the route got linked
   nodes = nodes.concat(nodesLand);

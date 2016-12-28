@@ -6,7 +6,7 @@ let MouseObserver = require('./observers/MouseObserver').MouseObserver;
 let canvasMap = require('./modules/canvasMap');
 let leafletMap = require('./modules/leafletMap');
 let defaults = require('./modules/options').defaults;
-let calcClientRect = require('./modules/options').calcClientRect;
+let calcClientRect = require('./libs/helpers').calcClientRect;
 let Land = require('./modules/land').Land;
 
 function shipcruising() {

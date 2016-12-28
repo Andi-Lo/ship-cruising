@@ -34,10 +34,10 @@ class KeyboardObserver extends Observer {
             drawLeaflet.drawPolyline(route._route,
                 routeLeafletColor,
                 routeLeafletWeight);
-            // drawLeaflet.drawMarkers(route._waypoints);
+            drawLeaflet.drawMarkers(route._waypoints);
 
-            // let simulation = forces.force(route._route, land._equidistantPoints);
-            // new ForceObserver(simulation);
+            let simulation = forces.force(route._route, land._equidistantPoints);
+            new ForceObserver(simulation);
 
             canvasMap.setFeatures([]);
           }

@@ -88,7 +88,7 @@ let drawLineString = function(fc, color, fill = false) {
   let ctx = canvasMap.getCanvas().getContext('2d');
   let length = 1;
   let isFirst = true;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 1;
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
 
