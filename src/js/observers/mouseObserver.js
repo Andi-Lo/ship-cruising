@@ -7,9 +7,17 @@ let Loader = require('../libs/loader').Loader;
 let forces = require('../forces/forces');
 let defaults = require('../modules/options').defaults;
 let canvasMap = require('../modules/canvasMap');
-let LeafletObserver = require('../observers/leafletObserver').LeafletObserver;
-let KeyboardObserver = require('../observers/keyboardObserver').KeyboardObserver;
+let LeafletObserver = require('./leafletObserver').LeafletObserver;
+let KeyboardObserver = require('./keyboardObserver').KeyboardObserver;
+let ForceObserver = require('./forceObserver').ForceObserver;
 let Land = require('../modules/land').Land;
+let mercator = require('../libs/mercator');
+let turf = require('../libs/turf');
+let Route = require('../modules/route').Route;
+
+
+let routeLeafletColor = "red";
+let routeLeafletWeight = 1;
 
 class MouseObserver extends Observer {
   constructor() {
@@ -37,11 +45,36 @@ class MouseObserver extends Observer {
           let land = new Land(geoMap);
           new LeafletObserver(land);
           new KeyboardObserver(land);
+
+          addRouteToPixelMap(fcRoute, land);
         });
       });
     });
-  }
 
+    function addRouteToPixelMap(route, land) {
+      // Calc pixel data for every point
+      turf.meta.coordEach(route, function(coord) {
+        let pixelPos = mercator.posToPixel(coord);
+        canvasMap.registerClick(pixelPos);
+      });
+
+      let features = canvasMap.getFeatures();
+      route = new Route(features);
+
+      drawCanvas.drawLineString(route._route, defaults.strokeColor);
+      drawCanvas.drawPixels(route._route);
+
+      drawLeaflet.drawPolyline(route._route,
+        routeLeafletColor,
+        routeLeafletWeight);
+      drawLeaflet.drawMarkers(route._waypoints);
+
+      let simulation = forces.force(route._route, land._equidistantPoints);
+      new ForceObserver(simulation);
+
+      canvasMap.setFeatures([]);
+    }
+  }
 }
 
 module.exports.MouseObserver = MouseObserver;
