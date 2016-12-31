@@ -76,9 +76,7 @@ function clip(fc) {
 }
 
 let initMap = function(geoMap, bbox) {
-  // Set bbox when route data will be loaded
   // Set bbox according to route
-  // defaults.bbox = calcBbox(geoRoute);
   geoMap = turf.clipPolygon(geoMap, bbox);
   geoMap.features.forEach((features) => {
     switch (features.geometry.type) {
@@ -90,35 +88,9 @@ let initMap = function(geoMap, bbox) {
         break;
     }
   });
+
+  return geoMap;
 };
-
-// Backup can be deleted when current initMap is working
-/* let initMap = function() {
-  return new Promise(function(resolve, reject) {
-    fetch('./map/route_test.geojson')
-      .then((parse) => parse.json()).then((geoRoute) => {
-        fetch('./map/coasts_50m.geojson')
-          .then((parse) => parse.json()).then((geo) => {
-            // Set bbox according to route
-            defaults.bbox = calcBbox(geoRoute);
-            geo = turf.clipPolygon(geo, defaults.bbox);
-
-            // resolve promise object with the map data
-            resolve(geo);
-            geo.features.forEach((features) => {
-              switch (features.geometry.type) {
-                case "LineString":
-                  draw.drawLineString(features, defaults.mapColor, true, 1);
-                  break;
-                default:
-                  console.log(features.geometry.type);
-                  break;
-              }
-            });
-          });
-      });
-  });
-};*/
 
 let updateVal = function(event) {
   let coord = document.getElementById('coordinates');
