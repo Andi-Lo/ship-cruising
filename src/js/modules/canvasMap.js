@@ -75,7 +75,25 @@ function clip(fc) {
   return pointsWithin;
 }
 
-let initMap = function() {
+let initMap = function(geoMap, bbox) {
+  // Set bbox when route data will be loaded
+  // Set bbox according to route
+  // defaults.bbox = calcBbox(geoRoute);
+  geoMap = turf.clipPolygon(geoMap, bbox);
+  geoMap.features.forEach((features) => {
+    switch (features.geometry.type) {
+      case "LineString":
+        draw.drawLineString(features, defaults.mapColor, true, 1);
+        break;
+      default:
+        console.log(features.geometry.type);
+        break;
+    }
+  });
+};
+
+// Backup can be deleted when current initMap is working
+/* let initMap = function() {
   return new Promise(function(resolve, reject) {
     fetch('./map/route_test.geojson')
       .then((parse) => parse.json()).then((geoRoute) => {
@@ -100,7 +118,7 @@ let initMap = function() {
           });
       });
   });
-};
+};*/
 
 let updateVal = function(event) {
   let coord = document.getElementById('coordinates');
@@ -176,7 +194,7 @@ let createPixelData = function() {
  * Returns a rectangular polygon feature that encompasses all vertices
  * @param route a Feature or FeatureCollection
  */
-function calcBbox(route) {
+let calcBbox = function(route) {
   let feature = turf.envelope(route);
   return turf.bbox(feature);
 };
@@ -224,3 +242,5 @@ module.exports.setFeatures = setFeatures;
 module.exports.initMap = initMap;
 module.exports.updateVal = updateVal;
 module.exports.registerClick = registerClick;
+module.exports.calcBbox = calcBbox;
+

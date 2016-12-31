@@ -5,6 +5,12 @@ let turf = require('../libs/turf');
 let defaults = require('./options').defaults;
 let canvasMap = require('./canvasMap');
 
+let clearCanvas = function() {
+  let ctx = canvasMap.getCanvas().getContext('2d');
+  ctx.clearRect(0, 0, defaults.width, defaults.height);
+  drawRect(defaults.mapBackgroundColor, defaults.width, defaults.height);
+};
+
 let drawLine = function(coord, isFirst, stroke = false) {
   let ctx = canvasMap.getCanvas().getContext('2d');
   let pixel = mercator.posToPixel(coord);
@@ -143,3 +149,4 @@ exports.drawRoute = drawRoute;
 exports.drawPixels = drawPixels;
 exports.drawLineString = drawLineString;
 exports.drawRect = drawRect;
+exports.clearCanvas = clearCanvas;

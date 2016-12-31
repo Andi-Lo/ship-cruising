@@ -12,6 +12,10 @@ let Land = require('./modules/land').Land;
 function shipcruising() {
   canvasMap.createCanvas(defaults.width, defaults.height);
 
+  // Old execution order -> new one:
+  // the map should be drawn when the route will be selected
+  // (this will be triggered when the "go" button will be pressed
+  /*
   // initMap is an async func we wait for a promise object to return with data
   let map = canvasMap.initMap().then((map) => {
     canvasMap.createPixelData();
@@ -25,7 +29,9 @@ function shipcruising() {
     new LeafletObserver(land);
     new KeyboardObserver(land);
     new MouseObserver(land);
-  });
+  });*/
+
+  new MouseObserver();
 
   // Interactive map sector
   let clientRect = calcClientRect();
