@@ -105,8 +105,7 @@ let setScale = function(units = 'kilometers') {
   el.innerHTML = '1px = ' + scale + ' ' + units;
 };
 
-let registerClick = function(event) {
-  let pixelPos = getMousePosition(event);
+let registerClick = function(pixelPos) {
   let point = mercator.pixelToPos([pixelPos.x, pixelPos.y]);
   point = turf.point(
       [point.x, point.y],

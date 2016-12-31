@@ -8,7 +8,8 @@ class CanvasObserver extends Observer {
     super();
 
     canvas.addEventListener('click', function(evt) {
-      canvasMap.registerClick(evt);
+      let pixelPos = canvasMap.getMousePosition(evt);
+      canvasMap.registerClick(pixelPos);
     }, false);
 
     canvas.addEventListener('mousemove', function(evt) {
