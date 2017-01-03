@@ -32,15 +32,14 @@ class MouseObserver extends Observer {
 
       features.then((fcRoute) => {
         let geoMap = new Loader('./map/coasts_50m.geojson');
-
         geoMap.then((fcMap) => {
           drawCanvas.clearCanvas();
 
           // Calc bbox
           defaults.bbox = canvasMap.calcBbox(fcRoute);
           // Expand the bbox by a factor of 2
-          defaults.bbox = turf.size(defaults.bbox, 2);
-          let geoMap = canvasMap.initMap(fcMap, defaults.bbox);
+          defaults.bbox = turf.size(defaults.bbox, 1.5);
+          let geoMap = canvasMap.initMap(fcMap, fcRoute, defaults.bbox);
           canvasMap.createPixelData();
           canvasMap.setScale();
 

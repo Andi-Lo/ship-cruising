@@ -63,19 +63,21 @@ let drawPolygon = function(features, color) {
   ctx.fill();
 };
 
-let drawPoint = function(features, color, lineWidth) {
+let drawPoint = function(fc, color, lineWidth) {
   let ctx = canvasMap.getCanvas().getContext('2d');
-  let point = features.geometry.coordinates;
-  let pixel = mercator.posToPixel(point);
-  ctx.fillStyle = color;
-  ctx.strokeStyle = color;
-  ctx.lineWidth = lineWidth;
 
-  ctx.beginPath();
-  ctx.arc(pixel.x, pixel.y, lineWidth, 0, (Math.PI/180)*360, false);
-  ctx.stroke();
-  ctx.closePath();
-  ctx.fill();
+  turf.meta.coordEach(fc, function(point) {
+    let pixel = mercator.posToPixel(point);
+    ctx.fillStyle = color;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lineWidth;
+
+    ctx.beginPath();
+    ctx.arc(pixel.x, pixel.y, lineWidth, 0, (Math.PI/180)*360, false);
+    ctx.stroke();
+    ctx.closePath();
+    ctx.fill();
+  });
 };
 
 let drawPixels = function(featureCollection) {

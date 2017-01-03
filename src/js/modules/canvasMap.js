@@ -75,7 +75,7 @@ function clip(fc) {
   return pointsWithin;
 }
 
-let initMap = function(geoMap, bbox) {
+let initMap = function(geoMap, geoRoute, bbox) {
   // Set bbox according to route
   geoMap = turf.clipPolygon(geoMap, bbox);
   geoMap.features.forEach((features) => {
@@ -88,6 +88,10 @@ let initMap = function(geoMap, bbox) {
         break;
     }
   });
+
+  // Draw black circle over the harbor points.
+  // So the astar algorithm will work.
+  draw.drawPoint(geoRoute, '#000000', 1.5);
 
   return geoMap;
 };
@@ -141,7 +145,8 @@ let createPixelData = function() {
   let isFirst = true;
   for(let i = 0; i < imageData.data.length; i += 4) {
     // Just take the red canal of the imageData array
-    let binaryValue = imageData.data[i] === mapColor.r ? 0 : 1;
+    // let binaryValue = imageData.data[i] === mapColor.r ? 0 : 1;
+    let binaryValue = imageData.data[i] !== 0 ? 0 : 1;
 
     if(isFirst) {
       colorData.push([binaryValue]);
