@@ -93,11 +93,11 @@ let drawPixels = function(featureCollection) {
   });
 };
 
-let drawLineString = function(fc, color, fill = false) {
+let drawLineString = function(fc, color, fill = false, lineWidth) {
   let ctx = canvasMap.getCanvas().getContext('2d');
   let length = 1;
   let isFirst = true;
-  ctx.lineWidth = 1;
+  ctx.lineWidth = lineWidth;
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
 

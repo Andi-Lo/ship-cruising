@@ -82,7 +82,7 @@ let initMap = function(geoMap, geoRoute, bbox) {
   geoMap.features.forEach((features) => {
     switch (features.geometry.type) {
       case "LineString":
-        draw.drawLineString(features, defaults.mapColor, true, 1);
+        draw.drawLineString(features, defaults.mapColor, true, 3);
         break;
       default:
         console.log(features.geometry.type);
@@ -92,7 +92,7 @@ let initMap = function(geoMap, geoRoute, bbox) {
 
   // Draw black circle over the harbor points.
   // So the astar algorithm will work.
-  draw.drawPoint(geoRoute, '#000000', 1.5);
+  draw.drawPoint(geoRoute, '#000000', 4);
 
   return geoMap;
 };
