@@ -14,7 +14,7 @@ body {
   line-height: 1.42857143;
   color: #333;
   background-color: #fff;
-   overflow: hidden;
+  overflow: hidden;
 }
 
 h3 {
@@ -62,10 +62,12 @@ h1, h2, h3 {
   border: 1px solid lightgrey;
   border-width: 0 0 1px 0;
   user-select: none;
+  height: 350px;
 }
 
 .tool-content {
   overflow: hidden;
+  height: 350px;
 }
 
 .container {

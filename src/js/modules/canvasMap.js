@@ -4,6 +4,7 @@ let defaults = require('./options').defaults;
 let turf = require('../libs/turf');
 let mercator = require('../libs/mercator');
 let erode = require('../libs/erode');
+let dilate = require('../libs/dilate');
 let draw = require('./drawCanvas');
 let CanvasObserver = require('../observers/canvasObserver').CanvasObserver;
 
@@ -59,7 +60,7 @@ function bboxClip(feature, bbox) {
 };
 
 function clip(fc) {
-  // expand the bbox size by factor 2
+  // expand the bbox size by factor n
   let bbox = turf.size(defaults.bbox, 1);
   let polygon = turf.featureCollection([turf.bboxPolygon(bbox)]);
   fc = polygon2line(fc);
@@ -138,15 +139,12 @@ let createPixelData = function() {
   let canvas = getCanvas();
   let ctx = canvas.getContext('2d');
   let imageData = ctx.getImageData(0, 0, defaults.width, defaults.height);
-  let mapColor = colorToObject(defaults.mapColor);
 
   let colorData = [];
   let rowIndex = 0;
   let isFirst = true;
   for(let i = 0; i < imageData.data.length; i += 4) {
-    // Just take the red canal of the imageData array
-    // let binaryValue = imageData.data[i] === mapColor.r ? 0 : 1;
-    let binaryValue = imageData.data[i] !== 0 ? 0 : 1;
+    let binaryValue = (imageData.data[i] !== 0) ? 0 : 1;
 
     if(isFirst) {
       colorData.push([binaryValue]);
@@ -161,14 +159,43 @@ let createPixelData = function() {
       rowIndex = 0;
     }
   }
-  colorData = erode(colorData, defaults.width, defaults.height, 5);
+  colorData = erode(colorData, defaults.width, defaults.height, 7);
   setColorData(colorData);
   return colorData;
 };
 
 /**
- * Returns a rectangular polygon feature that encompasses all vertices
- * @param route a Feature or FeatureCollection
+ * leaving this function for testing purposes, if we wan't to test dilate again
+ * @param {any} colorData
+ */
+function drawTestCanvas(colorData) {
+  let el = window.document.getElementById('test-canvas');
+  let testCanvas = document.createElement('canvas');
+  testCanvas.setAttribute('id', 'test-canvas');
+  testCanvas.width = defaults.width;
+  testCanvas.height = defaults.height;
+
+  draw.drawRect(defaults.mapBackgroundColor, defaults.width, defaults.height);
+  el.appendChild(testCanvas);
+
+  let ctx = testCanvas.getContext('2d');
+  for(let i = 0; i < colorData.length; i++) {
+    for(let j = 0; j < colorData.length; j++) {
+      if(colorData[i][j] === 1) {
+        ctx.fillStyle = 'rgba(0,0,0,1)';
+        ctx.fillRect(i, j, 1, 1);
+      }
+      else {
+        ctx.fillStyle = 'rgba(255,255,255,1)';
+        ctx.fillRect(i, j, 1, 1);
+      }
+    }
+  }
+}
+
+/**
+ * @param {featureCollection} Feature or FeatureCollection
+ * @returns rectangular polygon feature that encompasses all vertices
  */
 let calcBbox = function(route) {
   let feature = turf.envelope(route);
