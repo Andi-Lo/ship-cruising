@@ -14,7 +14,11 @@
     <div class="tool-wrapper" id="tool">
       <div class="container flex tool-content">
         <div class="controllers flex-item">
-          <h3>Select Route</h3>
+          <div class="drop-zone">
+            <div class="drop-here">
+              DROP GEOJSON HERE
+            </div>
+          </div>
           <select class="dropdown" name="routes" size="1">
             <option value="australia" selected="selected">Australien</option>
             <!--special case <option value="belgium" selected="selected">Belgien</option>-->
@@ -24,7 +28,6 @@
             <!--<option value="route2">Route a</option>-->
             <!--<option value="route3">Route b</option>-->
           </select>
-          <h3>Calculate</h3>
           <button class="button" id="calc" type="submit">GO</button>
         </div>
         <div class="controllers flex-item">

@@ -2,10 +2,18 @@ input[type=range] {
   display: inline-block;
   width: initial;
   vertical-align: middle;
+  cursor: -webkit-grab;
+  cursor: grab;
 }
 
 select.dropdown {
   width: 100%;
+  cursor: pointer;
+}
+
+button {
+  margin: 10px 0;
+  cursor: pointer;
 }
 
 body {
@@ -22,8 +30,36 @@ h3 {
 }
 
 h1, h2, h3 {
-    margin-top: 20px;
+    margin-top: 0;
     margin-bottom: 10px;
+}
+
+.drop-zone {
+  width: 95%;
+  height: 80px;
+  margin: 0 0 15px;
+  border: dashed 3px #878787;
+  border-radius: 5px;
+  background: lightgrey;
+}
+.drop-zone:hover {
+  cursor: -webkit-grabbing;
+}
+.dropping {
+  background-color: lightgrey;
+  border-color: lightgrey;
+}
+.dropping .drop-here {
+  color: black;
+  text-transform: underline;
+}
+.drop-here {
+  padding: 16px 0 8px 0;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #878787;
 }
 
 .widget-minimap-scrubber {
