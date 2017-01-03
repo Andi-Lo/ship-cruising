@@ -5,35 +5,25 @@
  * 0 0 0
  * 0 1 0
  * 0 0 0
- * @param {any} pixels
- * @param {any} w
- * @param {any} h
- * @param {any} x
- * @param {any} y
+ * @param {Array} 2d binary Array
+ * @param {Number} w
+ * @param {Number} h
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} value 0 or 1 depending on your binary image
  * @returns an array containing the neighbours values
  */
-module.exports = function(pixels, w, h, x, y) {
-  w = w - 1;
-  h = h - 1;
-  let pixs = [];
-
-  pixs.push(pixels[((y-1) % h) < 0 ? h : x % h][((x-1) % w) < 0 ? w : x % w]);
-  pixs.push(pixels[((y-1) % h) < 0 ? h : x % h][x]);
-  pixs.push(pixels[((y-1) % h) < 0 ? h : x % h][(x+1) % w]);
-
-  pixs.push(pixels[y][((x-1) % w) < 0 ? w : x % w]);
-  pixs.push(pixels[y][(x+1) % w]);
-
-  pixs.push(pixels[(y+1) % h][((x-1) % w) < 0 ? w : x % w]);
-  pixs.push(pixels[(y+1) % h][x]);
-  pixs.push(pixels[(y+1) % h][(x+1) % w]);
-
-  pixs = pixs.filter(isNull);
-
-  pixs.push(pixels[y][x]);
-  return pixs;
+module.exports = function(binaryImage, i, j) {
+  let neighbours = 0;
+  for(let a = -1; a <= 1; a++) {
+    for(let b = -1; b <= 1; b++) {
+      // avoid the center pixel
+      if((a != 0 || b != 0) && (i + a > 0 && j + b > 0)) {
+        if(binaryImage[i + a][j + b] == 0) {
+          neighbours++;
+        }
+      }
+    }
+  }
+  return neighbours;
 };
-
-function isNull(value) {
-  return value != 0;
-}

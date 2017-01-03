@@ -12,32 +12,24 @@ let kernel = require('./kernel');
  * 0 0 0 0
  * and eliminates black pixels (represented as ones). The threshold defines how
  * strong the erosion should be.
- * @param {any} binaryImage
- * @param {any} w width
- * @param {any} h height
- * @param {any} threshold
+ * @param {Array} binaryImage
+ * @param {Number} width
+ * @param {Number} height
+ * @param {Number} threshold
  * @returns an eroded two dimensional array
  */
-module.exports = function(binaryImage, w, h, threshold = 5) {
+module.exports = function(binaryImage, w, h, threshold) {
   let result = binaryImage;
-  let neighbours = [];
 
-  for(let x = 0; x < w; x++) {
-    for(let y = 0; y < h; y++) {
-      let pix = binaryImage[y][x];
-      if(pix === 1) {
-        neighbours = kernel(binaryImage, w, h, x, y);
-        let sum = neighbours.reduce((a, b) => {
-          return a + b;
-        }, 0);
-        if(sum < threshold)
-          result[y][x] = 0;
-      }
-      else {
-        result[y][x] = pix;
-      }
+  for(let i = 1; i < w - 1; i++) {
+    for(let j = 1; j < h - 1; j++) {
+      if(binaryImage[i][j] == 1) {
+        let neighbours = kernel(binaryImage, i, j);
+        if(neighbours > threshold) {
+          result[i][j] = 0;
+        }
+      }  // ends if binaryImage equals 0
     }
   }
   return result;
 };
-
