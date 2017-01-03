@@ -22,6 +22,11 @@ gulp.task('html', function() {
     .pipe($.connect.reload());
 });
 
+gulp.task('css', function() {
+  gulp.src('./src/**/*.css')
+    .pipe($.connect.reload());
+});
+
 function swallowError(error) {
   // If you want details of the error in the console
   console.log(error.toString());
@@ -66,6 +71,7 @@ gulp.task('watch', function() {
   gulp.start('build');
   gulp.watch(['./src/js/**/*.js', '!./src/js/bundle.js'], ['build']);
   gulp.watch('./src/*.html', ['html']);
+  gulp.watch('./src/**/*.css', ['css']);
 });
 
 gulp.task('serve', function(event) {
