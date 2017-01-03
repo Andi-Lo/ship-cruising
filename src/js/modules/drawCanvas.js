@@ -145,6 +145,21 @@ let drawRect = function(color, width, height) {
   ctx.closePath();
 };
 
+let drawRectBox = function(bbox, color, lineWidth) {
+  let ctx = canvasMap.getCanvas().getContext('2d');
+  let pixelStart = mercator.posToPixel([bbox[0], bbox[1]]);
+  let pixelEnd = mercator.posToPixel([bbox[2], bbox[3]]);
+  let width = pixelEnd.x - pixelStart.x;
+  let height = pixelStart.y - pixelEnd.y;
+
+  ctx.beginPath();
+  ctx.rect(pixelStart.x, pixelEnd.y, width, height);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.stroke();
+  ctx.closePath();
+};
+
 exports.drawPoint = drawPoint;
 exports.drawPolygon = drawPolygon;
 exports.drawMultiPolygon = drawMultiPolygon;
@@ -153,3 +168,4 @@ exports.drawPixels = drawPixels;
 exports.drawLineString = drawLineString;
 exports.drawRect = drawRect;
 exports.clearCanvas = clearCanvas;
+exports.drawRectBox = drawRectBox;

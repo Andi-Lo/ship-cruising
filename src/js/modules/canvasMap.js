@@ -94,6 +94,9 @@ let initMap = function(geoMap, geoRoute, bbox) {
   // So the astar algorithm will work.
   draw.drawPoint(geoRoute, '#000000', 4);
 
+  // Draw a black frame around the bbox
+  draw.drawRectBox(bbox, '#000000', 4);
+
   return geoMap;
 };
 
