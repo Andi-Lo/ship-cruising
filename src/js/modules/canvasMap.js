@@ -12,15 +12,15 @@ let canvas;
 let colorData = [];
 let features = [];
 
-let createCanvas = function(id, width, height) {
-  let el = window.document.getElementById(id);
+let createCanvas = function(width, height) {
+  let el = window.document.getElementById('ship-cruising');
   canvas = document.createElement('canvas');
   canvas.setAttribute('id', 'sc_canvas');
   canvas.width = width;
   canvas.height = height;
 
   new CanvasObserver(canvas);
-  draw.drawRect(defaults.mapBackgroundColor, width, height);
+  draw.drawRect(defaults.mapBackgroundColor, defaults.width, defaults.height);
   el.appendChild(canvas);
 
   return canvas;
