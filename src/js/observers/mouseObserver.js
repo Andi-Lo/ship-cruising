@@ -38,6 +38,8 @@ class MouseObserver extends Observer {
 
           // Calc bbox
           defaults.bbox = canvasMap.calcBbox(fcRoute);
+          // Expand the bbox by a factor of 2
+          defaults.bbox = turf.size(defaults.bbox, 2);
           let geoMap = canvasMap.initMap(fcMap, defaults.bbox);
           canvasMap.createPixelData();
           canvasMap.setScale();
