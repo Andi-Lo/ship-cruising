@@ -3,3 +3,6 @@ node_js:
   - node
   - v6
   - v5
+before_script:
+  - npm install
+script: npm run build

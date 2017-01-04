@@ -6,8 +6,8 @@
   "scripts": {
     "start": "gulp serve",
     "build": "gulp build",
-    "test": "mocha ./tests/test.js --compilers js:babel-core/register && rimraf coverage",
-    "covarage": "nyc --require babel-core/register mocha ./tests/test.js --compilers js:babel-core/register && rimraf coverage"
+    "quicktest": "mocha ./tests/test.js --compilers js:babel-core/register && rimraf coverage",
+    "test": "nyc --require babel-core/register mocha ./tests/test.js --compilers js:babel-core/register && rimraf coverage"
   },
   "author": "Andreas Lorer and Kevin Klugmann",
   "dependencies": {
