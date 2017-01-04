@@ -57,7 +57,7 @@ gulp.task('build', ['lint'], function() {
     .pipe($.connect.reload());
 });
 
-gulp.task('build-dev', function() {
+gulp.task('build-dev', ['lint'], function() {
   return $.browserify('./src/js/app.js')
     .transform("babelify")
     .bundle()
