@@ -1,7 +1,7 @@
 'use strict';
 
 let MouseObserver = require('./observers/mouseObserver').MouseObserver;
-let DropObserver = require('./observers/DropObserver').DropObserver;
+let DropObserver = require('./observers/dropObserver').DropObserver;
 let LeafletObserver = require('./observers/leafletObserver').LeafletObserver;
 let canvasMap = require('./modules/canvasMap');
 let leafletMap = require('./modules/leafletMap');
