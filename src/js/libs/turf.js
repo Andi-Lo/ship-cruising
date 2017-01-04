@@ -218,8 +218,18 @@ let clipPolygon = function(fc, bbox) {
   return clipped;
 };
 
+/**
+ * @param {featureCollection} Feature or FeatureCollection
+ * @returns rectangular polygon feature that encompasses all vertices
+ */
+let calcBbox = function(route) {
+  let feature = turf.envelope(route);
+  return turf.bbox(feature);
+};
+
 module.exports = turf;
 module.exports.bboxClip = bboxClip;
+module.exports.calcBbox = calcBbox;
 module.exports.clipPolygon = clipPolygon;
 module.exports.within = within;
 module.exports.iterateFeature = iterateFeature;

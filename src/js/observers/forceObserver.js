@@ -1,13 +1,10 @@
 'use strict';
 
-let Observer = require('./observer').Observer;
 let force = require('../forces/forces');
 let select = require('d3-selection').select;
 
-class ForceObserver extends Observer {
+class ForceObserver {
   constructor(simulation) {
-    super();
-
     select("#strengthElem").on("input", function() {
       force.linkForce.strength(this.value);
       simulation.alpha(0.5).restart();  // Re-heat the simulation

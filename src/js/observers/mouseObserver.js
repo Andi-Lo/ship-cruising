@@ -1,7 +1,7 @@
 'use strict';
 
-let Observer = require('./observer').Observer;
 let Loader = require('../libs/loader').Loader;
+let canvasMap = require('../modules/canvasMap');
 
 class MouseObserver {
   constructor(fc) {
@@ -14,7 +14,7 @@ class MouseObserver {
       let features = new Loader(path);
 
       features.then((fcRoute) => {
-        Observer.addRouteToPixelMap(fcRoute, fc);
+        canvasMap.updateMap(fcRoute, fc);
       });
     });
   }

@@ -1,17 +1,17 @@
 'use strict';
 
-let defaults = require('./options').defaults;
-let turf = require('../libs/turf');
-let mercator = require('../libs/mercator');
-let erode = require('../libs/erode');
-let dilate = require('../libs/dilate');
-let draw = require('./drawCanvas');
 let CanvasObserver = require('../observers/canvasObserver').CanvasObserver;
-let Map = require('../modules/map').Map;
+let defaults = require('./options').defaults;
+// let dilate = require('../libs/dilate');
+let drawCanvas = require('./drawCanvas');
+let drawLeaflet = require('./drawLeaflet');
+let erode = require('../libs/erode');
+let mercator = require('../libs/mercator');
+let turf = require('../libs/turf');
+let Route = require('./route').Route;
 
 let canvas;
 let colorData = [];
-let features = [];
 
 let createCanvas = function(width, height) {
   let el = window.document.getElementById('ship-cruising');
@@ -21,83 +21,29 @@ let createCanvas = function(width, height) {
   canvas.height = height;
 
   new CanvasObserver(canvas);
-  draw.drawRect(defaults.mapBackgroundColor, defaults.width, defaults.height);
+  drawCanvas.drawRect(defaults.mapBg, defaults.width, defaults.height);
   el.appendChild(canvas);
 
   return canvas;
 };
 
-/**
- * Takes a set of points and a set of polygons and returns
- * the points that fall within the polygons.
- * This function is a modified version of the official turf.within function
- *
- * @param {Array<Points>} points
- * @param {FeatureCollection<Polygon>} polygons
- * @returns FeatureCollection<LineString> with matching points
- */
-function within(points, polygons) {
-  let pointsWithin = [];
-  for (let i = 0; i < polygons.features.length; i++) {
-    for (let j = 0; j < points.length; j++) {
-      let isInside = turf.inside(points[j], polygons.features[i]);
-      if (isInside) {
-        pointsWithin.push(points[j]);
-      }
-    }
-  }
-  if(pointsWithin.length > 0) {
-    return turf.lineString(pointsWithin);
-  }
-  else {
-    return false;
-  }
-};
-
-function bboxClip(feature, bbox) {
-  let points = turf.meta.coordAll(feature);
-  let isWithin = within(points, bbox);
-  return isWithin;
-};
-
-function clip(fc) {
-  // expand the bbox size by factor n
-  let bbox = turf.size(defaults.bbox, 1);
-  let polygon = turf.featureCollection([turf.bboxPolygon(bbox)]);
-  fc = polygon2line(fc);
-
-  let pointsWithin = turf.featureCollection([]);
-  let intersection;
-  turf.meta.featureEach(fc, function(feature) {
-    intersection = bboxClip(feature, polygon);
-    if(intersection !== false) {
-      pointsWithin.features.push(intersection);
-    }
-  });
-  return pointsWithin;
-}
-
 let initMap = function(fcMap, fcRoute, bbox) {
-  // Set bbox according to route
-  draw.clearCanvas();
+  drawCanvas.clearCanvas();
   fcMap = turf.clipPolygon(fcMap, bbox);
   fcMap.features.forEach((features) => {
     switch (features.geometry.type) {
       case "LineString":
-        draw.drawLineString(features, defaults.mapColor, true, 3);
+        drawCanvas.drawLineString(features, defaults.mapColor, true, 3);
         break;
       default:
         console.log(features.geometry.type);
         break;
     }
   });
-
   // Draw black circle over the harbor points.
-  // So the astar algorithm will work.
-  draw.drawPoint(fcRoute, '#000000', 4);
-
+  drawCanvas.drawPoint(fcRoute, '#000000', 4);
   // Draw a black frame around the bbox
-  draw.drawRectBox(bbox, '#000000', 4);
+  drawCanvas.drawRectBox(bbox, '#000000', 4);
 
   return fcMap;
 };
@@ -106,22 +52,6 @@ let updateVal = function(event) {
   let coord = document.getElementById('coordinates');
   let pos = getMousePosition(event);
   coord.innerHTML = 'x: ' + pos.x + ' y: ' + pos.y;
-};
-
-let setScale = function(units = 'kilometers') {
-  let scale = mercator.calcScale(units);
-  let el = document.getElementById('scale');
-  if(units === 'kilometers') units = 'km';
-  el.innerHTML = '1px = ' + scale + ' ' + units;
-};
-
-let registerClick = function(pixelPos) {
-  let point = mercator.pixelToPos([pixelPos.x, pixelPos.y]);
-  point = turf.point(
-      [point.x, point.y],
-      {name: 'harbour'}
-  );
-  features.push(point);
 };
 
 let getMousePosition = function(event) {
@@ -141,25 +71,22 @@ let getMousePosition = function(event) {
  * @returns a 2D binary array
  */
 let createPixelData = function() {
-  let canvas = getCanvas();
-  let ctx = canvas.getContext('2d');
+  let ctx = getCanvas().getContext('2d');
   let imageData = ctx.getImageData(0, 0, defaults.width, defaults.height);
-
   let colorData = [];
   let rowIndex = 0;
   let isFirst = true;
+  let binaryValue;
+
   for(let i = 0; i < imageData.data.length; i += 4) {
-    let binaryValue = (imageData.data[i] !== 0) ? 0 : 1;
-
-    if(isFirst) {
+    binaryValue = (imageData.data[i] !== 0) ? 0 : 1;
+    if(isFirst)
       colorData.push([binaryValue]);
-    }
-    else {
+    else
       colorData[rowIndex].push(binaryValue);
-    }
-    rowIndex++;
 
-    if(rowIndex === canvas.height) {
+    rowIndex++;
+    if(rowIndex === defaults.height) {
       isFirst = false;
       rowIndex = 0;
     }
@@ -171,7 +98,7 @@ let createPixelData = function() {
 
 /**
  * leaving this function for testing purposes, if we wan't to test dilate again
- * @param {any} colorData
+ * @param {Array} colorData
  */
 function drawTestCanvas(colorData) {
   let el = window.document.getElementById('test-canvas');
@@ -180,7 +107,7 @@ function drawTestCanvas(colorData) {
   testCanvas.width = defaults.width;
   testCanvas.height = defaults.height;
 
-  draw.drawRect(defaults.mapBackgroundColor, defaults.width, defaults.height);
+  drawCanvas.drawRect(defaults.mapBg, defaults.width, defaults.height);
   el.appendChild(testCanvas);
 
   let ctx = testCanvas.getContext('2d');
@@ -198,43 +125,6 @@ function drawTestCanvas(colorData) {
   }
 }
 
-/**
- * @param {featureCollection} Feature or FeatureCollection
- * @returns rectangular polygon feature that encompasses all vertices
- */
-let calcBbox = function(route) {
-  let feature = turf.envelope(route);
-  return turf.bbox(feature);
-};
-
-let getCanvas = function() {
-  return canvas;
-};
-
-let getFeatures = function() {
-  return turf.featureCollection(features);
-};
-
-let setFeatures = function(val) {
-  features = val;
-};
-
-function setColorData(data) {
-  colorData = data;
-};
-
-let getColorData = function(start, end, fcMap) {
-  let fcRoute = turf.featureCollection([start, end]);
-  let bbox = calcBbox(fcRoute);
-  bbox = turf.square(bbox);
-  let origin = mercator.getOrigin(bbox);
-  defaults.bbox = turf.size(bbox, origin.zoom/1.5);
-  initMap(fcMap, fcRoute, defaults.bbox);
-  setColorData(createPixelData());
-
-  return colorData;
-};
-
 let colorToObject = function(rgbaString) {
   rgbaString = rgbaString.substring(5, rgbaString.length-1)
       .replace(/ /g, '')
@@ -247,16 +137,44 @@ let colorToObject = function(rgbaString) {
   };
 };
 
+let updateMap = function(fcRoute, fcMap) {
+  let route = new Route(fcRoute, fcMap);
+  const routeWeight = 1;
+
+  drawCanvas.drawLineString(route._route, defaults.strokeColor);
+  drawCanvas.drawPixels(route._route);
+
+  drawLeaflet.drawPolyline(route._route, defaults.routeColor, routeWeight);
+  drawLeaflet.drawMarkers(route._waypoints);
+
+  // let simulation = forces.force(route._route, land._equidistantPoints);
+  // new ForceObserver(simulation);
+};
+
+let getCanvas = function() {
+  return canvas;
+};
+
+function setColorData(data) {
+  colorData = data;
+};
+
+let getColorData = function(start, end, fcMap) {
+  let fcRoute = turf.featureCollection([start, end]);
+  let bbox = turf.square(turf.calcBbox(fcRoute));
+  let origin = mercator.getOrigin(bbox);
+  defaults.bbox = turf.size(bbox, origin.zoom / 1.5);
+  initMap(fcMap, fcRoute, defaults.bbox);
+  setColorData(createPixelData());
+
+  return colorData;
+};
+
 module.exports.createPixelData = createPixelData;
 module.exports.getMousePosition = getMousePosition;
 module.exports.getCanvas = getCanvas;
 module.exports.getColorData = getColorData;
-module.exports.getFeatures = getFeatures;
 module.exports.createCanvas = createCanvas;
-module.exports.setScale = setScale;
-module.exports.setFeatures = setFeatures;
 module.exports.initMap = initMap;
 module.exports.updateVal = updateVal;
-module.exports.registerClick = registerClick;
-module.exports.calcBbox = calcBbox;
-
+module.exports.updateMap = updateMap;

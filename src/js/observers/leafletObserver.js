@@ -1,14 +1,9 @@
 'use strict';
 
-let Observer = require('./observer').Observer;
 let leafletMap = require('../modules/leafletMap');
 let L = require('leaflet');
 
-class LeafletObserver extends Observer {
-  constructor() {
-    super();
-  }
-
+class LeafletObserver {
   onMapZoom() {
     let map = leafletMap.getMap();
     map.on('click', this.onMapClick);

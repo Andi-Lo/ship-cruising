@@ -5,14 +5,15 @@ let defaults = {
   'pointColor': 'rgba(255, 50, 10, 0.8)',
   'pixelColor': 'rgba(50, 200, 0, 0.8)',
   'mapColor': 'rgba(255, 255, 255, 1)',
-  'mapBackgroundColor': 'rgba(0, 0, 0, 1)',
+  'routeColor': 'red',
+  'mapBg': 'rgba(0, 0, 0, 1)',
   'width': 320,
   'height': 320,
   'bbox': [
-    -91.14257812499999,
-    7.493196470122287,
-    -64.8193359375,
-    25.839449402063185
+    -123.3984375,
+    -17.644022027872712,
+    147.65625,
+    75.14077784070429
   ]
 };
 
@@ -34,7 +35,6 @@ let force = {
   'nodeColor': '#00B6F2',
   'landColor': '#11C400',
   'zoomPointRouteColor': '#00B6F2',
-  // 'zoomPointLandColor': '#F23C00',
   'zoomPointLandColor': '#11C400',
   'zoomLineColor': '#0073C4',
   'zoomPointRouteSize': 4,

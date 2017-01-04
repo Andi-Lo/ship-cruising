@@ -1,6 +1,6 @@
 'use strict';
 
-let Observer = require('./observer').Observer;
+let canvasMap = require('../modules/canvasMap');
 
 class DropObserver {
   constructor(selector, fcMap) {
@@ -8,7 +8,7 @@ class DropObserver {
       let reader = new FileReader();
       reader.onloadend = function(e) {
         let fcRoute = JSON.parse(reader.result);
-        Observer.addRouteToPixelMap(fcRoute, fcMap);
+        canvasMap.updateMap(fcRoute, fcMap);
       };
       reader.readAsText(files[0]);
     });
