@@ -28,6 +28,7 @@ class DropObserver extends Observer {
         let fc = JSON.parse(reader.result);
         DropObserver.drawRoute(fc);
       };
+      reader.readAsText(files[0]);
     });
   }
 
