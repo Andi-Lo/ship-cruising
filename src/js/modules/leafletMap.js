@@ -3,20 +3,12 @@
 let leaflet = require('leaflet');
 let options = require('./options');
 let bbox = require('../libs/bbox');
-
-let box = [
-  -91.14257812499999,
-  7.493196470122287,
-  -64.8193359375,
-  25.839449402063185
-];
+let calcClientRect = require('../libs/helpers').calcClientRect;
 
 // Gets initialized in init, with leaflet map
 let _map;
 
 let createToneMapDiv = function(map) {
-  _map = map;
-
   // Add Stamen toner tile to leaflet map
   leaflet.tileLayer(options.leaflet.tileLayer, {
     'attribution': options.leaflet.attribution,
@@ -28,21 +20,25 @@ let getMap = function() {
   return _map;
 };
 
-let init = function(divId, width, height) {
+let init = function(width, height) {
   let div = window.document.getElementById('interactive-map');
   let divLeaflet = document.createElement('div');
-  divLeaflet.setAttribute('id', divId);
+  divLeaflet.setAttribute('id', 'tone-map');
   divLeaflet.style.width = width + 'px';
   divLeaflet.style.height = height + 'px';
   div.appendChild(divLeaflet);
 
-  // Get center of bbox
-  let bounds = bbox(box, width, height);
-  let map = leaflet.map(divId, {zoomControl: true})
-      .setView([bounds.center[1], bounds.center[0]], bounds.zoom);
+  _map = leaflet.map('tone-map', {zoomControl: true});
+  setView();
 
-  addScaleToMap(map);
-  createToneMapDiv(map);
+  addScaleToMap(_map);
+  createToneMapDiv(_map);
+};
+
+let setView = function(box = options.defaults.bbox) {
+  let rect = calcClientRect();
+  let bounds = bbox(box, rect.width, rect.height);
+  _map.setView([bounds.center[1], bounds.center[0]], bounds.zoom);
 };
 
 let getMetersPerPixel = function(map) {
@@ -81,7 +77,7 @@ let enableZoom = function(map) {
 
 module.exports.init = init;
 module.exports.getMap = getMap;
+module.exports.setView = setView;
 module.exports.getMetersPerPixel = getMetersPerPixel;
 module.exports.disableZoom = disableZoom;
 module.exports.enableZoom = enableZoom;
-

@@ -2,6 +2,8 @@
 
 let Loader = require('../libs/loader').Loader;
 let canvasMap = require('../modules/canvasMap');
+let calcBbox = require('../libs/turf').calcBbox;
+let setView = require('../modules/leafletMap').setView;
 
 class MouseObserver {
   constructor(fc) {
@@ -14,6 +16,7 @@ class MouseObserver {
       let features = new Loader(path);
 
       features.then((fcRoute) => {
+        setView(calcBbox(fcRoute));
         canvasMap.updateMap(fcRoute, fc);
       });
     });

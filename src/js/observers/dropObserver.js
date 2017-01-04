@@ -1,6 +1,8 @@
 'use strict';
 
 let canvasMap = require('../modules/canvasMap');
+let calcBbox = require('../libs/turf').calcBbox;
+let setView = require('../modules/leafletMap').setView;
 
 class DropObserver {
   constructor(selector, fcMap) {
@@ -8,6 +10,7 @@ class DropObserver {
       let reader = new FileReader();
       reader.onloadend = function(e) {
         let fcRoute = JSON.parse(reader.result);
+        setView(calcBbox(fcRoute));
         canvasMap.updateMap(fcRoute, fcMap);
       };
       reader.readAsText(files[0]);

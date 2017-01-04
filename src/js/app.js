@@ -21,7 +21,7 @@ function shipcruising() {
 
   // Interactive map sector
   let clientRect = calcClientRect();
-  leafletMap.init('tone-map', clientRect.width, clientRect.height);
+  leafletMap.init(clientRect.width, clientRect.height);
 };
 
 shipcruising();
