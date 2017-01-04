@@ -69,7 +69,7 @@ let calculateScale = function(units = 'kilometers', box = defaults.bbox) {
  * @param {bbox} [box=bboxJamaika]
  * @returns {[num, num, zoom]}
  */
-function getOrigin(box = defaults.bbox) {
+let getOrigin = function(box = defaults.bbox) {
   let bounds = bbox(box, defaults.width, defaults.height);
   let center = SM.px(bounds.center, bounds.zoom);
 
@@ -80,8 +80,9 @@ function getOrigin(box = defaults.bbox) {
   origin['zoom'] = bounds.zoom;
 
   return origin;
-}
+};
 
 module.exports.calcScale = calculateScale;
 module.exports.posToPixel = positionToPixel;
 module.exports.pixelToPos = pixelToPosition;
+module.exports.getOrigin = getOrigin;

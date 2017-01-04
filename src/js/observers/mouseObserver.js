@@ -38,7 +38,11 @@ class MouseObserver extends Observer {
           // Calc bbox
           defaults.bbox = canvasMap.calcBbox(fcRoute);
           // Expand the bbox by a factor of 2
-          defaults.bbox = turf.size(defaults.bbox, 1.5);
+          // defaults.bbox = turf.size(defaults.bbox, 1.5);
+          defaults.bbox = turf.square(defaults.bbox);
+          let origin = mercator.getOrigin(defaults.bbox);
+          defaults.bbox = turf.size(defaults.bbox, origin.zoom/3);
+
           let geoMap = canvasMap.initMap(fcMap, fcRoute, defaults.bbox);
           canvasMap.createPixelData();
           canvasMap.setScale();
