@@ -92,7 +92,7 @@ let initMap = function(geoMap, geoRoute, bbox) {
 
   // Draw black circle over the harbor points.
   // So the astar algorithm will work.
-  draw.drawPoint(geoRoute, '#000000', 4);
+  draw.drawPoint(geoRoute, '#000000', 2.5);
 
   // Draw a black frame around the bbox
   draw.drawRectBox(bbox, '#000000', 4);
@@ -221,7 +221,10 @@ function setColorData(data) {
   colorData = data;
 };
 
-let getColorData = function() {
+let getColorData = function(start, end) {
+  let origin = mercator.getOrigin(turf.square(defaults.bbox));
+  defaults.bbox = turf.size(defaults.bbox, origin.zoom/1.5);
+
   return colorData;
 };
 
