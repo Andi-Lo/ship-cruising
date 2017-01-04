@@ -7,6 +7,7 @@ let erode = require('../libs/erode');
 let dilate = require('../libs/dilate');
 let draw = require('./drawCanvas');
 let CanvasObserver = require('../observers/canvasObserver').CanvasObserver;
+let Map = require('../modules/map').Map;
 
 let canvas;
 let colorData = [];
@@ -76,10 +77,11 @@ function clip(fc) {
   return pointsWithin;
 }
 
-let initMap = function(geoMap, geoRoute, bbox) {
+let initMap = function(fcMap, fcRoute, bbox) {
   // Set bbox according to route
-  geoMap = turf.clipPolygon(geoMap, bbox);
-  geoMap.features.forEach((features) => {
+  draw.clearCanvas();
+  fcMap = turf.clipPolygon(fcMap, bbox);
+  fcMap.features.forEach((features) => {
     switch (features.geometry.type) {
       case "LineString":
         draw.drawLineString(features, defaults.mapColor, true, 3);
@@ -92,12 +94,12 @@ let initMap = function(geoMap, geoRoute, bbox) {
 
   // Draw black circle over the harbor points.
   // So the astar algorithm will work.
-  draw.drawPoint(geoRoute, '#000000', 2.5);
+  draw.drawPoint(fcRoute, '#000000', 4);
 
   // Draw a black frame around the bbox
   draw.drawRectBox(bbox, '#000000', 4);
 
-  return geoMap;
+  return fcMap;
 };
 
 let updateVal = function(event) {
@@ -221,9 +223,14 @@ function setColorData(data) {
   colorData = data;
 };
 
-let getColorData = function(start, end) {
-  let origin = mercator.getOrigin(turf.square(defaults.bbox));
-  defaults.bbox = turf.size(defaults.bbox, origin.zoom/1.5);
+let getColorData = function(start, end, fcMap) {
+  let fcRoute = turf.featureCollection([start, end]);
+  let bbox = calcBbox(fcRoute);
+  bbox = turf.square(bbox);
+  let origin = mercator.getOrigin(bbox);
+  defaults.bbox = turf.size(bbox, origin.zoom/1.5);
+  initMap(fcMap, fcRoute, defaults.bbox);
+  setColorData(createPixelData());
 
   return colorData;
 };

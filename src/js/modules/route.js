@@ -6,9 +6,9 @@ let mercator = require('../libs/mercator');
 let defaults = require('../modules/options').defaults;
 
 class Route {
-  constructor(fc) {
-    this._waypoints = fc;
-    this.calcRoute(this._waypoints);
+  constructor(fcRoute, fcMap) {
+    this._waypoints = fcRoute;
+    this.calcRoute(this._waypoints, fcMap);
     // this.calcRoute(this._waypoints).simplifyPath(0.1).smoothCurve();
     let stepSize = mercator.getOrigin(defaults.bbox).stepSize;
     this._route = turf.equidistant(this._route, stepSize);
@@ -29,8 +29,8 @@ class Route {
    * representing a step of the route
    * @memberOf Route
    */
-  calcRoute(fc) {
-    this._route = pathfinding(fc);
+  calcRoute(fcRoute, fcMap) {
+    this._route = pathfinding(fcRoute, fcMap);
     return this;
   }
 

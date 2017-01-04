@@ -3,10 +3,8 @@
 let Observer = require('./observer').Observer;
 let canvasMap = require('../modules/canvasMap');
 
-class CanvasObserver extends Observer {
+class CanvasObserver {
   constructor(canvas) {
-    super();
-
     canvas.addEventListener('click', function(evt) {
       let pixelPos = canvasMap.getMousePosition(evt);
       canvasMap.registerClick(pixelPos);

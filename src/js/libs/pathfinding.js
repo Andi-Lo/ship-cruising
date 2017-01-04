@@ -12,15 +12,15 @@ let _ = require('lodash/array');
  * @param {any} featureCollection
  * @returns returns a featureCollection containing lineString features
  */
-module.exports = function(fc) {
-  let feature = turf.iterateFeature(fc);
+module.exports = function(fcRoute, fcMap) {
+  let feature = turf.iterateFeature(fcRoute);
   let prevPoint = false;
   let lineCollection = [];
   let start = feature.next();
-  for(let i = 0; i < (fc.features.length - 1); i++) {
+  for(let i = 0; i < (fcRoute.features.length - 1); i++) {
     let next = feature.next();
     if(next.done !== true) {
-      let path = findPath(start, next, prevPoint);
+      let path = findPath(start, next, prevPoint, fcMap);
       prevPoint = _.last(path.route.geometry.coordinates);
       path = setProperties(path, start, next);
       start = path.prev;
@@ -45,8 +45,8 @@ function setProperties(path, start, next) {
  * @returns an {route, prev} object containing the path A to B and
  * the last harbour B to serve as the next new start point A
  */
-function findPath(start, end, prevPoint) {
-  let colorData = canvasMap.getColorData();
+function findPath(start, end, prevPoint, fcMap) {
+  let colorData = canvasMap.getColorData(start.value, end.value, fcMap);
   let graph = new Graph(colorData, {diagonal: true});
   let heuristic = {heuristic: astar.heuristics.diagonal};
   let prev = end;

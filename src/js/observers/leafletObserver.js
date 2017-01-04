@@ -5,7 +5,7 @@ let leafletMap = require('../modules/leafletMap');
 let L = require('leaflet');
 
 class LeafletObserver extends Observer {
-  constructor(land) {
+  constructor() {
     super();
   }
 
