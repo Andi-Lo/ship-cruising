@@ -2,7 +2,7 @@
 
 let turf = require('./turf');
 let defaults = require('../modules/options').defaults;
-let SM = new (require('sphericalmercator'))();
+let SM = new (require('@mapbox/sphericalmercator'))();
 let bbox = require('./bbox');
 
 /**

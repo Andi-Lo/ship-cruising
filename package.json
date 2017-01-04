@@ -12,6 +12,7 @@
   },
   "author": "Andreas Lorer and Kevin Klugmann",
   "dependencies": {
+    "@mapbox/sphericalmercator": "^1.0.5",
     "@turf/meta": "^3.5.2",
     "@turf/turf": "^3.5.2",
     "babel-polyfill": "^6.20.0",
@@ -21,7 +22,6 @@
     "leaflet": "^1.0.1",
     "lineclip": "^1.1.5",
     "parse-float": "^0.1.1",
-    "sphericalmercator": "^1.0.5",
     "turf-normalize": "^1.0.2",
     "turf-size": "^1.1.1",
     "underscore": "^1.8.3"
