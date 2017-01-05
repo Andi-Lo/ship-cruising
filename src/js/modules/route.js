@@ -29,7 +29,6 @@ class Route {
   }
 
   setPointsOutside(fcRoute, fcMap) {
-    console.log('before', fcRoute);
     let point = {};
     let fcPoint = turf.fcToFcPoints(fcMap);
     turf.meta.featureEach(fcRoute, function(featureRoute) {
@@ -38,11 +37,9 @@ class Route {
         let nearest = turf.nearest(point, fcPoint);
         let bearing = turf.bearing(point, nearest);
         let dest = turf.destination(nearest, .6, bearing, 'kilometers');
-        console.log('point', point, 'nearest', nearest, 'dest', dest);
         featureRoute.geometry.coordinates = dest.geometry.coordinates;
       }
     });
-    console.log('after', fcRoute);
     return fcRoute;
   }
 
