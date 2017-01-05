@@ -6,7 +6,6 @@ let LeafletObserver = require('./observers/leafletObserver').LeafletObserver;
 let canvasMap = require('./modules/canvasMap');
 let leafletMap = require('./modules/leafletMap');
 let defaults = require('./modules/options').defaults;
-let calcClientRect = require('./libs/helpers').calcClientRect;
 let Map = require('./modules/map').Map;
 
 function shipcruising() {
@@ -19,9 +18,7 @@ function shipcruising() {
     new LeafletObserver();
   });
 
-  // Interactive map sector
-  let clientRect = calcClientRect();
-  leafletMap.init(clientRect.width, clientRect.height);
+  leafletMap.init();
 };
 
 shipcruising();

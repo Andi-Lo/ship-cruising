@@ -21,11 +21,12 @@ let getMap = function() {
 };
 
 let init = function(width, height) {
+  let rect = calcClientRect();
   let div = window.document.getElementById('interactive-map');
   let divLeaflet = document.createElement('div');
   divLeaflet.setAttribute('id', 'tone-map');
-  divLeaflet.style.width = width + 'px';
-  divLeaflet.style.height = height + 'px';
+  divLeaflet.style.width = rect.width + 'px';
+  divLeaflet.style.height = rect.height + 'px';
   div.appendChild(divLeaflet);
 
   _map = leaflet.map('tone-map', {zoomControl: true});
@@ -42,7 +43,6 @@ let setView = function(box = options.defaults.bbox) {
 };
 
 let getMetersPerPixel = function(map) {
-  // Get the y,x dimensions of the map
   let y = map.getSize().y;
   let x = map.getSize().x;
   // calculate the distance the one side of
