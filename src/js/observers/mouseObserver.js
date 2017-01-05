@@ -6,7 +6,7 @@ let calcBbox = require('../libs/turf').calcBbox;
 let setView = require('../modules/leafletMap').setView;
 
 class MouseObserver {
-  constructor(fc) {
+  constructor(fcMap) {
     let calc = window.document.getElementById('calc');
 
     calc.addEventListener('click', function(evt) {
@@ -17,7 +17,7 @@ class MouseObserver {
 
       features.then((fcRoute) => {
         setView(calcBbox(fcRoute));
-        canvasMap.updateMap(fcRoute, fc);
+        canvasMap.updateMap(fcRoute, fcMap);
       });
     });
   }

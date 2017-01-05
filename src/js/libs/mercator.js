@@ -66,7 +66,7 @@ let calculateScale = function(units = 'kilometers', box = defaults.bbox) {
 /**
  * get the origin which is the very top left corner of the canvas
  * plus the actual zoom level of the bbox
- * @param {bbox} [box=bboxJamaika]
+ * @param {bbox} any bbox
  * @returns {[num, num, zoom]}
  */
 let getOrigin = function(box = defaults.bbox) {

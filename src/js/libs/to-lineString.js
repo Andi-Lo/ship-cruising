@@ -1,5 +1,5 @@
 let normalize = require('turf-normalize');
-let turf = require('./turf');
+let turf = require('turf');
 
 function flatten(array) {
   return [].concat.apply([], array); // eslint-disable-line

@@ -3,7 +3,7 @@ let Graph = require('./astar.js').Graph;
 let turf = require('./turf');
 let mercator = require('./mercator');
 let canvasMap = require('../modules/canvasMap');
-let _ = require('lodash/array');
+let last = require('lodash/array').last;
 
 /**
  * Pathfinding uses the Astar algorithm to find the
@@ -21,7 +21,7 @@ module.exports = function(fcRoute, fcMap) {
     let next = feature.next();
     if(next.done !== true) {
       let path = findPath(start, next, prevPoint, fcMap);
-      prevPoint = _.last(path.route.geometry.coordinates);
+      prevPoint = last(path.route.geometry.coordinates);
       path = setProperties(path, start, next);
       start = path.prev;
       lineCollection.push(path.route);
