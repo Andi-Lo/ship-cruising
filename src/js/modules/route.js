@@ -6,8 +6,16 @@ let mercator = require('../libs/mercator');
 let defaults = require('../modules/options').defaults;
 
 class Route {
-  constructor(fcRoute, fcMap) {
-    this._waypoints = this.fixWaypoints(fcRoute, fcMap);
+  /**
+   * Creates an instance of Route.
+   *
+   * @param {FeatureCollection<Point>} fcRoute
+   * @param {FeatureCollection<(LineString|MultiLineString)>} geojson map
+   *
+   * @memberOf Route
+   */
+  constructor(fcWaypoints, fcMap) {
+    this._waypoints = this.fixWaypoints(fcWaypoints, fcMap);
     this._route = this.calcRoute(this._waypoints, fcMap);
     // this.calcRoute(this._waypoints).simplifyPath(0.1).smoothCurve();
     let stepSize = mercator.getOrigin(defaults.bbox).stepSize;
@@ -21,17 +29,40 @@ class Route {
 
   get waypoints() { return this._waypoints; }
 
-  fixWaypoints(fcRoute, fcMap) {
-    let bbox = turf.square(turf.calcBbox(fcRoute));
+  /**
+   * Findes harbours that lay inside of landmarks instead of water and sets them
+   * onto the nearest point of the coastline. This is neccessary to
+   * make sure the pathfinding algorithm will find a route between A and B.
+   *
+   * @param {FeatureCollection<Point>}
+   * @param {FeatureCollection<(LineString|MultiLineString)>}
+   * @returns {FeatureCollection<Point>} fixed harbour coordinates
+   *
+   * @memberOf Route
+   */
+  fixWaypoints(fcWaypoints, fcMap) {
+    let bbox = turf.square(turf.calcBbox(fcWaypoints));
     fcMap = turf.clipPolygon(fcMap, turf.size(bbox, 2));
-    let pointsInside = turf.isInside(fcMap, fcRoute);
+    let pointsInside = turf.isInside(fcMap, fcWaypoints);
     return this.setPointsOutside(pointsInside, fcMap);
   }
 
-  setPointsOutside(fcRoute, fcMap) {
+  /**
+   * This function will find the nearest coastline point for each harbour
+   * that lays inside of land. It then calculates the bearing between those 2
+   * points and sets the new harbour location in a distance along the bearing.
+   *
+   * @example example of bearing calculation: http://turfjs.org/examples/turf-bearing/
+   * @param {FeatureCollection<Point>}
+   * @param {FeatureCollection<LineString>}
+   * @returns {FeatureCollection<Point>} harbour locations outside of landmass
+   *
+   * @memberOf Route
+   */
+  setPointsOutside(fcWaypoints, fcMap) {
     let point = {};
     let fcPoint = turf.fcToFcPoints(fcMap);
-    turf.meta.featureEach(fcRoute, function(featureRoute) {
+    turf.meta.featureEach(fcWaypoints, function(featureRoute) {
       if(featureRoute.properties.isInsideLand == true) {
         point = turf.point(featureRoute.geometry.coordinates);
         let nearest = turf.nearest(point, fcPoint);
@@ -40,19 +71,21 @@ class Route {
         featureRoute.geometry.coordinates = dest.geometry.coordinates;
       }
     });
-    return fcRoute;
+    return fcWaypoints;
   }
 
   /**
-   * Uses pathfinding.js to find a route for the given
-   * featureCollection of harbours.
-   * @param {any} fc
-   * @returns a featureCollection where each feature is a linestring
+   * Uses pathfinding.js to find a route for each harbour location
+   *
+   * @param {FeatureCollection<Point>}
+   * @param {FeatureCollection<(LineString|MultiLineString)>}
+   * @returns {FeatureCollection<LineString>} each feature is a linestring
    * representing a step of the route
+   *
    * @memberOf Route
    */
-  calcRoute(fcRoute, fcMap) {
-    return pathfinding(fcRoute, fcMap);
+  calcRoute(fcWaypoints, fcMap) {
+    return pathfinding(fcWaypoints, fcMap);
   }
 
   /**
@@ -61,7 +94,7 @@ class Route {
    * points to their initial waypoint value. This should close gaps
    * between the subsection of two routes.
    *
-   * @param {any} featureCollection of type LineString
+   * @param {FeatureCollection<LineString>} featureCollection of type LineString
    * @returns featureCollection
    */
   fixRoute(fc) {
@@ -86,10 +119,11 @@ class Route {
   };
 
   /**
-   * Simplifies the coordinates of a given featureCollection and
-   * @param {any} featureCollection
-   * @param {number} [tolerance = 0.01]
-   * @returns a simplified featureCollection of type linestring
+   * Simplifies the coordinates of a given featureCollection
+   *
+   * @param {FeatureCollection<LineString>}
+   * @param {number} [tolerance=0.01] tolerance of simplification
+   * @returns {FeatureCollection<LineString>} simplified route
    *
    * @memberOf Route
    */
@@ -106,10 +140,11 @@ class Route {
   /**
    * Takes a featureCollection and transforms the containing
    * features into bezier curves.
-   * @param {any} featureCollection
-   * @param {number} [resolution = 10000]
-   * @param {number} [sharpness = 0.4]
-   * @returns simplified featureCollection of bezier curve features
+   *
+   * @param {FeatureCollection<LineString>}
+   * @param {number} [resolution=10000]
+   * @param {number} [sharpness=0.4]
+   * @returns {FeatureCollection<LineString>} simplified bezier curve features
    *
    * @memberOf Route
    */

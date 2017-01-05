@@ -13,10 +13,10 @@
     "no-unused-vars": 1,
     "require-jsdoc": 0,
     "valid-jsdoc": 0,
-    "max-len": 1,
     "no-invalid-this": 0,
     "padded-blocks": ["error", { "blocks": "never" }],
-    "brace-style": ["error", "stroustrup", { "allowSingleLine": true }]
+    "brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
+    "max-len": [1, 80, 2, {"ignoreComments": true}]
   },
   "parserOptions": {
     "ecmaVersion": 8

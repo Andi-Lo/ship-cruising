@@ -10,10 +10,11 @@ require("babel-polyfill");
 
 /**
  * ES6 Generator iterates over the features of the featureCollection
+ *
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators
- * @param {any} featureCollection
- * @param {number} [start=0]
- * @param {number} [end=-1]
+ * @param {FeatureColelction<LineString>}
+ * @param {number} [start = 0]
+ * @param {number} [end = -1]
  * @returns a feature on success else undefined
  */
 let iterateFeature = function* (fc, start = 0, end = -1) {
@@ -30,6 +31,14 @@ let iterateFeature = function* (fc, start = 0, end = -1) {
   }
 };
 
+/**
+ * If start and endpoint are not the same, add the start
+ * point to the array so the lineString behaves like a closed
+ * polygon which needs to have start === endpoint
+ *
+ * @param {featureCollection<LineString>}
+ * @returns {featureCollection<LineString>}
+ */
 let fixLineString = function(fc) {
   turf.meta.featureEach(fc, function(feature) {
     let length = feature.geometry.coordinates.length;
@@ -58,6 +67,14 @@ function equdistantParameters(feature, stepSize) {
   return {stepSize, steps};
 };
 
+/**
+ * Distributes each route point equidistantly along the route
+ * in the given stepSize
+ *
+ * @param {featureCollection<LineString>}
+ * @param {number} stepSize
+ * @returns
+ */
 let equidistant = function(fc, stepSize) {
   let features = [];
   let i = 0;
@@ -81,6 +98,12 @@ let equidistantPointsZoom = function(fc, metersPerPixel) {
   return equidistant(fc, spaceBetweenPoints);
 };
 
+/**
+ * Converts a FeatureCollection<Point> into a lineString feature
+ *
+ * @param {featureCollection<Point>}
+ * @returns {Feature<LineString>}
+ */
 let fcToLineString = function(fc) {
   let lineString = [];
   for(let i = 0; i < fc.features.length; i++) {
@@ -103,6 +126,12 @@ let unpackMultiPolCoords = function(features) {
   return data;
 };
 
+/**
+ * Converts a FeatureCollection of LineStrings into a FeatureColelction<Point>
+ *
+ * @param {FeatureCollection<LineString>}
+ * @returns {FeatureCollection<Point>}
+ */
 let fcToFcPoints = function(fc) {
   let points = [];
   turf.meta.coordEach(fc, function(coord) {
@@ -111,27 +140,53 @@ let fcToFcPoints = function(fc) {
   return turf.featureCollection(points);
 };
 
-let isInside = function(fcMap, fcRoute) {
-  fcMap = fixLineString(fcMap);
+/**
+ * Convert the FeatureColelction<LineString> into FeatureColelction<Polygon>
+ *
+ * @param {FeatureColelction<LineString>}
+ * @returns {FeatureColelction<Polygon>}
+ */
+function fcLineStringToFcPolygon(fc) {
+  fc = fixLineString(fc);
   let features = [];
   let points = [];
-  turf.meta.featureEach(fcMap, function(feature) {
+  turf.meta.featureEach(fc, function(feature) {
     points = turf.meta.coordAll(feature);
     if(points.length > 3) {
       features.push(turf.polygon([points]));
     }
   });
-  fcMap = turf.featureCollection(features);
+  return turf.featureCollection(features);
+}
+
+/**
+ * Checks if points lay inside of a polygon and if yes,
+ * it sets the property "isInsideLand" to "true"
+ *
+ * @param {FeatureCollection<LineString>} the LineString polygons to test against
+ * @param {FeatureColelction<Point>} the points you want to test
+ * @returns {FeatureCollection<Point>}
+ */
+let isInside = function(fcMap, fcWaypoints) {
+  fcMap = fcLineStringToFcPolygon(fcMap);
   turf.meta.featureEach(fcMap, function(mapFeature) {
-    turf.meta.featureEach(fcRoute, function(routeFeature) {
+    turf.meta.featureEach(fcWaypoints, function(routeFeature) {
       if(turf.inside(routeFeature, mapFeature)) {
         routeFeature.properties.isInsideLand = true;
       }
     });
   });
-  return fcRoute;
+  return fcWaypoints;
 };
 
+/**
+ * Clips the FeatureCollection with the bbox, reducing the overhead
+ * of unused geometry.
+ *
+ * @param {FeatureCollection<(LineString|MultiLineString>)} the geojson world map
+ * @param {Bbox} bbox
+ * @returns {FeatureCollection<LineString>}
+ */
 let clipPolygon = function(fc, bbox) {
   let points;
   let polygon;
@@ -149,11 +204,14 @@ let clipPolygon = function(fc, bbox) {
 };
 
 /**
- * @param {featureCollection} Feature or FeatureCollection
- * @returns rectangular polygon feature that encompasses all vertices
+ * Calculates the minimal bbox for a given set of Features
+ *
+ * @example e.g. the function will give the minimal bounding box for the route
+ * @param {featureCollection<LineString>} Feature or FeatureCollection
+ * @returns {Feature<Bbox>} rectangular polygon feature that encompasses all vertices
  */
-let calcBbox = function(route) {
-  let feature = turf.envelope(route);
+let calcBbox = function(fc) {
+  let feature = turf.envelope(fc);
   return turf.bbox(feature);
 };
 

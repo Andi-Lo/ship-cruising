@@ -6,11 +6,13 @@ let canvasMap = require('../modules/canvasMap');
 let last = require('lodash/array').last;
 
 /**
- * Pathfinding uses the Astar algorithm to find the
- * route. Input has to be a geojson featureCollection containing each
- * harbour as a feature object with long / lat coordinates
- * @param {any} featureCollection
- * @returns returns a featureCollection containing lineString features
+ * Pathfinding uses the Astar algorithm to find the route.
+ * Input has to be a geojson featureCollection containing each harbour as a feature object with long / lat coordinates
+ *
+ * @name pathfinding
+ * @param {FeatureCollection<(LineString|MultiLineString)>}
+ * @param {FeatureCollection<Point>}
+ * @returns {FeatureCollection<LineString>} the actual route
  */
 module.exports = function(fcRoute, fcMap) {
   let feature = turf.iterateFeature(fcRoute);
@@ -40,9 +42,9 @@ function setProperties(path, start, next) {
 
 /**
  * Use astar to find path from "start" to "end"
- * @param {any} start
- * @param {any} end
- * @returns an {route, prev} object containing the path A to B and
+ * @param {Object} start
+ * @param {Object} end
+ * @returns {Object} object containing the route and the previous point
  * the last harbour B to serve as the next new start point A
  */
 function findPath(start, end, prevPoint, fcMap) {
