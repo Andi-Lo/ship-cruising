@@ -15,6 +15,8 @@ require("babel-polyfill");
  * @param {FeatureColelction<LineString>}
  * @param {number} [start = 0]
  * @param {number} [end = -1]
+ * @throws {Error} when start value is negative
+ * @throws {Error} when start and end value are equal
  * @returns a feature on success else undefined
  */
 let iterateFeature = function* (fc, start = 0, end = -1) {
@@ -32,21 +34,26 @@ let iterateFeature = function* (fc, start = 0, end = -1) {
 };
 
 /**
- * If start and endpoint are not the same, add the start
+ * If start and endpoint are unequal, add the start
  * point to the array so the lineString behaves like a closed
  * polygon which needs to have start === endpoint
  *
- * @param {featureCollection<LineString>}
- * @returns {featureCollection<LineString>}
+ * @param {featureCollection<(lineString)>}
+ * @throws {Error} on wrong geometry type
+ * @returns {featureCollection<(LineString)>}
  */
 let fixLineString = function(fc) {
   turf.meta.featureEach(fc, function(feature) {
-    let length = feature.geometry.coordinates.length;
-    let first = feature.geometry.coordinates[0];
-    let last = feature.geometry.coordinates[length-1];
-    if(first[0] !== last[0] || first[1] !== last[1]) {
-      feature.geometry.coordinates.push(first);
+    if(feature.geometry.type === 'LineString') {
+      let length = feature.geometry.coordinates.length;
+      let first = feature.geometry.coordinates[0];
+      let last = feature.geometry.coordinates[length-1];
+      if(first[0] !== last[0] || first[1] !== last[1]) {
+        feature.geometry.coordinates.push(first);
+      }
     }
+    else
+      throw new Error(`Wrong geometry.type given: ${feature.geometry.type}`);
   });
   return fc;
 };
@@ -99,7 +106,7 @@ let equidistantPointsZoom = function(fc, metersPerPixel) {
 };
 
 /**
- * Converts a FeatureCollection<Point> into a lineString feature
+ * Converts a FeatureCollection<Point> into a LineString feature
  *
  * @param {featureCollection<Point>}
  * @returns {Feature<LineString>}
