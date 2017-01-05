@@ -8,7 +8,7 @@ let canvasMap = require('./canvasMap');
 let clearCanvas = function() {
   let ctx = canvasMap.getCanvas().getContext('2d');
   ctx.clearRect(0, 0, defaults.width, defaults.height);
-  drawRect(defaults.mapBackgroundColor, defaults.width, defaults.height);
+  drawRect(defaults.mapBg, defaults.width, defaults.height);
 };
 
 let drawLine = function(coord, isFirst, stroke = false) {
@@ -88,7 +88,7 @@ let drawPixels = function(featureCollection) {
   turf.meta.featureEach(featureCollection, function(feature) {
     turf.meta.coordEach(feature, function(coord) {
       let pixel = mercator.posToPixel(coord);
-      ctx.fillRect(pixel.x, pixel.y, 4, 4);
+      ctx.fillRect(pixel.x, pixel.y, 2, 2);
     });
   });
 };
@@ -124,7 +124,7 @@ let drawRoute = function(route, color) {
   let isFirst = true;
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 1;
   ctx.globalCompositeOperation = 'destination-over';
 
   turf.meta.featureEach(route, function(point) {
@@ -151,11 +151,12 @@ let drawRectBox = function(bbox, color, lineWidth) {
   let pixelEnd = mercator.posToPixel([bbox[2], bbox[3]]);
   let width = pixelEnd.x - pixelStart.x;
   let height = pixelStart.y - pixelEnd.y;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.fillStyle = defaults.mapBg;
 
   ctx.beginPath();
   ctx.rect(pixelStart.x, pixelEnd.y, width, height);
-  ctx.strokeStyle = color;
-  ctx.lineWidth = lineWidth;
   ctx.stroke();
   ctx.closePath();
 };

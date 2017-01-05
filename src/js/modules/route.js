@@ -7,12 +7,12 @@ let defaults = require('../modules/options').defaults;
 
 class Route {
   constructor(fcRoute, fcMap) {
-    this._waypoints = fcRoute;
-    this.calcRoute(this._waypoints, fcMap);
+    this._waypoints = this.fixWaypoints(fcRoute, fcMap);
+    this._route = this.calcRoute(this._waypoints, fcMap);
     // this.calcRoute(this._waypoints).simplifyPath(0.1).smoothCurve();
     let stepSize = mercator.getOrigin(defaults.bbox).stepSize;
     this._route = turf.equidistant(this._route, stepSize);
-    this._route = turf.fixRoute(this._route);
+    this._route = this.fixRoute(this._route);
     return this;
   }
 
@@ -20,6 +20,31 @@ class Route {
   get route() { return this._route; }
 
   get waypoints() { return this._waypoints; }
+
+  fixWaypoints(fcRoute, fcMap) {
+    let bbox = turf.square(turf.calcBbox(fcRoute));
+    fcMap = turf.clipPolygon(fcMap, turf.size(bbox, 2));
+    let pointsInside = turf.isInside(fcMap, fcRoute);
+    return this.setPointsOutside(pointsInside, fcMap);
+  }
+
+  setPointsOutside(fcRoute, fcMap) {
+    console.log('before', fcRoute);
+    let point = {};
+    let fcPoint = turf.fcToFcPoints(fcMap);
+    turf.meta.featureEach(fcRoute, function(featureRoute) {
+      if(featureRoute.properties.isInsideLand == true) {
+        point = turf.point(featureRoute.geometry.coordinates);
+        let nearest = turf.nearest(point, fcPoint);
+        let bearing = turf.bearing(point, nearest);
+        let dest = turf.destination(nearest, .6, bearing, 'kilometers');
+        console.log('point', point, 'nearest', nearest, 'dest', dest);
+        featureRoute.geometry.coordinates = dest.geometry.coordinates;
+      }
+    });
+    console.log('after', fcRoute);
+    return fcRoute;
+  }
 
   /**
    * Uses pathfinding.js to find a route for the given
@@ -30,9 +55,38 @@ class Route {
    * @memberOf Route
    */
   calcRoute(fcRoute, fcMap) {
-    this._route = pathfinding(fcRoute, fcMap);
-    return this;
+    return pathfinding(fcRoute, fcMap);
   }
+
+  /**
+   * Takes a featureCollection of type LineString and fixes
+   * the start and end point of the route by resetting those
+   * points to their initial waypoint value. This should close gaps
+   * between the subsection of two routes.
+   *
+   * @param {any} featureCollection of type LineString
+   * @returns featureCollection
+   */
+  fixRoute(fc) {
+    turf.meta.featureEach(fc, function(feature) {
+      let length = feature.geometry.coordinates.length;
+      if(feature.properties.start && feature.properties.end) {
+        // there have to be at least 2 points for this to make sense
+        if(length > 0) {
+          feature.geometry.coordinates[0] = feature.properties.start;
+          feature.geometry.coordinates[length-1] = feature.properties.end;
+        }
+      }
+      else {
+        let first = feature.geometry.coordinates[0];
+        let last = feature.geometry.coordinates[length-1];
+        if(first[0] !== last[0] || first[1] !== last[1]) {
+          feature.geometry.coordinates.push(first);
+        }
+      }
+    });
+    return fc;
+  };
 
   /**
    * Simplifies the coordinates of a given featureCollection and

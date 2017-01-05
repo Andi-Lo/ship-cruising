@@ -33,7 +33,7 @@ let initMap = function(fcMap, fcRoute, bbox) {
   fcMap.features.forEach((features) => {
     switch (features.geometry.type) {
       case "LineString":
-        drawCanvas.drawLineString(features, defaults.mapColor, true, 3);
+        drawCanvas.drawLineString(features, defaults.mapColor, true, 2);
         break;
       default:
         console.log(features.geometry.type);
@@ -41,7 +41,7 @@ let initMap = function(fcMap, fcRoute, bbox) {
     }
   });
   // Draw black circle over the harbor points.
-  drawCanvas.drawPoint(fcRoute, '#000000', 4);
+  drawCanvas.drawPoint(fcRoute, '#000000', 2);
   // Draw a black frame around the bbox
   drawCanvas.drawRectBox(bbox, '#000000', 4);
 
@@ -51,6 +51,7 @@ let initMap = function(fcMap, fcRoute, bbox) {
 let updateVal = function(event) {
   let coord = document.getElementById('coordinates');
   let pos = getMousePosition(event);
+  pos = mercator.pixelToPos([pos.x, pos.y]);
   coord.innerHTML = 'x: ' + pos.x + ' y: ' + pos.y;
 };
 
@@ -139,12 +140,11 @@ let colorToObject = function(rgbaString) {
 
 let updateMap = function(fcRoute, fcMap) {
   let route = new Route(fcRoute, fcMap);
-  const routeWeight = 1;
 
-  drawCanvas.drawLineString(route._route, defaults.strokeColor);
+  drawCanvas.drawLineString(route._route, defaults.strokeColor, 0, 1);
   drawCanvas.drawPixels(route._route);
 
-  drawLeaflet.drawPolyline(route._route, defaults.routeColor, routeWeight);
+  drawLeaflet.drawPolyline(route._route, defaults.routeColor, 1);
   drawLeaflet.drawMarkers(route._waypoints);
 
   // let simulation = forces.force(route._route, land._equidistantPoints);
@@ -163,8 +163,9 @@ let getColorData = function(start, end, fcMap) {
   let fcRoute = turf.featureCollection([start, end]);
   let bbox = turf.square(turf.calcBbox(fcRoute));
   let origin = mercator.getOrigin(bbox);
-  defaults.bbox = turf.size(bbox, origin.zoom / 1.5);
-  initMap(fcMap, fcRoute, defaults.bbox);
+  bbox = turf.size(bbox, origin.zoom / 1.5);
+  defaults.bbox = bbox;
+  initMap(fcMap, fcRoute, bbox);
   setColorData(createPixelData());
 
   return colorData;
