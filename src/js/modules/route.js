@@ -16,8 +16,8 @@ class Route {
    */
   constructor(fcWaypoints, fcMap) {
     this._waypoints = this.fixWaypoints(fcWaypoints, fcMap);
-    this._route = this.calcRoute(this._waypoints, fcMap);
-    // this.calcRoute(this._waypoints).simplifyPath(0.1).smoothCurve();
+    // this.calcRoute(this._waypoints, fcMap).simplifyPath(0.1).smoothCurve(0.01, 0.1);
+    this.calcRoute(this._waypoints, fcMap);
     let stepSize = mercator.getOrigin(defaults.bbox).stepSize;
     this._route = turf.equidistant(this._route, stepSize);
     this._route = this.fixRoute(this._route);
@@ -44,7 +44,7 @@ class Route {
     let bbox = turf.square(turf.calcBbox(fcWaypoints));
     fcMap = turf.clipPolygon(fcMap, turf.size(bbox, 2));
     let pointsInside = turf.isInside(fcMap, fcWaypoints);
-    return this.setPointsOutside(pointsInside, fcMap);
+    return this.setPointsOutside(pointsInside, fcMap, 3);
   }
 
   /**
@@ -55,11 +55,12 @@ class Route {
    * @example example of bearing calculation: http://turfjs.org/examples/turf-bearing/
    * @param {FeatureCollection<Point>}
    * @param {FeatureCollection<LineString>}
+   * @param {number} distance where the habour should be set in kilometers
    * @returns {FeatureCollection<Point>} harbour locations outside of landmass
    *
    * @memberOf Route
    */
-  setPointsOutside(fcWaypoints, fcMap) {
+  setPointsOutside(fcWaypoints, fcMap, distance) {
     let point = {};
     let fcPoint = turf.fcToFcPoints(fcMap);
     turf.meta.featureEach(fcWaypoints, function(featureRoute) {
@@ -67,7 +68,7 @@ class Route {
         point = turf.point(featureRoute.geometry.coordinates);
         let nearest = turf.nearest(point, fcPoint);
         let bearing = turf.bearing(point, nearest);
-        let dest = turf.destination(nearest, .6, bearing, 'kilometers');
+        let dest = turf.destination(nearest, distance, bearing, 'kilometers');
         featureRoute.geometry.coordinates = dest.geometry.coordinates;
       }
     });
@@ -85,7 +86,8 @@ class Route {
    * @memberOf Route
    */
   calcRoute(fcWaypoints, fcMap) {
-    return pathfinding(fcWaypoints, fcMap);
+    this._route = pathfinding(fcWaypoints, fcMap);
+    return this;
   }
 
   /**
@@ -94,8 +96,8 @@ class Route {
    * points to their initial waypoint value. This should close gaps
    * between the subsection of two routes.
    *
-   * @param {FeatureCollection<LineString>} featureCollection of type LineString
-   * @returns featureCollection
+   * @param {FeatureCollection<LineString>}
+   * @returns {FeatureCollection<LineString>}
    */
   fixRoute(fc) {
     turf.meta.featureEach(fc, function(feature) {
@@ -148,11 +150,11 @@ class Route {
    *
    * @memberOf Route
    */
-  smoothCurve(resolution = 10000, sharpness = 0.4) {
+  smoothCurve(tolerance = 0.01, sharpness = 0.4) {
     let bezier = [];
     turf.meta.featureEach(this._route, function(feature) {
-      let curve = turf.bezier(feature, resolution, sharpness);
-      bezier.push(turf.simplify(curve, 0.01, false));
+      let curve = turf.bezier(feature, 10000, sharpness);
+      bezier.push(turf.simplify(curve, tolerance, false));
     });
     this._route = turf.featureCollection(bezier);
     return this;

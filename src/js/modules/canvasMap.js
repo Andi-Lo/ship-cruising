@@ -8,7 +8,10 @@ let drawLeaflet = require('./drawLeaflet');
 let erode = require('../libs/erode');
 let mercator = require('../libs/mercator');
 let turf = require('../libs/turf');
+let forces = require('../forces/forces');
+let tolineString = require('../libs/to-lineString');
 let Route = require('./route').Route;
+let Land = require('./land').Land;
 
 let canvas;
 let colorData = [];
@@ -41,7 +44,7 @@ let initMap = function(fcMap, fcRoute, bbox) {
     }
   });
   // Draw black circle over the harbor points.
-  drawCanvas.drawPoint(fcRoute, '#000000', 2);
+  // drawCanvas.drawPoint(fcRoute, '#000000', 2);
   // Draw a black frame around the bbox
   drawCanvas.drawRectBox(bbox, '#000000', 4);
 
@@ -80,7 +83,7 @@ let createPixelData = function() {
   let binaryValue;
 
   for(let i = 0; i < imageData.data.length; i += 4) {
-    binaryValue = (imageData.data[i] !== 0) ? 0 : 1;
+    binaryValue = (imageData.data[i] !== 0) ? 10000 : 1;
     if(isFirst)
       colorData.push([binaryValue]);
     else
@@ -96,35 +99,6 @@ let createPixelData = function() {
   setColorData(colorData);
   return colorData;
 };
-
-/**
- * leaving this function for testing purposes, if we wan't to test dilate again
- * @param {Array} colorData
- */
-function drawTestCanvas(colorData) {
-  let el = window.document.getElementById('test-canvas');
-  let testCanvas = document.createElement('canvas');
-  testCanvas.setAttribute('id', 'test-canvas');
-  testCanvas.width = defaults.width;
-  testCanvas.height = defaults.height;
-
-  drawCanvas.drawRect(defaults.mapBg, defaults.width, defaults.height);
-  el.appendChild(testCanvas);
-
-  let ctx = testCanvas.getContext('2d');
-  for(let i = 0; i < colorData.length; i++) {
-    for(let j = 0; j < colorData.length; j++) {
-      if(colorData[i][j] === 1) {
-        ctx.fillStyle = 'rgba(0,0,0,1)';
-        ctx.fillRect(i, j, 1, 1);
-      }
-      else {
-        ctx.fillStyle = 'rgba(255,255,255,1)';
-        ctx.fillRect(i, j, 1, 1);
-      }
-    }
-  }
-}
 
 let colorToObject = function(rgbaString) {
   rgbaString = rgbaString.substring(5, rgbaString.length-1)
@@ -147,6 +121,7 @@ let updateMap = function(fcRoute, fcMap) {
   drawLeaflet.drawPolyline(route._route, defaults.routeColor, 1);
   drawLeaflet.drawMarkers(route._waypoints);
 
+  // let land = new Land(tolineString(fcMap));
   // let simulation = forces.force(route._route, land._equidistantPoints);
   // new ForceObserver(simulation);
 };
