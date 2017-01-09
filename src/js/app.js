@@ -9,8 +9,6 @@ let defaults = require('./modules/options').defaults;
 let Map = require('./modules/map').Map;
 
 function shipcruising() {
-  canvasMap.createCanvas(defaults.width, defaults.height);
-
   let promise = new Map('./map/coasts_50m.geojson');
   promise.then((fc) => {
     new MouseObserver(fc);
