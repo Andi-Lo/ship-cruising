@@ -20,7 +20,7 @@ let createCanvas = function(width, height) {
   canvas.width = width;
   canvas.height = height;
 
-  new CanvasObserver(canvas);
+  // new CanvasObserver(canvas);
   drawCanvas.drawRect(defaults.mapBg, defaults.width, defaults.height);
   el.appendChild(canvas);
 
