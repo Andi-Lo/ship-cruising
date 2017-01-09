@@ -12,55 +12,53 @@
   <body>
 
     <div class="tool-wrapper" id="tool">
-      <div class="container flex tool-content">
-        <div class="controllers flex-item">
-          <div class="drop-zone">
-            <div class="drop-here">
-              DROP GEOJSON HERE
+      <div class="container tool-content">
+        <div class="flex-column-layout">
+          <div class="flex-row-layout">
+            <div class="controllers flex-item">
+              <div class="drop-zone">
+                <div class="drop-here">
+                  DROP GEOJSON HERE
+                </div>
+              </div>
+              <select class="dropdown" name="routes" size="1">
+                <option value="australia" selected="selected">Australien</option>
+                <option value="belgium">Belgien</option>
+                <option value="brazil">Brasilien</option>
+                <option value="germany">Deutschland</option>
+                <option value="dubai">Dubai</option>
+                <option value="east_mediterranean_sea">Östliches Mittelmeer</option>
+                <option value="kiel">Kiel</option>
+                <option value="croatia">Kroatien</option>
+                <option value="kuba">Kuba</option>
+                <option value="miami">Miami</option>
+                <option value="oslo">Oslo</option>
+                <option value="vancouver">Vancouver</option>
+                <option value="united_arab_emirates">Vereinigte Arabische Emirate</option>
+                <option value="usa">USA</option>
+                <option value="western_europe">Westeuropa</option>
+              </select>
+              <button class="button" id="calc" type="submit">GO</button>
+            </div>
+            <div class="controllers flex-item">
+              <h3>Spring</h3>
+              <div class="control"><input id="strengthElem" step="0.1" value="1.5" type="range" min="0.1" max="3.5" /><label>Strength</label> </div>
+              <div class="control"><input id="distanceElem" step="1" value="1" type="range" min="-5" max="50"/><label>Distance</label> </div>
+            </div>
+            <div class="controllers flex-item">
+              <h3>Many-Body</h3>
+              <div class="control"><input id="mbSterngth" step="0.1" value="-5" type="range" min="-15" max="15"/><label>Strength</label> </div>
+              <div class="control"><input id="mbMinDist" step="0.1" type="range" min="1" max="50"/><label>Distance Min</label> </div>
+              <div class="control"><input id="mbMaxDist" step="0.1" type="range" min="1" max="50"/><label>Distance Max</label> </div>
+            </div>
+            <div class="controllers flex-item">
+              <h3>Collision</h3>
+              <div class="control"><input id="colStrength" step="0.1" value="2" type="range" min="-5" max="5"/><label>Strength</label> </div>
+              <div class="control"><input id="colRadius" step="1" value="3" type="range" min="1" max="10"/><label>Radius</label> </div>
+              <div class="control"><input id="colIterations" step="0.1" value="1" type="range" min="0" max="1"/><label>Iterations</label> </div>
             </div>
           </div>
-          <select class="dropdown" name="routes" size="1">
-            <option value="australia" selected="selected">Australien</option>
-            <option value="belgium">Belgien</option>
-            <option value="brazil">Brasilien</option>
-            <option value="germany">Deutschland</option>
-            <option value="dubai">Dubai</option>
-            <option value="east_mediterranean_sea">Östliches Mittelmeer</option>
-            <option value="kiel">Kiel</option>
-            <option value="croatia">Kroatien</option>
-            <option value="kuba">Kuba</option>
-            <option value="miami">Miami</option>
-            <option value="oslo">Oslo</option>
-            <option value="vancouver">Vancouver</option>
-            <option value="united_arab_emirates">Vereinigte Arabische Emirate</option>
-            <option value="usa">USA</option>
-            <option value="western_europe">Westeuropa</option>
-          </select>
-          <button class="button" id="calc" type="submit">GO</button>
-        </div>
-        <div class="controllers flex-item">
-          <h3>Spring</h3>
-          <div class="control"><input id="strengthElem" step="0.1" value="1.5" type="range" min="0.1" max="3.5" /><label>Strength</label> </div>
-          <div class="control"><input id="distanceElem" step="1" value="1" type="range" min="-5" max="50"/><label>Distance</label> </div>
-        </div>
-        <div class="controllers flex-item">
-          <h3>Many-Body</h3>
-          <div class="control"><input id="mbSterngth" step="0.1" value="-5" type="range" min="-15" max="15"/><label>Strength</label> </div>
-          <div class="control"><input id="mbMinDist" step="0.1" type="range" min="1" max="50"/><label>Distance Min</label> </div>
-          <div class="control"><input id="mbMaxDist" step="0.1" type="range" min="1" max="50"/><label>Distance Max</label> </div>
-        </div>
-        <div class="controllers flex-item">
-          <h3>Collision</h3>
-          <div class="control"><input id="colStrength" step="0.1" value="2" type="range" min="-5" max="5"/><label>Strength</label> </div>
-          <div class="control"><input id="colRadius" step="1" value="3" type="range" min="1" max="10"/><label>Radius</label> </div>
-          <div class="control"><input id="colIterations" step="0.1" value="1" type="range" min="0" max="1"/><label>Iterations</label> </div>
-        </div>
-        <div class="controllers flex-item">
           <div id="ship-cruising"></div>
-          <div class="data-wrapper">
-            <span id="coordinates"></span>
-            <span id="scale"></span>
-          </div>
         </div>
       </div>
 

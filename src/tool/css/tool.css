@@ -114,11 +114,18 @@ h1, h2, h3 {
   margin-left: auto;
 }
 
-.container.flex {
+.flex-row-layout {
   display: -webkit-flex;
   -webkit-flex-direction: row;
   display: flex;
   flex-direction: row;
+}
+
+.flex-column-layout {
+  display: -webkit-flex;
+  -webkit-flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .container .flex-item {
