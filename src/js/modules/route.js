@@ -15,7 +15,8 @@ class Route {
    * @memberOf Route
    */
   constructor(fcWaypoints, fcMap) {
-    this._waypoints = this.fixWaypoints(fcWaypoints, fcMap);
+    // this._waypoints = this.fixWaypoints(fcWaypoints, fcMap);
+    this._waypoints = fcWaypoints;
     // this.calcRoute(this._waypoints, fcMap).simplifyPath(0.1).smoothCurve(0.01, 0.4);
     this.calcRoute(this._waypoints, fcMap);
     let stepSize = mercator.getOrigin(defaults.bbox).stepSize;

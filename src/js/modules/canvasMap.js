@@ -144,7 +144,7 @@ let getColorData = function(start, end, fcMap) {
   let fcRoute = turf.featureCollection([start, end]);
   let bbox = turf.square(turf.calcBbox(fcRoute));
   let origin = mercator.getOrigin(bbox);
-  bbox = turf.size(bbox, Math.floor(origin.zoom / 4));
+  bbox = turf.size(bbox, Math.floor(origin.zoom / 3));
   defaults.bbox = bbox;
   initMap(fcMap, fcRoute, bbox);
   setColorData(createPixelData());
