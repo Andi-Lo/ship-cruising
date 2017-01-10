@@ -16,7 +16,7 @@ class Route {
    */
   constructor(fcWaypoints, fcMap) {
     this._waypoints = this.fixWaypoints(fcWaypoints, fcMap);
-    // this.calcRoute(this._waypoints, fcMap).simplifyPath(0.1).smoothCurve(0.01, 0.1);
+    // this.calcRoute(this._waypoints, fcMap).simplifyPath(0.1).smoothCurve(0.01, 0.4);
     this.calcRoute(this._waypoints, fcMap);
     let stepSize = mercator.getOrigin(defaults.bbox).stepSize;
     this._route = turf.equidistant(this._route, stepSize);
@@ -44,7 +44,7 @@ class Route {
     let bbox = turf.square(turf.calcBbox(fcWaypoints));
     fcMap = turf.clipPolygon(fcMap, turf.size(bbox, 2));
     let pointsInside = turf.isInside(fcMap, fcWaypoints);
-    return this.setPointsOutside(pointsInside, fcMap, 3);
+    return this.setPointsOutside(pointsInside, fcMap, .5);
   }
 
   /**
@@ -152,9 +152,11 @@ class Route {
    */
   smoothCurve(tolerance = 0.01, sharpness = 0.4) {
     let bezier = [];
+    let curve;
     turf.meta.featureEach(this._route, function(feature) {
-      let curve = turf.bezier(feature, 10000, sharpness);
-      bezier.push(turf.simplify(curve, tolerance, false));
+      curve = turf.bezier(feature, 10000, sharpness);
+      // bezier.push(turf.simplify(curve, tolerance, false));
+      bezier.push(curve);
     });
     this._route = turf.featureCollection(bezier);
     return this;

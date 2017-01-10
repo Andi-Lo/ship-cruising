@@ -36,7 +36,7 @@ let initMap = function(fcMap, fcRoute, bbox) {
   fcMap.features.forEach((features) => {
     switch (features.geometry.type) {
       case "LineString":
-        drawCanvas.drawLineString(features, defaults.mapColor, true, 2);
+        drawCanvas.drawLineString(features, defaults.mapColor, true, 0.1);
         break;
       default:
         console.log(features.geometry.type);
@@ -46,7 +46,7 @@ let initMap = function(fcMap, fcRoute, bbox) {
   // Draw black circle over the harbor points.
   // drawCanvas.drawPoint(fcRoute, '#000000', 2);
   // Draw a black frame around the bbox
-  drawCanvas.drawRectBox(bbox, '#000000', 4);
+  // drawCanvas.drawRectBox(bbox, '#000000', 4);
 
   return fcMap;
 };
@@ -83,7 +83,7 @@ let createPixelData = function() {
   let binaryValue;
 
   for(let i = 0; i < imageData.data.length; i += 4) {
-    binaryValue = (imageData.data[i] !== 0) ? 10000 : 1;
+    binaryValue = (imageData.data[i] !== 0) ? 1000 : 1;
     if(isFirst)
       colorData.push([binaryValue]);
     else
@@ -138,7 +138,7 @@ let getColorData = function(start, end, fcMap) {
   let fcRoute = turf.featureCollection([start, end]);
   let bbox = turf.square(turf.calcBbox(fcRoute));
   let origin = mercator.getOrigin(bbox);
-  bbox = turf.size(bbox, origin.zoom / 1.5);
+  bbox = turf.size(bbox, Math.floor(origin.zoom / 4));
   defaults.bbox = bbox;
   initMap(fcMap, fcRoute, bbox);
   setColorData(createPixelData());
