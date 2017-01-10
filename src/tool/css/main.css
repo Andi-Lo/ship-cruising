@@ -33,3 +33,8 @@ canvas {
   stroke: #fff;
   stroke-width: 1.5px;
 }
+
+#interactive-map {
+  position: fixed;
+  bottom: 0;
+}

@@ -3,6 +3,8 @@ let Graph = require('./astar.js').Graph;
 let turf = require('./turf');
 let mercator = require('./mercator');
 let canvasMap = require('../modules/canvasMap');
+let drawCanvas = require('../modules/drawCanvas');
+let defaults = require('../modules/options').defaults;
 let last = require('lodash/array').last;
 
 /**
@@ -27,6 +29,9 @@ module.exports = function(fcRoute, fcMap) {
       path = setProperties(path, start, next);
       start = path.prev;
       lineCollection.push(path.route);
+
+      drawCanvas.drawLineString(path.route, defaults.strokeColor, 0, 1);
+      drawCanvas.drawPixels(path.route);
     }
   }
   return turf.featureCollection(lineCollection);

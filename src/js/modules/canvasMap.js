@@ -23,7 +23,7 @@ let createCanvas = function(width, height) {
   canvas.width = width;
   canvas.height = height;
 
-  new CanvasObserver(canvas);
+  // new CanvasObserver(canvas);
   drawCanvas.drawRect(defaults.mapBg, defaults.width, defaults.height);
   el.appendChild(canvas);
 
@@ -31,7 +31,8 @@ let createCanvas = function(width, height) {
 };
 
 let initMap = function(fcMap, fcRoute, bbox) {
-  drawCanvas.clearCanvas();
+  // drawCanvas.clearCanvas();
+  createCanvas(defaults.width, defaults.height);
   fcMap = turf.clipPolygon(fcMap, bbox);
   fcMap.features.forEach((features) => {
     switch (features.geometry.type) {
@@ -113,10 +114,8 @@ let colorToObject = function(rgbaString) {
 };
 
 let updateMap = function(fcRoute, fcMap) {
+  clearCanvasDiv();
   let route = new Route(fcRoute, fcMap);
-
-  drawCanvas.drawLineString(route._route, defaults.strokeColor, 0, 1);
-  drawCanvas.drawPixels(route._route);
 
   drawLeaflet.drawPolyline(route._route, defaults.routeColor, 1);
   drawLeaflet.drawMarkers(route._waypoints);
@@ -129,6 +128,13 @@ let updateMap = function(fcRoute, fcMap) {
 let getCanvas = function() {
   return canvas;
 };
+
+function clearCanvasDiv() {
+  let el = window.document.getElementById('ship-cruising');
+  while(el.hasChildNodes()) {
+    el.removeChild(el.lastChild);
+  }
+}
 
 function setColorData(data) {
   colorData = data;
