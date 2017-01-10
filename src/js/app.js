@@ -11,7 +11,7 @@ let Map = require('./modules/map').Map;
 function shipcruising() {
   canvasMap.createCanvas(defaults.width, defaults.height);
 
-  let promise = new Map('./map/coasts_50m_draft.geojson');
+  let promise = new Map('./map/coasts_10m_draft.geojson');
   promise.then((fc) => {
     new MouseObserver(fc);
     new DropObserver('drop-zone', fc);
