@@ -43,6 +43,7 @@ class Route {
   fixWaypoints(fcWaypoints, fcMap) {
     let bbox = turf.square(turf.calcBbox(fcWaypoints));
     fcMap = turf.clipPolygon(fcMap, turf.size(bbox, 2));
+    this._fcLand = fcMap;
     let pointsInside = turf.isInside(fcMap, fcWaypoints);
     return this.setPointsOutside(pointsInside, fcMap);
   }

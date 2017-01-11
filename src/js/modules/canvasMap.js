@@ -153,8 +153,7 @@ let updateMap = function(fcRoute, fcMap) {
   drawLeaflet.drawPolyline(route._route, defaults.routeColor, 1);
   drawLeaflet.drawMarkers(route._waypoints);
 
-  // let land = new Land(toLinestring(_fcMap));
-  let land = new Land(toLinestring(fcMap));
+  let land = new Land(route._fcLand);
   let simulation = forces.force(route._route, land._equidistantPoints);
   new ForceObserver(simulation);
 };
