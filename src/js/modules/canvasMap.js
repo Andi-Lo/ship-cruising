@@ -1,17 +1,18 @@
 'use strict';
 
-let CanvasObserver = require('../observers/canvasObserver').CanvasObserver;
+// let CanvasObserver = require('../observers/canvasObserver').CanvasObserver;
 let defaults = require('./options').defaults;
 // let dilate = require('../libs/dilate');
+// let erode = require('../libs/erode');
 let drawCanvas = require('./drawCanvas');
 let drawLeaflet = require('./drawLeaflet');
-let erode = require('../libs/erode');
 let mercator = require('../libs/mercator');
 let turf = require('../libs/turf');
-let forces = require('../forces/forces');
-let tolineString = require('../libs/to-lineString');
 let Route = require('./route').Route;
-let Land = require('./land').Land;
+let blur = require('ctx-blur');
+// let forces = require('../forces/forces');
+// let tolineString = require('../libs/to-lineString');
+// let Land = require('./land').Land;
 
 let canvas;
 let colorData = [];
@@ -30,22 +31,55 @@ let createCanvas = function(width, height) {
   return canvas;
 };
 
+function getStrokeSize(x) {
+  let sSize = Math.floor(11.9667 - 1.98571 * x);
+  // prevent stroke size of 0 and smaller
+  if(sSize <= 0 && sSize < 1) {
+    sSize = 0.1;
+  }
+  return sSize;
+}
+
+/**
+ * Create grey-scales values between 0 and 255
+ *
+ * @param {number} i
+ * @param {number} iterations
+ * @returns
+ */
+function getRgba(i, iterations) {
+  let rgb = Math.floor( (255 / (iterations-1)) * i );
+  let rgba = `rgba(${rgb}, ${rgb}, ${rgb}, 1)`;
+  return rgba;
+}
+
+function canvasBlur() {
+  blur({sigma: 2, radius: 2})(canvas, function(err, newCanvas) {
+  });
+}
+
 let initMap = function(fcMap, fcRoute, bbox) {
   // drawCanvas.clearCanvas();
   createCanvas(defaults.width, defaults.height);
   fcMap = turf.clipPolygon(fcMap, bbox);
-  fcMap.features.forEach((features) => {
-    switch (features.geometry.type) {
-      case "LineString":
-        drawCanvas.drawLineString(features, defaults.mapColor, true, 0.1);
-        break;
-      default:
-        console.log(features.geometry.type);
-        break;
-    }
-  });
-  // Draw black circle over the harbor points.
-  // drawCanvas.drawPoint(fcRoute, '#000000', 2);
+  const iterations = 7;
+  // draw grey-scale map with different stroke sizes
+  for(let i = 1; i < iterations; i++) {
+    let sSize = getStrokeSize(i);
+    let rgba = getRgba(i, iterations);
+    fcMap.features.forEach((features) => {
+      switch (features.geometry.type) {
+        case "LineString":
+          drawCanvas.drawLineString(features, rgba, true, sSize);
+          break;
+        default:
+          console.log(features.geometry.type);
+          break;
+      }
+    });
+    if(i === iterations - 2) // blur the canvas befor painting the land on the last iteration
+      canvasBlur();
+  }
   // Draw a black frame around the bbox
   // drawCanvas.drawRectBox(bbox, '#000000', 4);
 
@@ -96,7 +130,7 @@ let createPixelData = function() {
       rowIndex = 0;
     }
   }
-  colorData = erode(colorData, defaults.width, defaults.height, 7);
+  // colorData = erode(colorData, defaults.width, defaults.height, 7);
   setColorData(colorData);
   return colorData;
 };
