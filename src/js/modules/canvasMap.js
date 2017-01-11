@@ -9,9 +9,15 @@ let erode = require('../libs/erode');
 let mercator = require('../libs/mercator');
 let turf = require('../libs/turf');
 let Route = require('./route').Route;
+let forces = require('../forces/forces');
+let ForceObserver = require('../observers/forceObserver').ForceObserver;
+let toLinestring = require('../libs/to-lineString');
+let Land = require('./land').Land;
+
 
 let canvas;
 let colorData = [];
+let _fcMap;
 
 let createCanvas = function(width, height) {
   let el = window.document.getElementById('ship-cruising');
@@ -31,6 +37,7 @@ let initMap = function(fcMap, fcRoute, bbox) {
   // drawCanvas.clearCanvas();
   createCanvas(defaults.width, defaults.height);
   fcMap = turf.clipPolygon(fcMap, bbox);
+  // _fcMap = fcMap;
   fcMap.features.forEach((features) => {
     switch (features.geometry.type) {
       case "LineString":
@@ -146,8 +153,10 @@ let updateMap = function(fcRoute, fcMap) {
   drawLeaflet.drawPolyline(route._route, defaults.routeColor, 1);
   drawLeaflet.drawMarkers(route._waypoints);
 
-  // let simulation = forces.force(route._route, land._equidistantPoints);
-  // new ForceObserver(simulation);
+  // let land = new Land(toLinestring(_fcMap));
+  let land = new Land(toLinestring(fcMap));
+  let simulation = forces.force(route._route, land._equidistantPoints);
+  new ForceObserver(simulation);
 };
 
 let getCanvas = function() {
