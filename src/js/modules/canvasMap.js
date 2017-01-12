@@ -32,14 +32,15 @@ let createCanvas = function(width, height) {
 };
 
 function getStrokeSize(x) {
-  let sSize = Math.floor(11.9667 - 1.98571 * x);
-  // prevent stroke size of 0 and smaller
-  if(sSize <= 0 && sSize < 1) {
-    sSize = 0.1;
-    return sSize;
-  }
-  else {
-    return sSize + 1;
+  switch (x) {
+    case 1:
+      return 7;
+    case 2:
+      return 3;
+    case 3:
+      return 0.1;
+    default:
+      break;
   }
 }
 
@@ -62,14 +63,14 @@ function canvasBlur() {
 }
 
 let initMap = function(fcMap, fcRoute, bbox) {
-  // drawCanvas.clearCanvas();
   createCanvas(defaults.width, defaults.height);
   fcMap = turf.clipPolygon(fcMap, bbox);
-  const iterations = 7;
+  const iterations = 4;
   // draw grey-scale map with different stroke sizes
   for(let i = 1; i < iterations; i++) {
     let sSize = getStrokeSize(i);
     let rgba = getRgba(i, iterations);
+    console.log('rgba', rgba, sSize, i, iterations);
     fcMap.features.forEach((features) => {
       switch (features.geometry.type) {
         case "LineString":

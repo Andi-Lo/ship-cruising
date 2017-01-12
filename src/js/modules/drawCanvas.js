@@ -14,11 +14,11 @@ let clearCanvas = function() {
 let drawLine = function(coord, isFirst, stroke = false) {
   let ctx = canvasMap.getCanvas().getContext('2d');
   let pixel = mercator.posToPixel(coord);
+  ctx.imageSmoothingEnabled = false;
+  ctx.lineCap = "square";
 
   if(pixel.x > 0 || pixel.y > 0) {
     if(isFirst === true) {
-      ctx.imageSmoothingEnabled = false;
-      ctx.lineCap = "square";
       ctx.beginPath();
       ctx.moveTo(pixel.x, pixel.y);
       isFirst = false;
@@ -101,6 +101,7 @@ let drawLineString = function(fc, color, fill = false, lineWidth) {
   ctx.lineWidth = lineWidth;
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
+  ctx.lineCap = "square";
 
   turf.meta.featureEach(fc, function(feature) {
     let routeLength = feature.geometry.coordinates.length;
