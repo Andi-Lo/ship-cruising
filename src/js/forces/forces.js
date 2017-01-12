@@ -77,7 +77,6 @@ let force = function(route, land) {
 
   simulation.nodes(nodes).on("tick", ticked).on("end", end);
   simulation.force("link").links(links);
-  maps.on("zoomend", update);
   leafletMap.disableZoom(maps);
 
   function update() {
@@ -113,6 +112,7 @@ let force = function(route, land) {
     globalFeatureCollection = convertSvgCirclesToFeatureCol(
         svgCircles
     );
+    maps.on("zoomend", update);
     leafletMap.enableZoom(maps);
   }
 

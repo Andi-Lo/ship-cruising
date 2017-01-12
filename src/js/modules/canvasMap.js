@@ -14,10 +14,8 @@ let ForceObserver = require('../observers/forceObserver').ForceObserver;
 let toLinestring = require('../libs/to-lineString');
 let Land = require('./land').Land;
 
-
 let canvas;
 let colorData = [];
-let _fcMap;
 
 let createCanvas = function(width, height) {
   let el = window.document.getElementById('ship-cruising');
@@ -37,7 +35,6 @@ let initMap = function(fcMap, fcRoute, bbox) {
   // drawCanvas.clearCanvas();
   createCanvas(defaults.width, defaults.height);
   fcMap = turf.clipPolygon(fcMap, bbox);
-  // _fcMap = fcMap;
   fcMap.features.forEach((features) => {
     switch (features.geometry.type) {
       case "LineString":

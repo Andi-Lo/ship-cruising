@@ -39,7 +39,7 @@ let init = function(width, height) {
 let setView = function(box = options.defaults.bbox) {
   let rect = calcClientRect();
   let bounds = bbox(box, rect.width, rect.height);
-  _map.setView([bounds.center[1], bounds.center[0]], bounds.zoom);
+  _map.setView([bounds.center[1], bounds.center[0]], bounds.zoom, {animate: false});
 };
 
 let getMetersPerPixel = function(map) {
