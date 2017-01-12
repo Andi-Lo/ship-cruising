@@ -15,12 +15,11 @@ class Route {
    * @memberOf Route
    */
   constructor(fcWaypoints, fcMap) {
-    // this._waypoints = this.fixWaypoints(fcWaypoints, fcMap);
     this._waypoints = fcWaypoints;
-    // this.calcRoute(this._waypoints, fcMap).simplifyPath(0.1).smoothCurve(0.01, 0.4);
     this.calcRoute(this._waypoints, fcMap);
     let stepSize = mercator.getOrigin(defaults.bbox).stepSize;
     this._route = turf.equidistant(this._route, stepSize);
+    this.smoothCurve(0.02, 0.3);
     this._route = this.fixRoute(this._route);
     return this;
   }
@@ -29,52 +28,6 @@ class Route {
   get route() { return this._route; }
 
   get waypoints() { return this._waypoints; }
-
-  /**
-   * Findes harbours that lay inside of landmarks instead of water and sets them
-   * onto the nearest point of the coastline. This is neccessary to
-   * make sure the pathfinding algorithm will find a route between A and B.
-   *
-   * @param {FeatureCollection<Point>}
-   * @param {FeatureCollection<(LineString|MultiLineString)>}
-   * @returns {FeatureCollection<Point>} fixed harbour coordinates
-   *
-   * @memberOf Route
-   */
-  fixWaypoints(fcWaypoints, fcMap) {
-    let bbox = turf.square(turf.calcBbox(fcWaypoints));
-    fcMap = turf.clipPolygon(fcMap, turf.size(bbox, 2));
-    let pointsInside = turf.isInside(fcMap, fcWaypoints);
-    return this.setPointsOutside(pointsInside, fcMap, .5);
-  }
-
-  /**
-   * This function will find the nearest coastline point for each harbour
-   * that lays inside of land. It then calculates the bearing between those 2
-   * points and sets the new harbour location in a distance along the bearing.
-   *
-   * @example example of bearing calculation: http://turfjs.org/examples/turf-bearing/
-   * @param {FeatureCollection<Point>}
-   * @param {FeatureCollection<LineString>}
-   * @param {number} distance where the habour should be set in kilometers
-   * @returns {FeatureCollection<Point>} harbour locations outside of landmass
-   *
-   * @memberOf Route
-   */
-  setPointsOutside(fcWaypoints, fcMap, distance) {
-    let point = {};
-    let fcPoint = turf.fcToFcPoints(fcMap);
-    turf.meta.featureEach(fcWaypoints, function(featureRoute) {
-      if(featureRoute.properties.isInsideLand == true) {
-        point = turf.point(featureRoute.geometry.coordinates);
-        let nearest = turf.nearest(point, fcPoint);
-        let bearing = turf.bearing(point, nearest);
-        let dest = turf.destination(nearest, distance, bearing, 'kilometers');
-        featureRoute.geometry.coordinates = dest.geometry.coordinates;
-      }
-    });
-    return fcWaypoints;
-  }
 
   /**
    * Uses pathfinding.js to find a route for each harbour location
@@ -146,7 +99,7 @@ class Route {
    *
    * @param {FeatureCollection<LineString>}
    * @param {number} [resolution=10000]
-   * @param {number} [sharpness=0.4]
+   * @param {number} [sharpness=0.4] higher values mean more curviness
    * @returns {FeatureCollection<LineString>} simplified bezier curve features
    *
    * @memberOf Route
@@ -156,8 +109,10 @@ class Route {
     let curve;
     turf.meta.featureEach(this._route, function(feature) {
       curve = turf.bezier(feature, 10000, sharpness);
-      // bezier.push(turf.simplify(curve, tolerance, false));
-      bezier.push(curve);
+      if(tolerance === 0)
+        bezier.push(curve);
+      else
+        bezier.push(turf.simplify(curve, tolerance, false));
     });
     this._route = turf.featureCollection(bezier);
     return this;

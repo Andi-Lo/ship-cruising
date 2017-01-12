@@ -1,18 +1,12 @@
 'use strict';
 
-// let CanvasObserver = require('../observers/canvasObserver').CanvasObserver;
 let defaults = require('./options').defaults;
-// let dilate = require('../libs/dilate');
-// let erode = require('../libs/erode');
 let drawCanvas = require('./drawCanvas');
 let drawLeaflet = require('./drawLeaflet');
 let mercator = require('../libs/mercator');
 let turf = require('../libs/turf');
 let Route = require('./route').Route;
 let blur = require('ctx-blur');
-// let forces = require('../forces/forces');
-// let tolineString = require('../libs/to-lineString');
-// let Land = require('./land').Land;
 
 let canvas;
 let colorData = [];
@@ -24,7 +18,6 @@ let createCanvas = function(width, height) {
   canvas.width = width;
   canvas.height = height;
 
-  // new CanvasObserver(canvas);
   drawCanvas.drawRect(defaults.mapBg, defaults.width, defaults.height);
   el.appendChild(canvas);
 
@@ -34,9 +27,9 @@ let createCanvas = function(width, height) {
 function getStrokeSize(x) {
   switch (x) {
     case 1:
-      return 7;
+      return 4;
     case 2:
-      return 3;
+      return 2;
     case 3:
       return 0.1;
     default:
@@ -57,53 +50,38 @@ function getRgba(i, iterations) {
   return rgba;
 }
 
-function canvasBlur() {
-  blur({radius: 1})(canvas, function(err, newCanvas) {
+function canvasBlur(canvas) {
+  blur({radius: 2})(canvas, function(err, newCanvas) {
   });
 }
 
 let initMap = function(fcMap, fcRoute, bbox) {
-  createCanvas(defaults.width, defaults.height);
+  let canvas = createCanvas(defaults.width, defaults.height);
   fcMap = turf.clipPolygon(fcMap, bbox);
   const iterations = 4;
+  let lineCap = 'square';
   // draw grey-scale map with different stroke sizes
   for(let i = 1; i < iterations; i++) {
     let sSize = getStrokeSize(i);
     let rgba = getRgba(i, iterations);
-    console.log('rgba', rgba, sSize, i, iterations);
     fcMap.features.forEach((features) => {
       switch (features.geometry.type) {
         case "LineString":
-          drawCanvas.drawLineString(features, rgba, true, sSize);
+          if(i === iterations-1)
+            lineCap = 'butt';
+          drawCanvas.drawLineString(features, rgba, true, sSize, lineCap);
           break;
         default:
           console.log(features.geometry.type);
           break;
       }
     });
-    if(i === iterations - 2) // blur the canvas befor painting the land on the last iteration
-      canvasBlur();
+    // blur the canvas befor painting the land on the last iteration
+    if(i === iterations - 2)
+      canvasBlur(canvas);
   }
-  // Draw a black frame around the bbox
-  // drawCanvas.drawRectBox(bbox, '#000000', 4);
 
   return fcMap;
-};
-
-let updateVal = function(event) {
-  let coord = document.getElementById('coordinates');
-  let pos = getMousePosition(event);
-  pos = mercator.pixelToPos([pos.x, pos.y]);
-  coord.innerHTML = 'x: ' + pos.x + ' y: ' + pos.y;
-};
-
-let getMousePosition = function(event) {
-  let canvas = getCanvas();
-  let rectangle = canvas.getBoundingClientRect();
-  return {
-    x: Math.floor(event.clientX - rectangle.left),
-    y: Math.floor(event.clientY - rectangle.top)
-  };
 };
 
 /**
@@ -142,22 +120,8 @@ let createPixelData = function() {
       rowIndex = 0;
     }
   }
-  // colorData = erode(colorData, defaults.width, defaults.height, 7);
-  console.log('colorData', colorData);
   setColorData(colorData);
   return colorData;
-};
-
-let colorToObject = function(rgbaString) {
-  rgbaString = rgbaString.substring(5, rgbaString.length-1)
-      .replace(/ /g, '')
-      .split(',');
-  return {
-    'r': parseFloat(rgbaString[0]),
-    'g': parseFloat(rgbaString[1]),
-    'b': parseFloat(rgbaString[2]),
-    'a': parseFloat(rgbaString[3])
-  };
 };
 
 let updateMap = function(fcRoute, fcMap) {
@@ -166,10 +130,6 @@ let updateMap = function(fcRoute, fcMap) {
 
   drawLeaflet.drawPolyline(route._route, defaults.routeColor, 1);
   drawLeaflet.drawMarkers(route._waypoints);
-
-  // let land = new Land(tolineString(fcMap));
-  // let simulation = forces.force(route._route, land._equidistantPoints);
-  // new ForceObserver(simulation);
 };
 
 let getCanvas = function() {
@@ -191,7 +151,7 @@ let getColorData = function(start, end, fcMap) {
   let fcRoute = turf.featureCollection([start, end]);
   let bbox = turf.square(turf.calcBbox(fcRoute));
   let origin = mercator.getOrigin(bbox);
-  bbox = turf.size(bbox, Math.floor(origin.zoom / 3));
+  bbox = turf.size(bbox, Math.floor(origin.zoom / 4));
   defaults.bbox = bbox;
   initMap(fcMap, fcRoute, bbox);
   setColorData(createPixelData());
@@ -200,10 +160,8 @@ let getColorData = function(start, end, fcMap) {
 };
 
 module.exports.createPixelData = createPixelData;
-module.exports.getMousePosition = getMousePosition;
 module.exports.getCanvas = getCanvas;
 module.exports.getColorData = getColorData;
 module.exports.createCanvas = createCanvas;
 module.exports.initMap = initMap;
-module.exports.updateVal = updateVal;
 module.exports.updateMap = updateMap;

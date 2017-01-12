@@ -85,17 +85,17 @@ let getOrigin = function(box = defaults.bbox) {
 function getStepSize(zoomLevel) {
   switch (zoomLevel) {
     case 1:
-      return 200;
-    case 2:
-      return 175;
-    case 3:
-      return 125;
-    case 4:
-      return 100;
-    case 5:
       return 30;
-    case 6:
+    case 2:
+      return 20;
+    case 3:
       return 10;
+    case 4:
+      return 9;
+    case 5:
+      return 8;
+    case 6:
+      return 7;
     case 7:
       return 5;
     case 8:
