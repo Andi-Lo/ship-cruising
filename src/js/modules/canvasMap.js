@@ -36,8 +36,11 @@ function getStrokeSize(x) {
   // prevent stroke size of 0 and smaller
   if(sSize <= 0 && sSize < 1) {
     sSize = 0.1;
+    return sSize;
   }
-  return sSize;
+  else {
+    return sSize + 1;
+  }
 }
 
 /**
@@ -54,7 +57,7 @@ function getRgba(i, iterations) {
 }
 
 function canvasBlur() {
-  blur({sigma: 2, radius: 2})(canvas, function(err, newCanvas) {
+  blur({radius: 1})(canvas, function(err, newCanvas) {
   });
 }
 
@@ -115,14 +118,22 @@ let createPixelData = function() {
   let colorData = [];
   let rowIndex = 0;
   let isFirst = true;
-  let binaryValue;
+  let weight;
 
   for(let i = 0; i < imageData.data.length; i += 4) {
-    binaryValue = (imageData.data[i] !== 0) ? 1000 : 1;
+    if(imageData.data[i] === 0) {
+      weight = 1;
+    }
+    else if(imageData.data[i] > 250) {
+      weight = 100000;
+    }
+    else {
+      weight = imageData.data[i] * 10;
+    }
     if(isFirst)
-      colorData.push([binaryValue]);
+      colorData.push([weight]);
     else
-      colorData[rowIndex].push(binaryValue);
+      colorData[rowIndex].push(weight);
 
     rowIndex++;
     if(rowIndex === defaults.height) {
@@ -131,6 +142,7 @@ let createPixelData = function() {
     }
   }
   // colorData = erode(colorData, defaults.width, defaults.height, 7);
+  console.log('colorData', colorData);
   setColorData(colorData);
   return colorData;
 };
