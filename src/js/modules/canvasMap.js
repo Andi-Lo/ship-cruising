@@ -1,14 +1,12 @@
 'use strict';
 
-let CanvasObserver = require('../observers/canvasObserver').CanvasObserver;
 let defaults = require('./options').defaults;
-// let dilate = require('../libs/dilate');
 let drawCanvas = require('./drawCanvas');
 let drawLeaflet = require('./drawLeaflet');
-let erode = require('../libs/erode');
 let mercator = require('../libs/mercator');
 let turf = require('../libs/turf');
 let Route = require('./route').Route;
+let blur = require('ctx-blur');
 
 let canvas;
 let colorData = [];
@@ -20,49 +18,70 @@ let createCanvas = function(width, height) {
   canvas.width = width;
   canvas.height = height;
 
-  // new CanvasObserver(canvas);
   drawCanvas.drawRect(defaults.mapBg, defaults.width, defaults.height);
   el.appendChild(canvas);
 
   return canvas;
 };
 
-let initMap = function(fcMap, fcRoute, bbox) {
-  // drawCanvas.clearCanvas();
-  createCanvas(defaults.width, defaults.height);
-  fcMap = turf.clipPolygon(fcMap, bbox);
-  fcMap.features.forEach((features) => {
-    switch (features.geometry.type) {
-      case "LineString":
-        drawCanvas.drawLineString(features, defaults.mapColor, true, 2);
-        break;
-      default:
-        console.log(features.geometry.type);
-        break;
-    }
+function getStrokeSize(x) {
+  switch (x) {
+    case 1:
+      return 4;
+    case 2:
+      return 2;
+    case 3:
+      return 0.1;
+    default:
+      break;
+  }
+}
+
+/**
+ * Create grey-scales values between 0 and 255
+ *
+ * @param {number} i
+ * @param {number} iterations
+ * @returns
+ */
+function getRgba(i, iterations) {
+  let rgb = Math.floor( (255 / (iterations-1)) * i );
+  let rgba = `rgba(${rgb}, ${rgb}, ${rgb}, 1)`;
+  return rgba;
+}
+
+function canvasBlur(canvas) {
+  blur({radius: 2})(canvas, function(err, newCanvas) {
   });
-  // Draw black circle over the harbor points.
-  drawCanvas.drawPoint(fcRoute, '#000000', 2);
-  // Draw a black frame around the bbox
-  drawCanvas.drawRectBox(bbox, '#000000', 4);
+}
+
+let initMap = function(fcMap, fcRoute, bbox) {
+  let canvas = createCanvas(defaults.width, defaults.height);
+  fcMap = turf.clipPolygon(fcMap, bbox);
+  const iterations = 4;
+  let lineCap = 'square';
+  // draw grey-scale map with different stroke sizes
+  for(let i = 1; i < iterations; i++) {
+    let sSize = getStrokeSize(i);
+    let rgba = getRgba(i, iterations);
+    fcMap.features.forEach((features) => {
+      switch (features.geometry.type) {
+        case "LineString":
+          if(i === iterations-1)
+            lineCap = 'butt';
+          drawCanvas.drawLineString(features, rgba, true, sSize, lineCap);
+          break;
+        default:
+          console.log(features.geometry.type);
+          break;
+      }
+    });
+    // blur the canvas befor painting the land on the last iteration
+    if(i === iterations - 2)
+      canvasBlur(canvas);
+  }
 
   return fcMap;
-};
-
-let updateVal = function(event) {
-  let coord = document.getElementById('coordinates');
-  let pos = getMousePosition(event);
-  pos = mercator.pixelToPos([pos.x, pos.y]);
-  coord.innerHTML = 'x: ' + pos.x + ' y: ' + pos.y;
-};
-
-let getMousePosition = function(event) {
-  let canvas = getCanvas();
-  let rectangle = canvas.getBoundingClientRect();
-  return {
-    x: Math.floor(event.clientX - rectangle.left),
-    y: Math.floor(event.clientY - rectangle.top)
-  };
 };
 
 /**
@@ -78,14 +97,22 @@ let createPixelData = function() {
   let colorData = [];
   let rowIndex = 0;
   let isFirst = true;
-  let binaryValue;
+  let weight;
 
   for(let i = 0; i < imageData.data.length; i += 4) {
-    binaryValue = (imageData.data[i] !== 0) ? 0 : 1;
+    if(imageData.data[i] === 0) {
+      weight = 1;
+    }
+    else if(imageData.data[i] > 250) {
+      weight = 100000;
+    }
+    else {
+      weight = imageData.data[i] * 10;
+    }
     if(isFirst)
-      colorData.push([binaryValue]);
+      colorData.push([weight]);
     else
-      colorData[rowIndex].push(binaryValue);
+      colorData[rowIndex].push(weight);
 
     rowIndex++;
     if(rowIndex === defaults.height) {
@@ -93,50 +120,8 @@ let createPixelData = function() {
       rowIndex = 0;
     }
   }
-  colorData = erode(colorData, defaults.width, defaults.height, 7);
   setColorData(colorData);
   return colorData;
-};
-
-/**
- * leaving this function for testing purposes, if we wan't to test dilate again
- * @param {Array} colorData
- */
-function drawTestCanvas(colorData) {
-  let el = window.document.getElementById('test-canvas');
-  let testCanvas = document.createElement('canvas');
-  testCanvas.setAttribute('id', 'test-canvas');
-  testCanvas.width = defaults.width;
-  testCanvas.height = defaults.height;
-
-  drawCanvas.drawRect(defaults.mapBg, defaults.width, defaults.height);
-  el.appendChild(testCanvas);
-
-  let ctx = testCanvas.getContext('2d');
-  for(let i = 0; i < colorData.length; i++) {
-    for(let j = 0; j < colorData.length; j++) {
-      if(colorData[i][j] === 1) {
-        ctx.fillStyle = 'rgba(0,0,0,1)';
-        ctx.fillRect(i, j, 1, 1);
-      }
-      else {
-        ctx.fillStyle = 'rgba(255,255,255,1)';
-        ctx.fillRect(i, j, 1, 1);
-      }
-    }
-  }
-}
-
-let colorToObject = function(rgbaString) {
-  rgbaString = rgbaString.substring(5, rgbaString.length-1)
-      .replace(/ /g, '')
-      .split(',');
-  return {
-    'r': parseFloat(rgbaString[0]),
-    'g': parseFloat(rgbaString[1]),
-    'b': parseFloat(rgbaString[2]),
-    'a': parseFloat(rgbaString[3])
-  };
 };
 
 let updateMap = function(fcRoute, fcMap) {
@@ -145,9 +130,6 @@ let updateMap = function(fcRoute, fcMap) {
 
   drawLeaflet.drawPolyline(route._route, defaults.routeColor, 1);
   drawLeaflet.drawMarkers(route._waypoints);
-
-  // let simulation = forces.force(route._route, land._equidistantPoints);
-  // new ForceObserver(simulation);
 };
 
 let getCanvas = function() {
@@ -169,7 +151,7 @@ let getColorData = function(start, end, fcMap) {
   let fcRoute = turf.featureCollection([start, end]);
   let bbox = turf.square(turf.calcBbox(fcRoute));
   let origin = mercator.getOrigin(bbox);
-  bbox = turf.size(bbox, origin.zoom / 1.5);
+  bbox = turf.size(bbox, Math.floor(origin.zoom / 4));
   defaults.bbox = bbox;
   initMap(fcMap, fcRoute, bbox);
   setColorData(createPixelData());
@@ -178,10 +160,8 @@ let getColorData = function(start, end, fcMap) {
 };
 
 module.exports.createPixelData = createPixelData;
-module.exports.getMousePosition = getMousePosition;
 module.exports.getCanvas = getCanvas;
 module.exports.getColorData = getColorData;
 module.exports.createCanvas = createCanvas;
 module.exports.initMap = initMap;
-module.exports.updateVal = updateVal;
 module.exports.updateMap = updateMap;

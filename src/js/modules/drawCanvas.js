@@ -11,9 +11,7 @@ let clearCanvas = function() {
   drawRect(defaults.mapBg, defaults.width, defaults.height);
 };
 
-let drawLine = function(coord, isFirst, stroke = false) {
-  let ctx = canvasMap.getCanvas().getContext('2d');
-  ctx.imageSmoothingEnabled = false;
+let drawLine = function(ctx, coord, isFirst, stroke = false) {
   let pixel = mercator.posToPixel(coord);
 
   if(pixel.x > 0 || pixel.y > 0) {
@@ -40,7 +38,7 @@ let drawMultiPolygon = function(features, color) {
   let coordinates = turf.unpackMultiPolCoords(features);
   coordinates.forEach(function(coords) {
     coords.forEach(function(coord) {
-      isFirst = drawLine(coord, isFirst);
+      isFirst = drawLine(ctx, coord, isFirst);
     });
     isFirst = true;
     ctx.closePath();
@@ -56,7 +54,7 @@ let drawPolygon = function(features, color) {
 
   turf.meta.featureEach(features, function(feature) {
     turf.meta.coordEach(feature, function(coord) {
-      isFirst = drawLine(coord, isFirst);
+      isFirst = drawLine(ctx, coord, isFirst);
     });
   });
 
@@ -93,18 +91,29 @@ let drawPixels = function(featureCollection) {
   });
 };
 
-let drawLineString = function(fc, color, fill = false, lineWidth) {
+function setCanvasProps(ctx, props) {
+  ctx.lineWidth = props.lineWidth;
+  ctx.strokeStyle = props.fillStyle;
+  ctx.fillStyle = props.fillStyle;
+  ctx.lineCap = props.lineCap;
+  ctx.imageSmoothingEnabled = false;
+}
+
+let drawLineString = function(fc, color, fill = false, lineWidth, lineCap) {
   let ctx = canvasMap.getCanvas().getContext('2d');
   let length = 1;
   let isFirst = true;
-  ctx.lineWidth = lineWidth;
-  ctx.fillStyle = color;
-  ctx.strokeStyle = color;
+  setCanvasProps(ctx, {
+    'lineWidth': lineWidth,
+    'fillStyle': color,
+    'strokeStyle': color,
+    'lineCap': lineCap
+  });
 
   turf.meta.featureEach(fc, function(feature) {
     let routeLength = feature.geometry.coordinates.length;
     turf.meta.coordEach(feature, function(coord) {
-      isFirst = drawLine(coord, isFirst, true);
+      isFirst = drawLine(ctx, coord, isFirst, true);
       if(routeLength === length) ctx.closePath();
       length++;
     });
@@ -129,7 +138,7 @@ let drawRoute = function(route, color) {
 
   turf.meta.featureEach(route, function(point) {
     let coord = turf.invariant.getCoord(point);
-    isFirst = drawLine(coord, isFirst, true);
+    isFirst = drawLine(ctx, coord, isFirst, true);
     if(routeLength === length) ctx.closePath();
     length++;
   });

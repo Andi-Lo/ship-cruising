@@ -197,14 +197,14 @@ let isInside = function(fcMap, fcWaypoints) {
 let clipPolygon = function(fc, bbox) {
   let points;
   let polygon;
-  bbox = turf.size(bbox, 1);
+  bbox = turf.size(turf.square(bbox), 2);
   let clipped = turf.featureCollection([]);
   turf.meta.featureEach(fc, function(feature) {
     points = turf.meta.coordAll(feature);
-    polygon = lineclip.polygon(points, bbox);
-    if(polygon.length > 0) {
+    if(points.length > 0)
+      polygon = lineclip.polygon(points, bbox);
+    if(polygon.length > 0)
       clipped.features.push(turf.lineString(polygon));
-    }
   });
   clipped = turf.fixLineString(clipped);
   return clipped;
