@@ -13,11 +13,12 @@ let clearCanvas = function() {
 
 let drawLine = function(coord, isFirst, stroke = false) {
   let ctx = canvasMap.getCanvas().getContext('2d');
-  ctx.imageSmoothingEnabled = false;
   let pixel = mercator.posToPixel(coord);
 
   if(pixel.x > 0 || pixel.y > 0) {
     if(isFirst === true) {
+      ctx.imageSmoothingEnabled = false;
+      ctx.lineCap = "square";
       ctx.beginPath();
       ctx.moveTo(pixel.x, pixel.y);
       isFirst = false;
