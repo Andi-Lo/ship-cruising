@@ -7,7 +7,7 @@ let leafletMap = require('./modules/leafletMap');
 let Map = require('./modules/map').Map;
 
 function shipcruising() {
-  let promise = new Map('./map/coasts_10m_draft.geojson');
+  let promise = new Map('./map/coasts_10m.geojson');
   promise.then((fc) => {
     new MouseObserver(fc);
     new DropObserver('drop-zone', fc);
