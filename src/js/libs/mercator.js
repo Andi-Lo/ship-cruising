@@ -12,7 +12,7 @@ let bbox = require('./bbox');
  */
 let positionToPixel = function(coord) {
   if (typeof coord[0] !== 'number' || typeof coord[1] !== 'number') {
-    throw new Error('Argument should be an array [number, number]');
+    throw new Error('Argument should be an array [number, number] ' + typeof(coord[0]) + ' given');
   }
   let origin = getOrigin();
   let px = SM.px(coord, origin.zoom);

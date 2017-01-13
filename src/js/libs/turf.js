@@ -6,6 +6,9 @@ turf.invariant = require('@turf/invariant');
 turf.size = require('turf-size');
 let options = require('../modules/options').force;
 let lineclip = require('lineclip');
+let martinez = require('martinez-polygon-clipping');
+let flatten = require('./helpers').flatten;
+let toLineString = require('./to-lineString');
 require("babel-polyfill");
 
 /**
@@ -46,10 +49,12 @@ let fixLineString = function(fc) {
   turf.meta.featureEach(fc, function(feature) {
     if(feature.geometry.type === 'LineString') {
       let length = feature.geometry.coordinates.length;
-      let first = feature.geometry.coordinates[0];
-      let last = feature.geometry.coordinates[length-1];
-      if(first[0] !== last[0] || first[1] !== last[1]) {
-        feature.geometry.coordinates.push(first);
+      if(length > 0) {
+        let first = feature.geometry.coordinates[0];
+        let last = feature.geometry.coordinates[length-1];
+        if(first[0] !== last[0] || first[1] !== last[1]) {
+          feature.geometry.coordinates.push(first);
+        }
       }
     }
     else
@@ -210,6 +215,54 @@ let clipPolygon = function(fc, bbox) {
   return clipped;
 };
 
+function toLine(fc) {
+  let lineString = turf.featureCollection([]);
+  turf.meta.featureEach(fc, function(feature) {
+    switch(feature.geometry.type) {
+      case 'Polygon':
+        lineString.features.push(turf.lineString(flatten(feature.geometry.coordinates)));
+        break;
+      case 'MultiPolygon':
+        lineString.features.push(turf.lineString(unpackMultiPolCoords(feature)));
+        break;
+    }
+  });
+  return lineString;
+}
+
+function swap(fc) {
+  console.log('fc', fc);
+  let c = [];
+  turf.meta.featureEach(fc, function(feature) {
+    console.log('feature', feature);
+    feature.geometry.coordinates.forEach((coord) => {
+      console.log('coord', coord);
+      c = coord;
+      coord[0] = c[1];
+      coord[1] = c[0];
+    });
+  });
+  console.log('flipp', fc);
+}
+
+let martinezClipping = function(fc, bbox) {
+  let polygon;
+  bbox = turf.bboxPolygon(turf.size(turf.square(bbox), 1.2));
+  let clipped = turf.featureCollection([]);
+  fc = toLineString(fc);
+  fc = fcLineStringToFcPolygon(fc);
+  turf.meta.featureEach(fc, function(feature) {
+    if(feature.geometry.coordinates.length > 0)
+      polygon = martinez.intersection(feature.geometry.coordinates, bbox.geometry.coordinates);
+    if(polygon !== null)
+      if(polygon.length === 1)
+        clipped.features.push(turf.polygon(polygon));
+      else
+        clipped.features.push(turf.multiPolygon(polygon));
+  });
+  return toLine(clipped);
+};
+
 /**
  * Calculates the minimal bbox for a given set of Features
  *
@@ -233,3 +286,4 @@ module.exports.equidistantPointsZoom = equidistantPointsZoom;
 module.exports.unpackMultiPolCoords = unpackMultiPolCoords;
 module.exports.fcToLineString = fcToLineString;
 module.exports.isInside = isInside;
+module.exports.martinezClipping = martinezClipping;

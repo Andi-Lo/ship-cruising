@@ -22,6 +22,7 @@
     "geo-viewport": "^0.2.1",
     "leaflet": "^1.0.1",
     "lineclip": "^1.1.5",
+    "martinez-polygon-clipping": "^0.1.5",
     "parse-float": "^0.1.1",
     "turf-normalize": "^1.0.2",
     "turf-size": "^1.1.1",
