@@ -19,6 +19,8 @@ class Route {
     this.calcRoute(this._waypoints, fcMap);
     let stepSize = mercator.getOrigin(defaults.bbox).stepSize;
     this._route = turf.equidistant(this._route, stepSize);
+    // For Belgien 0.01 and 0.85 are good values
+    // For Brazil and so on the below are good values
     this.simplifyPath(0.1).smoothCurve(0.85);
     this._route = this.fixRoute(this._route);
     return this;
