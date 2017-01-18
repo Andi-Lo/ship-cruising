@@ -12,9 +12,10 @@ let circleCoastForces = [];
  * @param weight
  */
 let drawPolyline = function(fc, color = '#3388ff', weight = 3) {
+  let maps = leafletMap.getMap();
+
   turf.meta.featureEach(fc, function(feature) {
     let swappedCords = turf.flip(feature);
-    let maps = leafletMap.getMap();
 
     leaflet.polyline(swappedCords.geometry.coordinates, {
       color: color,
@@ -25,12 +26,15 @@ let drawPolyline = function(fc, color = '#3388ff', weight = 3) {
 
 let drawMarkers = function(fc) {
   let maps = leafletMap.getMap();
+  let coord;
+  let marker;
+  let text;
 
   turf.meta.featureEach(fc, function(feature) {
-    let coord = turf.invariant.getCoord(turf.flip(feature));
-    let marker = drawMarker(maps, coord);
+    coord = turf.invariant.getCoord(turf.flip(feature));
+    marker = drawMarker(maps, coord);
     // using es6 template literals (` `) here
-    let text = `<b>${feature.properties.name}</b><br>
+    text = `<b>${feature.properties.name}</b><br>
                 ${coord[1]} "lat "  ${coord[0]}`;
     bindMarkerPopup(marker, text);
   });
@@ -47,12 +51,13 @@ let drawPoints = function(fc, radius = 5, hexColor = "#F23C00") {
 
 let drawPointsCoastForces = function(fc, radius = 5, hexColor = "#F23C00") {
   let maps = leafletMap.getMap();
+  let circle;
   // Make sure the old points get erased
   removeCoastCircles();
 
   turf.meta.featureEach(fc, function(feature) {
     turf.meta.coordEach(feature, function(coord) {
-      let circle = drawCircleMarker(
+      circle = drawCircleMarker(
         maps,
         [coord[1], coord[0]],
         radius,
