@@ -11,6 +11,10 @@
   </head>
   <body>
 
+    <div id="cover" class="">
+      <div id="spinner" class=""></div>
+    </div>
+
     <div class="tool-wrapper" id="tool">
       <div class="container tool-content">
         <div class="flex-column-layout">
@@ -23,6 +27,7 @@
               </div>
               <select class="dropdown" name="routes" size="1">
                 <option value="australia">Australien</option>
+                <option value="test" selected="selected">Test</option>
                 <option value="belgium">Belgien</option>
                 <option value="brazil">Brasilien</option>
                 <option value="germany">Deutschland</option>
@@ -30,7 +35,7 @@
                 <option value="east_mediterranean_sea">Östliches Mittelmeer</option>
                 <option value="kiel">Kiel</option>
                 <option value="croatia">Kroatien</option>
-                <option value="kuba" selected="selected">Kuba</option>
+                <option value="kuba">Kuba</option>
                 <option value="miami">Miami</option>
                 <option value="oslo">Oslo</option>
                 <option value="vancouver">Vancouver</option>
@@ -65,12 +70,11 @@
       <div id="scrubber" class="widget-minimap-button widget-minimap-scrubber">
         <div class="riffle"></div>
       </div>
-      <div id="tool-map">
-
-      </div>
+      <div id="tool-map"></div>
     </div>
 
     <div id="interactive-map"></div>
+
 
     <force style="width: 900; height: 700;"></force>
 

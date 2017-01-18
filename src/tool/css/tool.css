@@ -22,7 +22,6 @@ body {
   line-height: 1.42857143;
   color: #333;
   background-color: #fff;
-  /* overflow: hidden; */
 }
 
 h3 {
@@ -32,6 +31,18 @@ h3 {
 h1, h2, h3 {
     margin-top: 0;
     margin-bottom: 10px;
+}
+
+#cover {
+  position: absolute;
+}
+
+.cover {
+  height: 100%;
+  z-index: 2000;
+  background-color: #b2b9be;
+  width: 100%;
+  opacity: .5;
 }
 
 .drop-zone {
@@ -83,8 +94,7 @@ h1, h2, h3 {
   height: 25px;
   right: 0;
   overflow: hidden;
-  /* position: absolute;*/
-  z-index: 99999;
+  z-index: 1000;
   box-sizing: border-box;
   transition: background-color 0.16s ease-out;
 }
@@ -145,4 +155,87 @@ h1, h2, h3 {
 
 .control label {
   padding-left: 10px;
+}
+
+/* spinner */
+
+.cssload-whirlpool,
+.cssload-whirlpool::before,
+.cssload-whirlpool::after {
+	position: absolute;
+	top: 45%;
+	left: 50%;
+	border: 1px solid rgb(188,188,188);
+	border-left-color: rgb(0,0,0);
+	border-radius: 974px;
+		-o-border-radius: 974px;
+		-ms-border-radius: 974px;
+		-webkit-border-radius: 974px;
+		-moz-border-radius: 974px;
+}
+
+.cssload-whirlpool {
+  z-index: 99999;
+	margin: -24px 0 0 -24px;
+	height: 49px;
+	width: 49px;
+	animation: cssload-rotate 1150ms linear infinite;
+		-o-animation: cssload-rotate 1150ms linear infinite;
+		-ms-animation: cssload-rotate 1150ms linear infinite;
+		-webkit-animation: cssload-rotate 1150ms linear infinite;
+		-moz-animation: cssload-rotate 1150ms linear infinite;
+}
+
+.cssload-whirlpool::before {
+	content: "";
+	margin: -22px 0 0 -22px;
+	height: 43px;
+	width: 43px;
+	animation: cssload-rotate 1150ms linear infinite;
+		-o-animation: cssload-rotate 1150ms linear infinite;
+		-ms-animation: cssload-rotate 1150ms linear infinite;
+		-webkit-animation: cssload-rotate 1150ms linear infinite;
+		-moz-animation: cssload-rotate 1150ms linear infinite;
+}
+
+.cssload-whirlpool::after {
+	content: "";
+	margin: -28px 0 0 -28px;
+	height: 55px;
+	width: 55px;
+	animation: cssload-rotate 2300ms linear infinite;
+		-o-animation: cssload-rotate 2300ms linear infinite;
+		-ms-animation: cssload-rotate 2300ms linear infinite;
+		-webkit-animation: cssload-rotate 2300ms linear infinite;
+		-moz-animation: cssload-rotate 2300ms linear infinite;
+}
+
+@keyframes cssload-rotate {
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@-o-keyframes cssload-rotate {
+	100% {
+		-o-transform: rotate(360deg);
+	}
+}
+
+@-ms-keyframes cssload-rotate {
+	100% {
+		-ms-transform: rotate(360deg);
+	}
+}
+
+@-webkit-keyframes cssload-rotate {
+	100% {
+		-webkit-transform: rotate(360deg);
+	}
+}
+
+@-moz-keyframes cssload-rotate {
+	100% {
+		-moz-transform: rotate(360deg);
+	}
 }

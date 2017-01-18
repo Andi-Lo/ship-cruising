@@ -16,6 +16,7 @@ document.addEventListener('mouseup', function(evt) {
 
 $(function() {
   $('#scrubber').css('bottom', map.height() - offset);
+  $('#cover').css('height', window.innerHeight);
 });
 
 function setHeight(evt) {

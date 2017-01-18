@@ -11,13 +11,21 @@ class MouseObserver {
 
     calc.addEventListener('click', function(evt) {
       let select = window.document.getElementsByClassName('dropdown')[0];
+      let spinner = window.document.getElementById('spinner');
+      let cover = window.document.getElementById('cover');
+      spinner.className = 'cssload-whirlpool';
+      cover.className = 'cover';
       select.option = select.options[select.selectedIndex].value;
       let path = `./map/${select.option}.geojson`;
       let features = new Loader(path);
 
       features.then((fcRoute) => {
         setView(calcBbox(fcRoute));
-        canvasMap.updateMap(fcRoute, fcMap);
+        let status = canvasMap.updateMap(fcRoute, fcMap);
+        if(status === "Done!") {
+          spinner.className = '';
+          cover.className = '';
+        }
       });
     });
   }
