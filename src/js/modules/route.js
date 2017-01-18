@@ -19,7 +19,7 @@ class Route {
     this.calcRoute(this._waypoints, fcMap);
     let stepSize = mercator.getOrigin(defaults.bbox).stepSize;
     this._route = turf.equidistant(this._route, stepSize);
-    this.simplifyPath(0.8).smoothCurve(0.3);
+    this.simplifyPath(0.1).smoothCurve(0.85);
     this._route = this.fixRoute(this._route);
     return this;
   }
