@@ -95,7 +95,7 @@ function setCanvasProps(ctx, props) {
   ctx.lineWidth = props.lineWidth;
   ctx.strokeStyle = props.fillStyle;
   ctx.fillStyle = props.fillStyle;
-  ctx.lineCap = props.lineCap;
+  ctx.lineCap = props.lineCap === undefined ? 'butt' : props.lineCap;
   ctx.imageSmoothingEnabled = false;
 }
 

@@ -79,6 +79,37 @@ function equdistantParameters(feature, stepSize) {
   return {stepSize, steps};
 };
 
+// let isNearest = function(targetPoint, fcLineString) {
+//   let nearestPoint;
+//   let minDist = Infinity;
+//   for (let i = 0; i < fcLineString.features.length; i++) {
+//     for (let j = 0; j < fcLineString.features[i].geometry.coordinates.length; j++) {
+//       let dist = turf.distance(targetPoint, fcLineString.features[i], 'kilometers');
+//       if (dist < minDist) {
+//         nearestPoint = fcLineString.features[i];
+//         minDist = dist;
+//       }
+//     }
+//   }
+//   return nearestPoint;
+// };
+
+let isNearest = function(targetPoint, points) {
+  let nearestPoint;
+  let minDist = Infinity;
+  for(let i = 0; i < points.features.length; i++) {
+    for(let j = 0; j < points.feature[i].geometry.coordinates.length; j++) {
+      let p = turf.point(points.feature[i].geometry.coordinates[j]);
+      let distanceToPoint = distance(targetPoint, p, 'kilometers');
+      if (distanceToPoint < minDist && distanceToPoint > 0) {
+        nearestPoint = p;
+        minDist = distanceToPoint;
+      }
+    }
+  }
+  return nearestPoint;
+};
+
 /**
  * Distributes each route point equidistantly along the route
  * in the given stepSize
@@ -202,7 +233,7 @@ let isInside = function(fcMap, fcWaypoints) {
 let clipPolygon = function(fc, bbox) {
   let points;
   let polygon;
-  bbox = turf.size(turf.square(bbox), 2);
+  bbox = turf.size(turf.square(bbox), 1.5);
   let clipped = turf.featureCollection([]);
   turf.meta.featureEach(fc, function(feature) {
     points = turf.meta.coordAll(feature);
@@ -216,27 +247,26 @@ let clipPolygon = function(fc, bbox) {
 };
 
 function toLine(fc) {
-  let lineString = turf.featureCollection([]);
+  let line = turf.featureCollection([]);
+  let flat;
   turf.meta.featureEach(fc, function(feature) {
     switch(feature.geometry.type) {
       case 'Polygon':
-        lineString.features.push(turf.lineString(flatten(feature.geometry.coordinates)));
+        flat = flatten(feature.geometry.coordinates);
+        line.features.push(turf.lineString(flat));
         break;
       case 'MultiPolygon':
-        lineString.features.push(turf.lineString(unpackMultiPolCoords(feature)));
+        line.features.push(turf.lineString(unpackMultiPolCoords(feature)));
         break;
     }
   });
-  return lineString;
+  return line;
 }
 
 function swap(fc) {
-  console.log('fc', fc);
   let c = [];
   turf.meta.featureEach(fc, function(feature) {
-    console.log('feature', feature);
     feature.geometry.coordinates.forEach((coord) => {
-      console.log('coord', coord);
       c = coord;
       coord[0] = c[1];
       coord[1] = c[0];
@@ -287,3 +317,4 @@ module.exports.unpackMultiPolCoords = unpackMultiPolCoords;
 module.exports.fcToLineString = fcToLineString;
 module.exports.isInside = isInside;
 module.exports.martinezClipping = martinezClipping;
+module.exports.isNearest = isNearest;

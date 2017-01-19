@@ -28,9 +28,9 @@ let createCanvas = function(width, height) {
 function getStrokeSize(x) {
   switch (x) {
     case 1:
-      return 4;
-    case 2:
       return 2;
+    case 2:
+      return 0.1;
     case 3:
       return 0.1;
     default:
@@ -52,7 +52,7 @@ function getRgba(i, iterations) {
 }
 
 function canvasBlur(canvas) {
-  blur({radius: 2})(canvas, function(err, newCanvas) {
+  blur({radius: 1})(canvas, function(err, newCanvas) {
   });
 }
 
@@ -61,12 +61,14 @@ let initMap = function(fcMap, fcRoute, bbox) {
   // fcMap = turf.clipPolygon(fcMap, bbox);
   // fcMap = turf.martinezClipping(fcMap, bbox);
   fcMap = toLineString(fcMap);
-  const iterations = 4;
+  fcMap = turf.clipPolygon(fcMap, bbox);
+  const iterations = 3;
   let lineCap = 'square';
   // draw grey-scale map with different stroke sizes
   for(let i = 1; i < iterations; i++) {
     let sSize = getStrokeSize(i);
     let rgba = getRgba(i, iterations);
+    console.log('Calculating canvas ' + i + ' of ' + (iterations-1));
     fcMap.features.forEach((features) => {
       switch (features.geometry.type) {
         case "LineString":
@@ -107,10 +109,11 @@ let createPixelData = function() {
       weight = 1;
     }
     else if(imageData.data[i] > 250) {
-      weight = 100000;
+      weight = imageData.data[i] * Math.pow(imageData.data[i], 3);
     }
     else {
-      weight = imageData.data[i] * 10;
+      weight = Math.ceil(imageData.data[i] * Math.log2(imageData.data[i])/100);
+      if(weight <= 0) weight = 1;
     }
     if(isFirst)
       colorData.push([weight]);
@@ -133,6 +136,7 @@ let updateMap = function(fcRoute, fcMap) {
 
   drawLeaflet.drawPolyline(route._route, defaults.routeColor, 1);
   drawLeaflet.drawMarkers(route._waypoints);
+  return 'Done!';
 };
 
 let getCanvas = function() {

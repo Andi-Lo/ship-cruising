@@ -19,6 +19,7 @@ class Route {
     this.calcRoute(this._waypoints, fcMap);
     let stepSize = mercator.getOrigin(defaults.bbox).stepSize;
     this._route = turf.equidistant(this._route, stepSize);
+    // this.mergeSimilarRoutes(this._route, 5);
     // For Belgien 0.01 and 0.85 are good values
     // For Brazil and so on the below are good values
     this.simplifyPath(0.1).smoothCurve(0.85);
@@ -30,6 +31,46 @@ class Route {
   get route() { return this._route; }
 
   get waypoints() { return this._waypoints; }
+
+  leastSquares(fc, threshold = 10) {
+    for(let i = 0; i < fc.features.length; i++) {
+      for(let j = 0; j < fc.features[i].geometry.coordinates.length; j++) {
+        if((i+1) < fc.features.length) {
+          for(let k = 0; k < fc.features[i+1].geometry.coordinates.length; k++) {
+            let a = turf.point(fc.features[i].geometry.coordinates[j]);
+            let b = turf.point(fc.features[i+1].geometry.coordinates[k]);
+            let distanceToPoint = turf.distance(a, b);
+            if (distanceToPoint < threshold && distanceToPoint > 0) {
+              console.log('distance', distanceToPoint);
+              fc.features[i].geometry.coordinates[j] = b.geometry.coordinates;
+            }
+          };
+        }
+      };
+    };
+    console.log('fc new', fc);
+  };
+
+  mergeSimilarRoutes(fc, threshold = 10) {
+    let nearestPoint;
+    let minDist = Infinity;
+    for(let i = 0; i < fc.features.length; i++) {
+      for(let j = 0; j < fc.features[i].geometry.coordinates.length; j++) {
+        let a = turf.point(fc.features[i].geometry.coordinates[i]);
+        let b = turf.point(fc.features[i].geometry.coordinates[j]);
+        let distanceToPoint = turf.distance(a, b, 'kilometers');
+        if (distanceToPoint < threshold && distanceToPoint > 0) {
+          fc.features[i].geometry.coordinates[i] = b.geometry.coordinates;
+          nearestPoint = b;
+          minDist = distanceToPoint;
+          console.log('minDist', minDist);
+          console.log(turf.featureCollection([a, b]));
+        }
+      }
+    }
+    console.log('fc new', fc);
+    return nearestPoint;
+  }
 
   /**
    * Uses pathfinding.js to find a route for each harbour location
