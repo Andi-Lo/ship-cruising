@@ -7,6 +7,7 @@ let mercator = require('../libs/mercator');
 let turf = require('../libs/turf');
 let Route = require('./route').Route;
 let blur = require('ctx-blur');
+let toLineString = require('../libs/to-lineString');
 
 let canvas;
 let colorData = [];
@@ -58,7 +59,8 @@ function canvasBlur(canvas) {
 let initMap = function(fcMap, fcRoute, bbox) {
   let canvas = createCanvas(defaults.width, defaults.height);
   // fcMap = turf.clipPolygon(fcMap, bbox);
-  fcMap = turf.martinezClipping(fcMap, bbox);
+  // fcMap = turf.martinezClipping(fcMap, bbox);
+  fcMap = toLineString(fcMap);
   const iterations = 4;
   let lineCap = 'square';
   // draw grey-scale map with different stroke sizes
