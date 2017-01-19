@@ -109,7 +109,8 @@ let createPixelData = function() {
       weight = imageData.data[i] * Math.pow(imageData.data[i], 3);
     }
     else {
-      weight = imageData.data[i] * Math.log2(imageData.data[i])/2;
+      weight = Math.ceil(imageData.data[i] * Math.log2(imageData.data[i])/100);
+      if(weight <= 0) weight = 1;
     }
     if(isFirst)
       colorData.push([weight]);
