@@ -10,6 +10,7 @@
     "quicktest": "mocha ./tests/test.js --compilers js:babel-core/register && rimraf coverage",
     "test": "nyc --require babel-core/register mocha ./tests/test.js --compilers js:babel-core/register && rimraf coverage"
   },
+  "license": "Creative Commons Attribution 4.0 International License",
   "author": "Andreas Lorer and Kevin Klugmann",
   "dependencies": {
     "@mapbox/sphericalmercator": "^1.0.5",
@@ -28,8 +29,8 @@
     "turf-size": "^1.1.1",
     "underscore": "^1.8.3"
   },
-  "license": "",
   "repository": "https://github.com/Andi-Lo/ship-cruising",
+  "issues": "https://github.com/Andi-Lo/ship-cruising/issues",
   "devDependencies": {
     "async": "^1.5.2",
     "babel-core": "^6.20.0",

@@ -157,6 +157,26 @@ h1, h2, h3 {
   padding-left: 10px;
 }
 
+/* Attribution */
+
+.leaflet-bottom .leaflet-control-scale {
+  margin-bottom: 30px;
+}
+
+#attribution {
+  background: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  cursor: auto;
+  z-index: 800;
+  pointer-events: visiblePainted;
+  pointer-events: auto;
+  padding: 2px 4px;
+}
+
+#attribution a {
+  color: #0078A8;
+}
+
 /* spinner */
 
 .cssload-whirlpool,
