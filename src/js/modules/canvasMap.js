@@ -58,9 +58,9 @@ function canvasBlur(canvas) {
 
 let initMap = function(fcMap, fcRoute, bbox) {
   let canvas = createCanvas(defaults.width, defaults.height);
-  // fcMap = turf.clipPolygon(fcMap, bbox);
+  fcMap = turf.clipPolygon(fcMap, bbox);
   // fcMap = turf.martinezClipping(fcMap, bbox);
-  fcMap = toLineString(fcMap);
+  // fcMap = toLineString(fcMap);
   fcMap = turf.clipPolygon(fcMap, bbox);
   const iterations = 3;
   let lineCap = 'square';
@@ -134,7 +134,7 @@ let updateMap = function(fcRoute, fcMap) {
   clearCanvasDiv();
   let route = new Route(fcRoute, fcMap);
 
-  drawLeaflet.drawPolyline(route._route, defaults.routeColor, 1);
+  drawLeaflet.drawPolyline(route._route);
   drawLeaflet.drawMarkers(route._waypoints);
   return 'Done!';
 };
