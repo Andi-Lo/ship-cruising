@@ -5,9 +5,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ship Cruising</title>
     <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
     <link rel="stylesheet" type="text/css" href="tool/css/main.css">
     <link rel="stylesheet" type="text/css" href="tool/css/tool.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
   </head>
   <body>
 
@@ -73,8 +73,11 @@
       <div id="tool-map"></div>
     </div>
 
-    <div id="interactive-map"></div>
-
+    <div id="interactive-map">
+      <div id="attribution" class="leaflet-bottom leaflet-left">
+        Map visualization & Routing by: <a href="https://twitter.com/AndreasLorer">Andreas Lorer</a>, <a href="https://twitter.com/kevinklugmann">Kevin Klugmann</a>
+      </div>
+    </div>
 
     <force style="width: 900; height: 700;"></force>
 
