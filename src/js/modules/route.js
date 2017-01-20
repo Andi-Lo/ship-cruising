@@ -19,10 +19,11 @@ class Route {
     this.calcRoute(this._waypoints, fcMap);
     let stepSize = mercator.getOrigin(defaults.bbox).stepSize;
     this._route = turf.equidistant(this._route, stepSize);
-    // this.mergeSimilarRoutes(this._route, 5);
     // For Belgien 0.01 and 0.85 are good values
     // For Brazil and so on the below are good values
-    this.simplifyPath(0.1).smoothCurve(0.85);
+    this.mergeSimilarRoutes(this._route, 2);
+    this.simplifyPath(0.05).smoothCurve(0.15);
+    // this._route = this.mergeSimilarRoutes(this._route, 1);
     this._route = this.fixRoute(this._route);
     return this;
   }
@@ -32,44 +33,29 @@ class Route {
 
   get waypoints() { return this._waypoints; }
 
-  leastSquares(fc, threshold = 10) {
-    for(let i = 0; i < fc.features.length; i++) {
-      for(let j = 0; j < fc.features[i].geometry.coordinates.length; j++) {
-        if((i+1) < fc.features.length) {
-          for(let k = 0; k < fc.features[i+1].geometry.coordinates.length; k++) {
-            let a = turf.point(fc.features[i].geometry.coordinates[j]);
-            let b = turf.point(fc.features[i+1].geometry.coordinates[k]);
-            let distanceToPoint = turf.distance(a, b);
-            if (distanceToPoint < threshold && distanceToPoint > 0) {
-              console.log('distance', distanceToPoint);
-              fc.features[i].geometry.coordinates[j] = b.geometry.coordinates;
-            }
-          };
-        }
-      };
-    };
-    console.log('fc new', fc);
-  };
-
   mergeSimilarRoutes(fc, threshold = 10) {
-    let nearestPoint;
-    let minDist = Infinity;
-    for(let i = 0; i < fc.features.length; i++) {
-      for(let j = 0; j < fc.features[i].geometry.coordinates.length; j++) {
-        let a = turf.point(fc.features[i].geometry.coordinates[i]);
-        let b = turf.point(fc.features[i].geometry.coordinates[j]);
-        let distanceToPoint = turf.distance(a, b, 'kilometers');
-        if (distanceToPoint < threshold && distanceToPoint > 0) {
-          fc.features[i].geometry.coordinates[i] = b.geometry.coordinates;
-          nearestPoint = b;
-          minDist = distanceToPoint;
-          console.log('minDist', minDist);
-          console.log(turf.featureCollection([a, b]));
-        }
+    let copyFc = (JSON.parse(JSON.stringify(fc))); // creates a copy of a javascript object
+    let feature = copyFc.features.shift();
+    let newFc = turf.featureCollection([feature]);
+    // shift the features array to the left, and test it against the remaining features
+    while(copyFc.features.length) { // for all sub-routes in routes
+      for(let k = 0; k < feature.geometry.coordinates.length; k++) { // for all points of the n'th feature
+        turf.meta.coordEach(copyFc, function(coord) { // for all points of the "n'th+1 to n" features
+          if(copyFc.features.length > 0) {
+            let a = turf.point(coord);
+            let b = turf.point(feature.geometry.coordinates[k]);
+            let distanceToPoint = turf.distance(a, b, 'kilometers');
+            if(distanceToPoint < threshold && distanceToPoint > 0)
+              feature.geometry.coordinates[k] = coord;
+          }
+        });
       }
+      feature = copyFc.features.shift();
+      newFc.features.push(feature);
     }
-    console.log('fc new', fc);
-    return nearestPoint;
+    fc = newFc;
+    this._route = fc;
+    return this;
   }
 
   /**
