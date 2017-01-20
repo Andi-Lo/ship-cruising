@@ -9,6 +9,7 @@ let lineclip = require('lineclip');
 let martinez = require('martinez-polygon-clipping');
 let flatten = require('./helpers').flatten;
 let toLineString = require('./to-lineString');
+let polygonIntersectsBBox = require('../libs/whichPolygon').polygonIntersectsBBox;
 require("babel-polyfill");
 
 /**
@@ -293,6 +294,37 @@ let martinezClipping = function(fc, bbox) {
   return toLine(clipped);
 };
 
+let getFeaturesForClipping = function(fc, bbox) {
+  fc = toLineString(fc);
+  fc = fcLineStringToFcPolygon(fc);
+
+  let savedFeatures = [];
+  turf.meta.featureEach(fc, function(feature) {
+    let coords = feature.geometry.coordinates;
+    let coordsList = [];
+    if (feature.geometry.type === 'Polygon') {
+      coordsList.push(coords);
+    }
+    else if (feature.geometry.type === 'MultiPolygon') {
+      for (let j = 0; j < coords.length; j++) {
+        coordsList.push(coords[j]);
+      }
+    }
+
+    // Get through all coordinates of the feature
+    // and check that there are in the bbox
+    for(let i = 0; i < coordsList.length; i++) {
+      if(polygonIntersectsBBox(coordsList[i], bbox)) {
+        // Save polygon because it is in the bbox
+        savedFeatures.push(feature);
+        break;
+      }
+    }
+  });
+
+  return turf.featureCollection(savedFeatures);
+};
+
 /**
  * Calculates the minimal bbox for a given set of Features
  *
@@ -318,3 +350,4 @@ module.exports.fcToLineString = fcToLineString;
 module.exports.isInside = isInside;
 module.exports.martinezClipping = martinezClipping;
 module.exports.isNearest = isNearest;
+module.exports.getFeaturesForClipping = getFeaturesForClipping;
