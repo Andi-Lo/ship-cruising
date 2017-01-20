@@ -20,6 +20,28 @@ let getMap = function() {
   return _map;
 };
 
+function getAttribution() {
+  const kevin = {"name": "Kevin Klugmann", "href": "https://twitter.com/kevinklugmann"}; // eslint-disable-line
+  const andreas = {"name": "Andreas Lorer", "href": "https://twitter.com/AndreasLorer"}; // eslint-disable-line
+  let attribution = document.createElement('div');
+  attribution.setAttribute('id', 'attribution');
+  attribution.setAttribute('class', 'leaflet-bottom leaflet-left');
+
+  let createLink = (person) => {
+    let a = document.createElement('a');
+    a.href = person.href;
+    a.innerText = person.name;
+    a.title = person.name;
+    return a;
+  };
+
+  attribution.innerHTML = `Map visualization & Routing by: `;
+  attribution.appendChild(createLink(andreas));
+  attribution.innerHTML += ', ';
+  attribution.appendChild(createLink(kevin));
+  return attribution;
+}
+
 let init = function(width, height) {
   let rect = calcClientRect();
   let div = window.document.getElementById('interactive-map');
@@ -27,6 +49,7 @@ let init = function(width, height) {
   divLeaflet.setAttribute('id', 'tone-map');
   divLeaflet.style.width = rect.width + 'px';
   divLeaflet.style.height = rect.height + 'px';
+  divLeaflet.appendChild(getAttribution());
   div.appendChild(divLeaflet);
 
   _map = leaflet.map('tone-map', {zoomControl: true});
