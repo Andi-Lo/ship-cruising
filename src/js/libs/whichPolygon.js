@@ -1,5 +1,6 @@
 'use strict';
 
+let lineclip = require('lineclip');
 // This code is from the npm package "which-polygon"
 // http://github.com/mapbox/which-polygon
 let polygonIntersectsBBox = function(polygon, bbox) {
