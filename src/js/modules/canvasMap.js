@@ -28,9 +28,9 @@ let createCanvas = function(width, height) {
 function getStrokeSize(x) {
   switch (x) {
     case 1:
-      return 2;
+      return 4;
     case 2:
-      return 0.1;
+      return 2;
     case 3:
       return 0.1;
     default:
@@ -62,7 +62,7 @@ let initMap = function(fcMap, fcRoute, bbox) {
   // fcMap = turf.martinezClipping(fcMap, bbox);
   // fcMap = toLineString(fcMap);
   fcMap = turf.clipPolygon(fcMap, bbox);
-  const iterations = 3;
+  const iterations = 4;
   let lineCap = 'square';
   // draw grey-scale map with different stroke sizes
   for(let i = 1; i < iterations; i++) {

@@ -7,8 +7,8 @@ let defaults = {
   'mapColor': 'rgba(255, 255, 255, 1)',
   'routeColor': '#3388ff',
   'mapBg': 'rgba(0, 0, 0, 1)',
-  'width': 512/2,
-  'height': 512/2,
+  'width': 512,
+  'height': 512,
   'bbox': [
     -77.34374999999999,
     9.44906182688142,

@@ -19,11 +19,8 @@ class Route {
     this.calcRoute(this._waypoints, fcMap);
     let stepSize = mercator.getOrigin(defaults.bbox).stepSize;
     this._route = turf.equidistant(this._route, stepSize);
-    // For Belgien 0.01 and 0.85 are good values
-    // For Brazil and so on the below are good values
     this.mergeSimilarRoutes(this._route, 2);
     this.simplifyPath(0.05).smoothCurve(0.15);
-    // this._route = this.mergeSimilarRoutes(this._route, 1);
     this._route = this.fixRoute(this._route);
     return this;
   }
@@ -33,14 +30,24 @@ class Route {
 
   get waypoints() { return this._waypoints; }
 
+  /**
+   * Tries to merge routes that lay closely to each other
+   *
+   * @param {FeatureCollection<LineString>} fc
+   * @param {number} [threshold=10]
+   * @returns
+   *
+   * @memberOf Route
+   */
   mergeSimilarRoutes(fc, threshold = 10) {
-    let copyFc = (JSON.parse(JSON.stringify(fc))); // creates a copy of a javascript object
+    // creates a copy of a javascript object
+    let copyFc = (JSON.parse(JSON.stringify(fc)));
     let feature = copyFc.features.shift();
-    let newFc = turf.featureCollection([feature]);
+    let shifted = turf.featureCollection([feature]);
     // shift the features array to the left, and test it against the remaining features
-    while(copyFc.features.length) { // for all sub-routes in routes
-      for(let k = 0; k < feature.geometry.coordinates.length; k++) { // for all points of the n'th feature
-        turf.meta.coordEach(copyFc, function(coord) { // for all points of the "n'th+1 to n" features
+    while(copyFc.features.length) {
+      for(let k = 0; k < feature.geometry.coordinates.length; k++) {
+        turf.meta.coordEach(copyFc, function(coord) {
           if(copyFc.features.length > 0) {
             let a = turf.point(coord);
             let b = turf.point(feature.geometry.coordinates[k]);
@@ -51,9 +58,9 @@ class Route {
         });
       }
       feature = copyFc.features.shift();
-      newFc.features.push(feature);
+      shifted.features.push(feature);
     }
-    fc = newFc;
+    fc = shifted;
     this._route = fc;
     return this;
   }
@@ -127,7 +134,6 @@ class Route {
    * features into bezier curves.
    *
    * @param {FeatureCollection<LineString>}
-   * @param {number} [resolution=10000]
    * @param {number} [sharpness=0.4] higher values mean more curviness
    * @returns {FeatureCollection<LineString>} simplified bezier curve features
    *
