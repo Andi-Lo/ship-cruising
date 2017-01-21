@@ -28,9 +28,9 @@ let createCanvas = function(width, height) {
 function getStrokeSize(x) {
   switch (x) {
     case 1:
-      return 2;
+      return 4;
     case 2:
-      return 0.1;
+      return 2;
     case 3:
       return 0.1;
     default:
@@ -58,11 +58,11 @@ function canvasBlur(canvas) {
 
 let initMap = function(fcMap, fcRoute, bbox) {
   let canvas = createCanvas(defaults.width, defaults.height);
-  // fcMap = turf.clipPolygon(fcMap, bbox);
-  // fcMap = turf.martinezClipping(fcMap, bbox);
-  fcMap = toLineString(fcMap);
   fcMap = turf.clipPolygon(fcMap, bbox);
-  const iterations = 3;
+  // fcMap = turf.martinezClipping(fcMap, bbox);
+  // fcMap = toLineString(fcMap);
+  fcMap = turf.clipPolygon(fcMap, bbox);
+  const iterations = 4;
   let lineCap = 'square';
   // draw grey-scale map with different stroke sizes
   for(let i = 1; i < iterations; i++) {
@@ -134,7 +134,7 @@ let updateMap = function(fcRoute, fcMap) {
   clearCanvasDiv();
   let route = new Route(fcRoute, fcMap);
 
-  drawLeaflet.drawPolyline(route._route, defaults.routeColor, 1);
+  drawLeaflet.drawPolyline(route._route);
   drawLeaflet.drawMarkers(route._waypoints);
   return 'Done!';
 };
