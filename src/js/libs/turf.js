@@ -295,9 +295,6 @@ let martinezClipping = function(fc, bbox) {
 };
 
 let getFeaturesForClipping = function(fc, bbox) {
-  fc = toLineString(fc);
-  fc = fcLineStringToFcPolygon(fc);
-
   let savedFeatures = [];
   turf.meta.featureEach(fc, function(feature) {
     let coords = feature.geometry.coordinates;
