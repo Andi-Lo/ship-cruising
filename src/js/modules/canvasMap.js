@@ -7,7 +7,7 @@ let mercator = require('../libs/mercator');
 let turf = require('../libs/turf');
 let Route = require('./route').Route;
 let blur = require('ctx-blur');
-let toLineString = require('../libs/to-lineString');
+// let toLineString = require('../libs/to-lineString');
 
 let canvas;
 let colorData = [];
@@ -41,14 +41,13 @@ function getStrokeSize(x) {
 /**
  * Create grey-scales values between 0 and 255
  *
- * @param {number} i
+ * @param {number} iterator
  * @param {number} iterations
  * @returns
  */
 function getRgba(i, iterations) {
   let rgb = Math.floor( (255 / (iterations-1)) * i );
-  let rgba = `rgba(${rgb}, ${rgb}, ${rgb}, 1)`;
-  return rgba;
+  return `rgba(${rgb}, ${rgb}, ${rgb}, 1)`;
 }
 
 function canvasBlur(canvas) {
@@ -56,23 +55,22 @@ function canvasBlur(canvas) {
   });
 }
 
-let initMap = function(fcMap, fcRoute, bbox) {
+function initMap(fcMap, bbox) {
   let canvas = createCanvas(defaults.width, defaults.height);
-  fcMap = turf.clipPolygon(fcMap, bbox);
   // fcMap = turf.martinezClipping(fcMap, bbox);
   // fcMap = toLineString(fcMap);
   fcMap = turf.clipPolygon(fcMap, bbox);
-  const iterations = 4;
+  const ITERATIONS = 4;
   let lineCap = 'square';
   // draw grey-scale map with different stroke sizes
-  for(let i = 1; i < iterations; i++) {
+  for(let i = 1; i < ITERATIONS; i++) {
     let sSize = getStrokeSize(i);
-    let rgba = getRgba(i, iterations);
-    console.log('Calculating canvas ' + i + ' of ' + (iterations-1));
+    let rgba = getRgba(i, ITERATIONS);
+    console.log('Calculating canvas ' + i + ' of ' + (ITERATIONS-1));
     fcMap.features.forEach((features) => {
       switch (features.geometry.type) {
         case "LineString":
-          if(i === iterations-1)
+          if(i === ITERATIONS-1)
             lineCap = 'butt';
           drawCanvas.drawLineString(features, rgba, true, sSize, lineCap);
           break;
@@ -82,7 +80,7 @@ let initMap = function(fcMap, fcRoute, bbox) {
       }
     });
     // blur the canvas befor painting the land on the last iteration
-    if(i === iterations - 2)
+    if(i === ITERATIONS-2)
       canvasBlur(canvas);
   }
 
@@ -90,11 +88,10 @@ let initMap = function(fcMap, fcRoute, bbox) {
 };
 
 /**
- * Creates a 2D binary array of the canvas that will serve us as a
+ * Creates a 2D array of the canvas that will serve us as a
  * per pixel based look-up-table for land and water.
- * If the color lookup leads to a 1 it is water
- * If the color lookup leads to a 0 it is land
- * @returns a 2D binary array
+ *
+ * @returns {Array<Array>} a 2D binary array
  */
 let createPixelData = function() {
   let ctx = getCanvas().getContext('2d');
@@ -160,7 +157,7 @@ let getColorData = function(start, end, fcMap) {
   let origin = mercator.getOrigin(bbox);
   bbox = turf.size(bbox, Math.floor(origin.zoom / 3));
   defaults.bbox = bbox;
-  initMap(fcMap, fcRoute, bbox);
+  initMap(fcMap, bbox);
   setColorData(createPixelData());
 
   return colorData;
@@ -170,5 +167,4 @@ module.exports.createPixelData = createPixelData;
 module.exports.getCanvas = getCanvas;
 module.exports.getColorData = getColorData;
 module.exports.createCanvas = createCanvas;
-module.exports.initMap = initMap;
 module.exports.updateMap = updateMap;

@@ -4,7 +4,6 @@ let turf = require('@turf/turf');
 turf.meta = require('@turf/meta');
 turf.invariant = require('@turf/invariant');
 turf.size = require('turf-size');
-let options = require('../modules/options').force;
 let lineclip = require('lineclip');
 let martinez = require('martinez-polygon-clipping');
 let flatten = require('./helpers').flatten;
@@ -63,6 +62,14 @@ let fixLineString = function(fc) {
   return fc;
 };
 
+/**
+ * Calculates the stepsize and the amount of steps needed returns an object
+ * containing those.
+ *
+ * @param {Feature<LineString>} a lineString feature
+ * @param {number} the desired stepSize
+ * @returns {Object} containing stepsize and number of steps
+ */
 function equdistantParameters(feature, stepSize) {
   if (stepSize < 0) {
     throw new Error('StepSize can not be negative');
@@ -79,44 +86,13 @@ function equdistantParameters(feature, stepSize) {
   return {stepSize, steps};
 };
 
-// let isNearest = function(targetPoint, fcLineString) {
-//   let nearestPoint;
-//   let minDist = Infinity;
-//   for (let i = 0; i < fcLineString.features.length; i++) {
-//     for (let j = 0; j < fcLineString.features[i].geometry.coordinates.length; j++) {
-//       let dist = turf.distance(targetPoint, fcLineString.features[i], 'kilometers');
-//       if (dist < minDist) {
-//         nearestPoint = fcLineString.features[i];
-//         minDist = dist;
-//       }
-//     }
-//   }
-//   return nearestPoint;
-// };
-
-let isNearest = function(targetPoint, points) {
-  let nearestPoint;
-  let minDist = Infinity;
-  for(let i = 0; i < points.features.length; i++) {
-    for(let j = 0; j < points.feature[i].geometry.coordinates.length; j++) {
-      let p = turf.point(points.feature[i].geometry.coordinates[j]);
-      let distanceToPoint = distance(targetPoint, p, 'kilometers');
-      if (distanceToPoint < minDist && distanceToPoint > 0) {
-        nearestPoint = p;
-        minDist = distanceToPoint;
-      }
-    }
-  }
-  return nearestPoint;
-};
-
 /**
  * Distributes each route point equidistantly along the route
  * in the given stepSize
  *
  * @param {featureCollection<LineString>}
  * @param {number} stepSize
- * @returns
+ * @returns {featureCollection<LineString>}
  */
 let equidistant = function(fc, stepSize) {
   let features = [];
@@ -136,11 +112,6 @@ let equidistant = function(fc, stepSize) {
   return turf.featureCollection(features);
 };
 
-let equidistantPointsZoom = function(fc, metersPerPixel) {
-  let spaceBetweenPoints = (options.pixelSpaceForces * metersPerPixel) / 1000;
-  return equidistant(fc, spaceBetweenPoints);
-};
-
 /**
  * Converts a FeatureCollection<Point> into a LineString feature
  *
@@ -154,33 +125,6 @@ let fcToLineString = function(fc) {
   }
   lineString = turf.lineString(lineString);
   return lineString;
-};
-
-let unpackMultiPolCoords = function(features) {
-  let data = [];
-  turf.meta.featureEach(features, function(feature) {
-    let coordCollection = feature.geometry.coordinates;
-    coordCollection.forEach(function(coords) {
-      coords.forEach(function(coord) {
-        data.push(coord);
-      });
-    });
-  });
-  return data;
-};
-
-/**
- * Converts a FeatureCollection of LineStrings into a FeatureColelction<Point>
- *
- * @param {FeatureCollection<LineString>}
- * @returns {FeatureCollection<Point>}
- */
-let fcToFcPoints = function(fc) {
-  let points = [];
-  turf.meta.coordEach(fc, function(coord) {
-    points.push(turf.point(coord));
-  });
-  return turf.featureCollection(points);
 };
 
 /**
@@ -201,26 +145,6 @@ function fcLineStringToFcPolygon(fc) {
   });
   return turf.featureCollection(features);
 }
-
-/**
- * Checks if points lay inside of a polygon and if yes,
- * it sets the property "isInsideLand" to "true"
- *
- * @param {FeatureCollection<LineString>} the LineString polygons to test against
- * @param {FeatureColelction<Point>} the points you want to test
- * @returns {FeatureCollection<Point>}
- */
-let isInside = function(fcMap, fcWaypoints) {
-  fcMap = fcLineStringToFcPolygon(fcMap);
-  turf.meta.featureEach(fcMap, function(mapFeature) {
-    turf.meta.featureEach(fcWaypoints, function(routeFeature) {
-      if(turf.inside(routeFeature, mapFeature)) {
-        routeFeature.properties.isInsideLand = true;
-      }
-    });
-  });
-  return fcWaypoints;
-};
 
 /**
  * Clips the FeatureCollection with the bbox, reducing the overhead
@@ -263,18 +187,6 @@ function toLine(fc) {
   return line;
 }
 
-function swap(fc) {
-  let c = [];
-  turf.meta.featureEach(fc, function(feature) {
-    feature.geometry.coordinates.forEach((coord) => {
-      c = coord;
-      coord[0] = c[1];
-      coord[1] = c[0];
-    });
-  });
-  console.log('flipp', fc);
-}
-
 let martinezClipping = function(fc, bbox) {
   let polygon;
   bbox = turf.bboxPolygon(turf.size(turf.square(bbox), 1.2));
@@ -283,7 +195,9 @@ let martinezClipping = function(fc, bbox) {
   fc = fcLineStringToFcPolygon(fc);
   turf.meta.featureEach(fc, function(feature) {
     if(feature.geometry.coordinates.length > 0)
-      polygon = martinez.intersection(feature.geometry.coordinates, bbox.geometry.coordinates);
+      polygon = martinez.intersection(
+        feature.geometry.coordinates,
+        bbox.geometry.coordinates);
     if(polygon !== null)
       if(polygon.length === 1)
         clipped.features.push(turf.polygon(polygon));
@@ -311,10 +225,5 @@ module.exports.clipPolygon = clipPolygon;
 module.exports.iterateFeature = iterateFeature;
 module.exports.equidistant = equidistant;
 module.exports.fixLineString = fixLineString;
-module.exports.fcToFcPoints = fcToFcPoints;
-module.exports.equidistantPointsZoom = equidistantPointsZoom;
-module.exports.unpackMultiPolCoords = unpackMultiPolCoords;
 module.exports.fcToLineString = fcToLineString;
-module.exports.isInside = isInside;
 module.exports.martinezClipping = martinezClipping;
-module.exports.isNearest = isNearest;

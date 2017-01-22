@@ -79,7 +79,7 @@ gulp.task('serve', function(event) {
     baseDir: "./src",
     root: '.',
     port: 3000,
-    livereload: true
+    livereload: false
   });
   gulp.start('watch');
 });

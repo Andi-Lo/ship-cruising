@@ -17,9 +17,9 @@ class MouseObserver {
       cover.className = 'cover';
       select.option = select.options[select.selectedIndex].value;
       let path = `./map/${select.option}.geojson`;
-      let features = new Loader(path);
+      let loadRoute = new Loader(path);
 
-      features.then((fcRoute) => {
+      loadRoute.then((fcRoute) => {
         setView(calcBbox(fcRoute));
         let status = canvasMap.updateMap(fcRoute, fcMap);
         if(status === "Done!") {

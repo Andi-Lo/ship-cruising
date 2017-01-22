@@ -9,19 +9,23 @@ class Route {
   /**
    * Creates an instance of Route.
    *
-   * @param {FeatureCollection<Point>} fcRoute
+   * @param {FeatureCollection<Point>}
    * @param {FeatureCollection<(LineString|MultiLineString)>} geojson map
    *
    * @memberOf Route
    */
   constructor(fcWaypoints, fcMap) {
+    const TRESHOLD = 2;
+    const TOLERANCE_IN_PX = 0.05;
+    const SHARPNESS = 0.15;
     this._waypoints = fcWaypoints;
     this.calcRoute(this._waypoints, fcMap);
     let stepSize = mercator.getOrigin(defaults.bbox).stepSize;
     this._route = turf.equidistant(this._route, stepSize);
-    this.mergeSimilarRoutes(this._route, 2);
-    this.simplifyPath(0.05).smoothCurve(0.15);
-    this._route = this.fixRoute(this._route);
+    this.mergeSimilarRoutes(TRESHOLD)
+      .simplifyPath(TOLERANCE_IN_PX)
+      .smoothCurve(SHARPNESS)
+      .fixRoute();
     return this;
   }
 
@@ -33,15 +37,15 @@ class Route {
   /**
    * Tries to merge routes that lay closely to each other
    *
-   * @param {FeatureCollection<LineString>} fc
-   * @param {number} [threshold=10]
-   * @returns
+   * @param {FeatureCollection<LineString>}
+   * @param {number} [threshold=3] number in kilometers should be > 0 < 10. Defines the radius where 2 points should be merged to 1.
+   * @returns {Route}
    *
    * @memberOf Route
    */
-  mergeSimilarRoutes(fc, threshold = 10) {
+  mergeSimilarRoutes(threshold = 3) {
     // creates a copy of a javascript object
-    let copyFc = (JSON.parse(JSON.stringify(fc)));
+    let copyFc = (JSON.parse(JSON.stringify(this._route)));
     let feature = copyFc.features.shift();
     let shifted = turf.featureCollection([feature]);
     // shift the features array to the left, and test it against the remaining features
@@ -60,8 +64,7 @@ class Route {
       feature = copyFc.features.shift();
       shifted.features.push(feature);
     }
-    fc = shifted;
-    this._route = fc;
+    this._route = shifted;
     return this;
   }
 
@@ -70,7 +73,7 @@ class Route {
    *
    * @param {FeatureCollection<Point>}
    * @param {FeatureCollection<(LineString|MultiLineString)>}
-   * @returns {FeatureCollection<LineString>} each feature is a linestring
+   * @returns {Route}
    * representing a step of the route
    *
    * @memberOf Route
@@ -84,13 +87,13 @@ class Route {
    * Takes a featureCollection of type LineString and fixes
    * the start and end point of the route by resetting those
    * points to their initial waypoint value. This should close gaps
-   * between the subsection of two routes.
+   * between the subsection of two route parts.
    *
    * @param {FeatureCollection<LineString>}
    * @returns {FeatureCollection<LineString>}
    */
-  fixRoute(fc) {
-    turf.meta.featureEach(fc, function(feature) {
+  fixRoute() {
+    turf.meta.featureEach(this._route, function(feature) {
       let length = feature.geometry.coordinates.length;
       if(feature.properties.start && feature.properties.end) {
         // there have to be at least 2 points for this to make sense
@@ -107,11 +110,13 @@ class Route {
         }
       }
     });
-    return fc;
+    return this;
   };
 
   /**
    * Simplifies the coordinates of a given featureCollection
+   *
+   * @see http://turfjs.org/docs.html#simplify
    *
    * @param {FeatureCollection<LineString>}
    * @param {number} [tolerance=0.01] tolerance of simplification
@@ -133,9 +138,11 @@ class Route {
    * Takes a featureCollection and transforms the containing
    * features into bezier curves.
    *
+   * @see http://turfjs.org/docs.html#bezier
+   *
    * @param {FeatureCollection<LineString>}
    * @param {number} [sharpness=0.4] higher values mean more curviness
-   * @returns {FeatureCollection<LineString>} simplified bezier curve features
+   * @returns {FeatureCollection<LineString>} bezier curved route
    *
    * @memberOf Route
    */
@@ -149,7 +156,6 @@ class Route {
     this._route = turf.featureCollection(bezier);
     return this;
   }
-
 };
 
 module.exports.Route = Route;

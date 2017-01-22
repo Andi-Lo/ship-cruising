@@ -1,6 +1,6 @@
 'use strict';
 
-let leaflet = require('leaflet');
+let L = require('leaflet');
 let options = require('./options');
 let bbox = require('../libs/bbox');
 let calcClientRect = require('../libs/helpers').calcClientRect;
@@ -10,7 +10,7 @@ let _map;
 
 let createToneMapDiv = function(map) {
   // Add Stamen toner tile to leaflet map
-  leaflet.tileLayer(options.leaflet.tileLayer, {
+  L.tileLayer(options.leaflet.tileLayer, {
     'attribution': options.leaflet.attribution,
     'maxZoom': options.leaflet.maxZoom
   }).addTo(map);
@@ -52,7 +52,7 @@ let init = function(width, height) {
   divLeaflet.appendChild(getAttribution());
   div.appendChild(divLeaflet);
 
-  _map = leaflet.map('tone-map', {zoomControl: true});
+  _map = L.map('tone-map', {zoomControl: true});
   setView();
 
   addScaleToMap(_map);
@@ -65,19 +65,8 @@ let setView = function(box = options.defaults.bbox) {
   _map.setView([bounds.center[1], bounds.center[0]], bounds.zoom);
 };
 
-let getMetersPerPixel = function(map) {
-  let y = map.getSize().y;
-  let x = map.getSize().x;
-  // calculate the distance the one side of
-  // the map to the other using the haversine formula
-  let maxMeters = map.containerPointToLatLng([0, y])
-                  .distanceTo( map.containerPointToLatLng([x, y]));
-  // calculate how many meters each pixel represents
-  return maxMeters/x;
-};
-
 function addScaleToMap(map) {
-  leaflet.control.scale().addTo(map);
+  L.control.scale().addTo(map);
 };
 
 let disableZoom = function(map) {
@@ -101,6 +90,5 @@ let enableZoom = function(map) {
 module.exports.init = init;
 module.exports.getMap = getMap;
 module.exports.setView = setView;
-module.exports.getMetersPerPixel = getMetersPerPixel;
 module.exports.disableZoom = disableZoom;
 module.exports.enableZoom = enableZoom;

@@ -30,17 +30,5 @@ let leaflet = {
   'maxZoom': 18
 };
 
-let force = {
-  'pixelSpaceForces': 10,
-  'nodeColor': '#00B6F2',
-  'landColor': '#11C400',
-  'zoomPointRouteColor': '#00B6F2',
-  'zoomPointLandColor': '#11C400',
-  'zoomLineColor': '#0073C4',
-  'zoomPointRouteSize': 4,
-  'zoomPointLandSize': 2,
-};
-
 module.exports.defaults = defaults;
 module.exports.leaflet = leaflet;
-module.exports.force = force;
