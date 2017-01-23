@@ -39,6 +39,20 @@ canvas {
 	border: none;
 }
 
+.leaflet-container .L-div-icon.rotate-left img{
+  transform: translate3d(12px, 0, 0) rotate(33deg);
+}
+.leaflet-container .L-div-icon.rotate-right img{
+  transform: translate3d(-12px, 0, 0) rotate(-33deg);
+}
+
+.rotate-right.leaflet-marker-icon .number {
+  transform: translate3d(-15px, 0, 0) rotate(-33deg);
+}
+.rotate-left.leaflet-marker-icon .number {
+  transform: translate3d(16px, 0, 0) rotate(40deg);
+}
+
 .leaflet-marker-icon .number{
   position: relative;
   top: -41px;
