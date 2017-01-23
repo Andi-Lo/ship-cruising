@@ -47,6 +47,7 @@ function setProperties(path, start, next) {
 
 /**
  * Use astar to find path from "start" to "end"
+ *
  * @param {Object} start
  * @param {Object} end
  * @returns {Object} object containing the route and the previous point
@@ -68,7 +69,6 @@ function findPath(start, end, prevPoint, fcMap) {
   try {
     path = astar.search(graph, start, end, heuristic);
     if (path.length <= 0) {
-      console.log(start, end);
       throw new Error(`At least one of the given positions is set falsly.
          Meaning that no path could be found.
          Two of the given harbour points may be equal:
