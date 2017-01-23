@@ -30,55 +30,6 @@ let drawLine = function(ctx, coord, isFirst, stroke = false) {
   return isFirst;
 };
 
-let drawMultiPolygon = function(features, color) {
-  let ctx = canvasMap.getCanvas().getContext('2d');
-  ctx.fillStyle = color;
-  let isFirst = true;
-
-  let coordinates = turf.unpackMultiPolCoords(features);
-  coordinates.forEach(function(coords) {
-    coords.forEach(function(coord) {
-      isFirst = drawLine(ctx, coord, isFirst);
-    });
-    isFirst = true;
-    ctx.closePath();
-    ctx.fill();
-  });
-  ctx.closePath();
-  ctx.fill();
-};
-
-let drawPolygon = function(features, color) {
-  ctx.fillStyle = color;
-  let isFirst = true;
-
-  turf.meta.featureEach(features, function(feature) {
-    turf.meta.coordEach(feature, function(coord) {
-      isFirst = drawLine(ctx, coord, isFirst);
-    });
-  });
-
-  ctx.closePath();
-  ctx.fill();
-};
-
-let drawPoint = function(fc, color, lineWidth) {
-  let ctx = canvasMap.getCanvas().getContext('2d');
-
-  turf.meta.coordEach(fc, function(point) {
-    let pixel = mercator.posToPixel(point);
-    ctx.fillStyle = color;
-    ctx.strokeStyle = color;
-    ctx.lineWidth = lineWidth;
-
-    ctx.beginPath();
-    ctx.arc(pixel.x, pixel.y, lineWidth, 0, (Math.PI/180)*360, false);
-    ctx.stroke();
-    ctx.closePath();
-    ctx.fill();
-  });
-};
-
 let drawPixels = function(featureCollection) {
   let ctx = canvasMap.getCanvas().getContext('2d');
   ctx.fillStyle = defaults.pixelColor;
@@ -126,24 +77,6 @@ let drawLineString = function(fc, color, fill = false, lineWidth, lineCap) {
   }
 };
 
-let drawRoute = function(route, color) {
-  let ctx = canvasMap.getCanvas().getContext('2d');
-  let routeLength = route.features.length;
-  let length = 1;
-  let isFirst = true;
-  ctx.fillStyle = color;
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 1;
-  ctx.globalCompositeOperation = 'destination-over';
-
-  turf.meta.featureEach(route, function(point) {
-    let coord = turf.invariant.getCoord(point);
-    isFirst = drawLine(ctx, coord, isFirst, true);
-    if(routeLength === length) ctx.closePath();
-    length++;
-  });
-};
-
 let drawRect = function(color, width, height) {
   let ctx = canvasMap.getCanvas().getContext('2d');
 
@@ -154,28 +87,7 @@ let drawRect = function(color, width, height) {
   ctx.closePath();
 };
 
-let drawRectBox = function(bbox, color, lineWidth) {
-  let ctx = canvasMap.getCanvas().getContext('2d');
-  let pixelStart = mercator.posToPixel([bbox[0], bbox[1]]);
-  let pixelEnd = mercator.posToPixel([bbox[2], bbox[3]]);
-  let width = pixelEnd.x - pixelStart.x;
-  let height = pixelStart.y - pixelEnd.y;
-  ctx.strokeStyle = color;
-  ctx.lineWidth = lineWidth;
-  ctx.fillStyle = defaults.mapBg;
-
-  ctx.beginPath();
-  ctx.rect(pixelStart.x, pixelEnd.y, width, height);
-  ctx.stroke();
-  ctx.closePath();
-};
-
-exports.drawPoint = drawPoint;
-exports.drawPolygon = drawPolygon;
-exports.drawMultiPolygon = drawMultiPolygon;
-exports.drawRoute = drawRoute;
 exports.drawPixels = drawPixels;
 exports.drawLineString = drawLineString;
 exports.drawRect = drawRect;
 exports.clearCanvas = clearCanvas;
-exports.drawRectBox = drawRectBox;

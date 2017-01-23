@@ -12,7 +12,8 @@ let bbox = require('./bbox');
  */
 let positionToPixel = function(coord) {
   if (typeof coord[0] !== 'number' || typeof coord[1] !== 'number') {
-    throw new Error('Argument should be an array [number, number] ' + typeof(coord[0]) + ' given');
+    throw new Error('Argument should be an array [number, number] '
+     + typeof(coord[0]) + ' given');
   }
   let origin = getOrigin();
   let px = SM.px(coord, origin.zoom);
@@ -31,7 +32,8 @@ let positionToPixel = function(coord) {
  */
 let pixelToPosition = function(pixelPos) {
   if (typeof pixelPos[0] !== 'number' || typeof pixelPos[1] !== 'number') {
-    throw new Error('Argument should be an array [number, number]');
+    throw new Error('Argument should be an array [number, number] '
+      + typeof(pixelPos[0]) + ' given');
   }
   let origin = getOrigin();
 
@@ -83,30 +85,7 @@ let getOrigin = function(box = defaults.bbox) {
 };
 
 function getStepSize(zoomLevel) {
-  switch (zoomLevel) {
-    case 1:
-      return 30;
-    case 2:
-      return 20;
-    case 3:
-      return 10;
-    case 4:
-      return 9;
-    case 5:
-      return 8;
-    case 6:
-      return 7;
-    case 7:
-      return 5;
-    case 8:
-      return 3;
-    case 9:
-      return 2;
-    case 10:
-      return 2;
-    default:
-      return 20;
-  }
+  return 0.458333 * Math.pow(zoomLevel, 2) - 7.62348 * zoomLevel + 33.8833;
 }
 
 module.exports.calcScale = calculateScale;

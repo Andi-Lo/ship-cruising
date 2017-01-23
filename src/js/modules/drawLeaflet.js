@@ -6,7 +6,8 @@ let L = require('leaflet');
 let defaults = require('../modules/options').defaults;
 
 /**
- * Draws a polyline in L
+ * Draws a polyline in Leaflet
+ *
  * @param fc has to be a lineString collection
  * @param color
  * @param weight
@@ -42,25 +43,6 @@ let drawMarkers = function(fc) {
     i++;
   });
 };
-
-let drawPoints = function(fc, radius = 5, hexColor = "#F23C00") {
-  let maps = leafletMap.getMap();
-
-  turf.meta.featureEach(fc, function(feature) {
-    let coord = turf.invariant.getCoord(turf.flip(feature));
-    drawCircleMarker(maps, coord, radius, hexColor);
-  });
-};
-
-function drawCircleMarker(map, coord, radius, hexColor) {
-  return L.circleMarker(coord, {
-    color: '#FFFFFF',
-    fillColor: hexColor,
-    radius: radius,
-    fillOpacity: 1,
-    stroke: false
-  }).addTo(map);
-}
 
 function bindMarkerPopup(marker, text) {
   marker.bindPopup(text);
@@ -101,4 +83,3 @@ L.NumberedDivIcon = L.Icon.extend({
 
 module.exports.drawPolyline = drawPolyline;
 module.exports.drawMarkers = drawMarkers;
-module.exports.drawPoints = drawPoints;

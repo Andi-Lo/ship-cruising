@@ -68,8 +68,13 @@ function findPath(start, end, prevPoint, fcMap) {
   try {
     path = astar.search(graph, start, end, heuristic);
     if (path.length <= 0) {
+      console.log(start, end);
       throw new Error(`At least one of the given positions is set falsly.
-         Meaning that one of the given points might lay inside of Land`);
+         Meaning that no path could be found.
+         Two of the given harbour points may be equal:
+         Given Points:  A long/lat ${mercator.pixelToPos([start.x, start.y])},
+                        B long/lat ${mercator.pixelToPos([end.x, end.y])}`
+      );
     }
   }
   catch (error) {
