@@ -16,7 +16,7 @@ class MouseObserver {
       spinner.className = 'cssload-whirlpool';
       cover.className = 'cover';
       select.option = select.options[select.selectedIndex].value;
-      let path = `./map/${select.option}.geojson`;
+      let path = `./harbours/${select.option}.geojson`;
       let loadRoute = new Loader(path);
 
       loadRoute.then((fcRoute) => {
