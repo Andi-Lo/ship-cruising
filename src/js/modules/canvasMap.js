@@ -7,7 +7,7 @@ let mercator = require('../libs/mercator');
 let turf = require('../libs/turf');
 let Route = require('./route').Route;
 let blur = require('ctx-blur');
-// let toLineString = require('../libs/to-lineString');
+let toLineString = require('../libs/to-lineString');
 
 let canvas;
 let colorData = [];
