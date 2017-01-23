@@ -3,7 +3,7 @@
 let lineclip = require('lineclip');
 // This code is from the npm package "which-polygon"
 // http://github.com/mapbox/which-polygon
-let polygonIntersectsBBox = function(polygon, bbox) {
+module.exports = function(polygon, bbox) {
   let bboxCenter = [
     (bbox[0] + bbox[2]) / 2,
     (bbox[1] + bbox[3]) / 2
@@ -30,5 +30,3 @@ function insidePolygon(rings, p) {
 function rayIntersect(p, p1, p2) {
   return ((p1[1] > p[1]) !== (p2[1] > p[1])) && (p[0] < (p2[0] - p1[0]) * (p[1] - p1[1]) / (p2[1] - p1[1]) + p1[0]);
 }
-
-module.exports.polygonIntersectsBBox = polygonIntersectsBBox;

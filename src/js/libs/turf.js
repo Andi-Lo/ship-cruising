@@ -4,11 +4,7 @@ let turf = require('@turf/turf');
 turf.meta = require('@turf/meta');
 turf.invariant = require('@turf/invariant');
 turf.size = require('turf-size');
-let lineclip = require('lineclip');
-let martinez = require('martinez-polygon-clipping');
-let flatten = require('./helpers').flatten;
-let toLineString = require('./to-lineString');
-let polygonIntersectsBBox = require('../libs/whichPolygon').polygonIntersectsBBox;
+let selectPolygons = require('../libs/whichPolygon');
 require("babel-polyfill");
 
 /**
@@ -128,87 +124,7 @@ let fcToLineString = function(fc) {
   return lineString;
 };
 
-/**
- * Convert the FeatureColelction<LineString> into FeatureColelction<Polygon>
- *
- * @param {FeatureColelction<LineString>}
- * @returns {FeatureColelction<Polygon>}
- */
-function fcLineStringToFcPolygon(fc) {
-  fc = fixLineString(fc);
-  let features = [];
-  let points = [];
-  turf.meta.featureEach(fc, function(feature) {
-    points = turf.meta.coordAll(feature);
-    if(points.length > 3) {
-      features.push(turf.polygon([points]));
-    }
-  });
-  return turf.featureCollection(features);
-}
-
-/**
- * Clips the FeatureCollection with the bbox, reducing the overhead
- * of unused geometry.
- *
- * @param {FeatureCollection<(LineString|MultiLineString>)} the geojson world map
- * @param {Bbox} bbox
- * @returns {FeatureCollection<LineString>}
- */
-let clipPolygon = function(fc, bbox) {
-  let points;
-  let polygon;
-  bbox = turf.size(turf.square(bbox), 1.5);
-  let clipped = turf.featureCollection([]);
-  turf.meta.featureEach(fc, function(feature) {
-    points = turf.meta.coordAll(feature);
-    if(points.length > 0)
-      polygon = lineclip.polygon(points, bbox);
-    if(polygon.length > 0)
-      clipped.features.push(turf.lineString(polygon));
-  });
-  clipped = turf.fixLineString(clipped);
-  return clipped;
-};
-
-function toLine(fc) {
-  let line = turf.featureCollection([]);
-  let flat;
-  turf.meta.featureEach(fc, function(feature) {
-    switch(feature.geometry.type) {
-      case 'Polygon':
-        flat = flatten(feature.geometry.coordinates);
-        line.features.push(turf.lineString(flat));
-        break;
-      case 'MultiPolygon':
-        line.features.push(turf.lineString(unpackMultiPolCoords(feature)));
-        break;
-    }
-  });
-  return line;
-}
-
-let martinezClipping = function(fc, bbox) {
-  let polygon;
-  bbox = turf.bboxPolygon(turf.size(turf.square(bbox), 1.2));
-  let clipped = turf.featureCollection([]);
-  fc = toLineString(fc);
-  fc = fcLineStringToFcPolygon(fc);
-  turf.meta.featureEach(fc, function(feature) {
-    if(feature.geometry.coordinates.length > 0)
-      polygon = martinez.intersection(
-        feature.geometry.coordinates,
-        bbox.geometry.coordinates);
-    if(polygon !== null)
-      if(polygon.length === 1)
-        clipped.features.push(turf.polygon(polygon));
-      else
-        clipped.features.push(turf.multiPolygon(polygon));
-  });
-  return toLine(clipped);
-};
-
-let getFeaturesForClipping = function(fc, bbox) {
+let getPolygons = function(fc, bbox) {
   let savedFeatures = [];
   turf.meta.featureEach(fc, function(feature) {
     let coords = feature.geometry.coordinates;
@@ -221,12 +137,9 @@ let getFeaturesForClipping = function(fc, bbox) {
         coordsList.push(coords[j]);
       }
     }
-
-    // Get through all coordinates of the feature
-    // and check that there are in the bbox
+    // select polygons that lay inside bbox
     for(let i = 0; i < coordsList.length; i++) {
-      if(polygonIntersectsBBox(coordsList[i], bbox)) {
-        // Save polygon because it is in the bbox
+      if(selectPolygons(coordsList[i], bbox)) {
         savedFeatures.push(feature);
         break;
       }
@@ -250,10 +163,8 @@ let calcBbox = function(fc) {
 
 module.exports = turf;
 module.exports.calcBbox = calcBbox;
-module.exports.clipPolygon = clipPolygon;
 module.exports.iterateFeature = iterateFeature;
 module.exports.equidistant = equidistant;
 module.exports.fixLineString = fixLineString;
 module.exports.fcToLineString = fcToLineString;
-module.exports.martinezClipping = martinezClipping;
-module.exports.getFeaturesForClipping = getFeaturesForClipping;
+module.exports.getPolygons = getPolygons;

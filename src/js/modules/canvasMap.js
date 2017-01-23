@@ -11,6 +11,7 @@ let toLineString = require('../libs/to-lineString');
 
 let canvas;
 let colorData = [];
+const ITERATIONS = 4;
 
 let createCanvas = function(width, height) {
   let el = window.document.getElementById('ship-cruising');
@@ -28,9 +29,9 @@ let createCanvas = function(width, height) {
 function getStrokeSize(x) {
   switch (x) {
     case 1:
-      return 4;
+      return 6;
     case 2:
-      return 2;
+      return 3;
     case 3:
       return 0.1;
     default:
@@ -51,15 +52,15 @@ function getRgba(i, iterations) {
 }
 
 function canvasBlur(canvas) {
-  blur({radius: 1})(canvas, function(err, newCanvas) {
+  blur({radius: 2})(canvas, function(err, newCanvas) {
   });
 }
 
 function initMap(fcMap, bbox) {
   let canvas = createCanvas(defaults.width, defaults.height);
-  const ITERATIONS = 4;
-  fcMap = turf.getFeaturesForClipping(fcMap, bbox);
+  fcMap = turf.getPolygons(fcMap, bbox);
   fcMap = toLineString(fcMap);
+  console.log(fcMap);
   let lineCap = 'square';
   // draw grey-scale map with different stroke sizes
   for(let i = 1; i < ITERATIONS; i++) {
