@@ -7,6 +7,7 @@ let defaults = require('../modules/options').defaults;
 
 /**
  * Draws a polyline in Leaflet
+ *
  * @param fc has to be a lineString collection
  * @param color
  * @param weight

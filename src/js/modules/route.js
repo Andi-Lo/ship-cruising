@@ -23,9 +23,9 @@ class Route {
     let stepSize = mercator.getOrigin(defaults.bbox).stepSize;
     this._route = turf.equidistant(this._route, stepSize);
     this.mergeSimilarRoutes(TRESHOLD)
-      .simplifyPath(TOLERANCE_IN_PX)
-      .smoothCurve(SHARPNESS)
-      .fixRoute();
+        .simplifyPath(TOLERANCE_IN_PX)
+        .smoothCurve(SHARPNESS)
+        .fixRoute();
     return this;
   }
 

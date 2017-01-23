@@ -57,10 +57,9 @@ function canvasBlur(canvas) {
 
 function initMap(fcMap, bbox) {
   let canvas = createCanvas(defaults.width, defaults.height);
-  // fcMap = turf.martinezClipping(fcMap, bbox);
-  // fcMap = toLineString(fcMap);
-  fcMap = turf.clipPolygon(fcMap, bbox);
   const ITERATIONS = 4;
+  fcMap = turf.getFeaturesForClipping(fcMap, bbox);
+  fcMap = toLineString(fcMap);
   let lineCap = 'square';
   // draw grey-scale map with different stroke sizes
   for(let i = 1; i < ITERATIONS; i++) {
