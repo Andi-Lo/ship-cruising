@@ -21,7 +21,7 @@ class MouseObserver {
 
       loadRoute.then((fcRoute) => {
         setView(calcBbox(fcRoute));
-        let status = canvasMap.updateMap(fcRoute, fcMap);
+        let status = canvasMap.initMap(fcRoute, fcMap);
         if(status === "Done!") {
           spinner.className = '';
           cover.className = '';
