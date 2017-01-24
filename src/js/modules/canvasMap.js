@@ -126,7 +126,9 @@ let createPixelData = function() {
 
 let initMap = function(fcRoute, fcMap) {
   clearCanvasDiv();
+  console.time('Time for Calculation');
   let route = new Route(fcRoute, fcMap);
+  console.timeEnd('Time for Calculation');
 
   drawLeaflet.drawPolyline(route._route);
   drawLeaflet.drawMarkers(route._waypoints);
