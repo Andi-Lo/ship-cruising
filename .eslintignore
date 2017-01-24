@@ -1,5 +1,0 @@
-**/bundle.js
-gulpfile.js
-src/js/libs/astar.js
-src/tool/js/*
-src/js/modules/options.js

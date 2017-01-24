@@ -2,8 +2,9 @@ node_modules/*
 npm-debug.log
 src/js/bundle.js
 src/js/bundle.js.map
-dist/
+src/
 .vscode
 .idea/
 .nyc_output/**
 coverage/**
+test/**/*
