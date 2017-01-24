@@ -1,10 +1,11 @@
 'use strict';
 
+let _ = {};
+_.round = require('lodash/Math').round;
 let turf = require('../libs/turf');
 let leafletMap = require('./leafletMap');
 let L = require('leaflet');
 let defaults = require('../modules/options').defaults;
-let _ = require('lodash/math');
 
 /**
  * Draws a polyline in Leaflet
