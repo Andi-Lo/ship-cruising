@@ -7,7 +7,6 @@ var $ = require('gulp-load-plugins')({
     pattern: '*',
     rename: {
         'run-sequence': 'runSequence',
-        'browserSync': 'browser-sync',
         'browserify': 'browserify',
         'vinyl-buffer': 'buffer',
         'babelify': 'babelify',
@@ -57,14 +56,29 @@ gulp.task('build', ['lint'], function() {
     .pipe($.connect.reload());
 });
 
-gulp.task('build-dev', ['lint'], function() {
+gulp.task('uglify', ['lint'], function() {
   return $.browserify('./src/js/app.js')
     .transform("babelify")
     .bundle()
-    .pipe($.source('bundle.min.js'))
+    .pipe($.source('bundle.js'))
     .pipe($.buffer())
     .pipe($.uglify({mangle: false}))
-    .pipe(gulp.dest('./dist/'));
+    .pipe(gulp.dest('./dist/js'));
+});
+
+// Build Production Files, the Default Task
+gulp.task('build-dev', ['clean'], function (cb) {
+  $.runSequence(['uglify', 'copy'], cb);
+});
+
+// Clean dist Directory
+gulp.task('clean', $.del.bind(null, ['dist']));
+
+gulp.task('copy', function () {
+  return gulp.src([
+    'src/**/*',
+    '!src/js/**/*'
+  ]).pipe(gulp.dest('dist'));
 });
 
 gulp.task('watch', function() {
