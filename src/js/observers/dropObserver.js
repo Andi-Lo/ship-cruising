@@ -11,7 +11,7 @@ class DropObserver {
       reader.onloadend = function(e) {
         let fcRoute = JSON.parse(reader.result);
         setView(calcBbox(fcRoute));
-        canvasMap.updateMap(fcRoute, fcMap);
+        canvasMap.initMap(fcRoute, fcMap);
       };
       reader.readAsText(files[0]);
     });
