@@ -138,14 +138,11 @@ h1, h2, h3 {
 
 .tool-wrapper {
   position: relative;
-  /* border: 1px solid lightgrey;
-  border-width: 0 0 1px 0; */
   user-select: none;
-  height: 350px;
+  height: 240px;
 }
 
 .tool-content {
-  /* overflow: hidden;*/
   height: 350px;
 }
 
