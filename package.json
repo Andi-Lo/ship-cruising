@@ -6,7 +6,7 @@
   "scripts": {
     "start": "gulp serve",
     "build": "gulp build",
-    "build-dev": "gulp build-dev",
+    "build-dev": "npm test && gulp build-dev",
     "quicktest": "mocha ./tests/test.js --compilers js:babel-core/register && rimraf coverage",
     "test": "nyc --require babel-core/register mocha ./tests/test.js --compilers js:babel-core/register && rimraf coverage"
   },
