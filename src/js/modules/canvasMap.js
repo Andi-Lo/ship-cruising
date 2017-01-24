@@ -56,11 +56,9 @@ function canvasBlur(canvas) {
   });
 }
 
-function initMap(fcMap, bbox) {
+function updateMap(fcMap, bbox) {
   let canvas = createCanvas(defaults.width, defaults.height);
-  fcMap = turf.getPolygons(fcMap, bbox);
-  fcMap = toLineString(fcMap);
-  console.log(fcMap);
+  fcMap = toLineString(turf.getPolygons(fcMap, bbox));
   let lineCap = 'square';
   // draw grey-scale map with different stroke sizes
   for(let i = 1; i < ITERATIONS; i++) {
@@ -83,7 +81,6 @@ function initMap(fcMap, bbox) {
     if(i === ITERATIONS-2)
       canvasBlur(canvas);
   }
-
   return fcMap;
 };
 
@@ -127,7 +124,7 @@ let createPixelData = function() {
   return colorData;
 };
 
-let updateMap = function(fcRoute, fcMap) {
+let initMap = function(fcRoute, fcMap) {
   clearCanvasDiv();
   let route = new Route(fcRoute, fcMap);
 
@@ -157,7 +154,7 @@ let getColorData = function(start, end, fcMap) {
   let origin = mercator.getOrigin(bbox);
   bbox = turf.size(bbox, Math.floor(origin.zoom / 3));
   defaults.bbox = bbox;
-  initMap(fcMap, bbox);
+  updateMap(fcMap, bbox);
   setColorData(createPixelData());
 
   return colorData;
@@ -167,4 +164,4 @@ module.exports.createPixelData = createPixelData;
 module.exports.getCanvas = getCanvas;
 module.exports.getColorData = getColorData;
 module.exports.createCanvas = createCanvas;
-module.exports.updateMap = updateMap;
+module.exports.initMap = initMap;

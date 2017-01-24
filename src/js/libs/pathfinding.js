@@ -22,6 +22,7 @@ module.exports = function(fcRoute, fcMap) {
   let lineCollection = [];
   let start = feature.next();
   for(let i = 0; i < (fcRoute.features.length - 1); i++) {
+    console.log(`Calculating route ${i+1} of ${fcRoute.features.length-1}`);
     let next = feature.next();
     if(next.done !== true) {
       let path = findPath(start, next, prevPoint, fcMap);

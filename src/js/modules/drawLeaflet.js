@@ -1,7 +1,7 @@
 'use strict';
 
 let _ = {};
-_.round = require('lodash/Math').round;
+_.round = require('lodash/math').round;
 let turf = require('../libs/turf');
 let leafletMap = require('./leafletMap');
 let L = require('leaflet');
