@@ -6,59 +6,90 @@ let setView = require('../modules/leafletMap').setView;
 
 class DropObserver {
   constructor(selector, fcMap) {
-    this.dndController(selector).then((files) => {
-      let reader = new FileReader();
+    this.dndController(selector, fcMap);
+  }
+
+  static addSpinner() {
+    return new Promise((resolve, reject) => {
       let spinner = window.document.getElementById('spinner');
       let cover = window.document.getElementById('cover');
       spinner.className = 'cssload-whirlpool';
       cover.className = 'cover';
-      reader.onloadend = function(e) {
-        let fcRoute = JSON.parse(reader.result);
-        setView(calcBbox(fcRoute));
-        let status = canvasMap.initMap(fcRoute, fcMap);
-        if(status === "Done!") {
-          spinner.className = '';
-          cover.className = '';
-        }
-      };
-      reader.readAsText(files[0]);
+
+      let sleep = ((sleepyTime) => {
+        let start = +new Date;
+        while (+new Date - start < sleepyTime);
+      });
+      sleep(50);
+
+      return resolve();
     });
   }
 
-  dndController(selector) {
-    return new Promise(function(resolve, reject) {
-      let el_ = window.document.getElementsByClassName(selector)[0];
+  static handleDrop(e, fcMap) {
+    let reader = new FileReader();
+    let spinner = window.document.getElementById('spinner');
+    let cover = window.document.getElementById('cover');
+    spinner.className = 'cssload-whirlpool';
+    cover.className = 'cover';
+    reader.onloadend = function(e) {
+      let fcRoute = JSON.parse(reader.result);
+      setView(calcBbox(fcRoute));
+      let status = canvasMap.initMap(fcRoute, fcMap);
+      if(status === "Done!") {
+        spinner.className = '';
+        cover.className = '';
+      }
+    };
+    reader.readAsText(e.dataTransfer.files[0]);
+  }
 
-      el_.dragenter = function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        el_.classList.add('dropping');
-      };
+  dndController(selector, fcMap) {
+    let el_ = window.document.getElementsByClassName(selector)[0];
 
-      el_.dragover = function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        el_.classList.add('dropping');
-      };
+    el_.dragenter = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      el_.classList.add('dropping');
+    };
 
-      el_.dragleave = function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        el_.classList.remove('dropping');
-      };
+    el_.dragover = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      el_.classList.add('dropping');
+    };
 
-      el_.drop = function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        el_.classList.remove('dropping');
-        return resolve(e.dataTransfer.files);
-      };
+    el_.dragleave = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      el_.classList.remove('dropping');
+    };
 
-      el_.addEventListener('dragenter', el_.dragenter, false);
-      el_.addEventListener('dragover', el_.dragover, false);
-      el_.addEventListener('dragleave', el_.dragleave, false);
-      el_.addEventListener('drop', el_.drop, false);
-    });
+    el_.drop = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      el_.classList.remove('dropping');
+      let spinner = window.document.getElementById('spinner');
+      let cover = window.document.getElementById('cover');
+      DropObserver.addSpinner().then(() => {
+        let reader = new FileReader();
+        reader.onloadend = function(e) {
+          let fcRoute = JSON.parse(reader.result);
+          setView(calcBbox(fcRoute));
+          let status = canvasMap.initMap(fcRoute, fcMap);
+          if(status === "Done!") {
+            spinner.className = '';
+            cover.className = '';
+          }
+        };
+        reader.readAsText(e.dataTransfer.files[0]);
+      });
+    };
+
+    el_.addEventListener('dragenter', el_.dragenter, false);
+    el_.addEventListener('dragover', el_.dragover, false);
+    el_.addEventListener('dragleave', el_.dragleave, false);
+    el_.addEventListener('drop', el_.drop, false);
   }
 }
 
