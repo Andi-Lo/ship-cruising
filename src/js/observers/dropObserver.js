@@ -8,10 +8,18 @@ class DropObserver {
   constructor(selector, fcMap) {
     this.dndController(selector).then((files) => {
       let reader = new FileReader();
+      let spinner = window.document.getElementById('spinner');
+      let cover = window.document.getElementById('cover');
+      spinner.className = 'cssload-whirlpool';
+      cover.className = 'cover';
       reader.onloadend = function(e) {
         let fcRoute = JSON.parse(reader.result);
         setView(calcBbox(fcRoute));
-        canvasMap.initMap(fcRoute, fcMap);
+        let status = canvasMap.initMap(fcRoute, fcMap);
+        if(status === "Done!") {
+          spinner.className = '';
+          cover.className = '';
+        }
       };
       reader.readAsText(files[0]);
     });
