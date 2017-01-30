@@ -1,12 +1,17 @@
 'use strict';
 
-let canvasMap = require('../modules/canvasMap');
+let canvasMap = require('../modules/canvasMap').canvasMap;
 let calcBbox = require('../libs/turf').calcBbox;
 let setView = require('../modules/leafletMap').setView;
 
+/**
+ * Class DropObserver handles the drag and drop event
+ * @public
+ * @class DropObserver
+ */
 class DropObserver {
-  constructor(selector, fcMap) {
-    this.dndController(selector, fcMap);
+  constructor(fcMap) {
+    this.dndController('drop-zone', fcMap);
   }
 
   static addSpinner() {
@@ -16,6 +21,8 @@ class DropObserver {
       spinner.className = 'cssload-whirlpool';
       cover.className = 'cover';
 
+      // browser hack to try to force a redraw of the UI while executing javascript to display the loading spinner
+      // see http://stackoverflow.com/a/30417587/2483301
       let sleep = ((sleepyTime) => {
         let start = +new Date;
         while (+new Date - start < sleepyTime);
@@ -26,6 +33,15 @@ class DropObserver {
     });
   }
 
+  /**
+   * handle the onDrop event and load the from user provided route
+   *
+   * @static
+   * @param {Event} e
+   * @param {FeatureCollection<Polygon>} fcMap
+   *
+   * @memberOf DropObserver
+   */
   static handleDrop(e, fcMap) {
     let reader = new FileReader();
     let spinner = window.document.getElementById('spinner');
@@ -35,7 +51,7 @@ class DropObserver {
     reader.onloadend = function(e) {
       let fcRoute = JSON.parse(reader.result);
       setView(calcBbox(fcRoute));
-      let status = canvasMap.initMap(fcRoute, fcMap);
+      let status = canvasMap(fcRoute, fcMap);
       if(status === "Done!") {
         spinner.className = '';
         cover.className = '';
@@ -76,7 +92,7 @@ class DropObserver {
         reader.onloadend = function(e) {
           let fcRoute = JSON.parse(reader.result);
           setView(calcBbox(fcRoute));
-          let status = canvasMap.initMap(fcRoute, fcMap);
+          let status = canvasMap(fcRoute, fcMap);
           if(status === "Done!") {
             spinner.className = '';
             cover.className = '';

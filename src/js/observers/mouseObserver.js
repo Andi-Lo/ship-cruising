@@ -1,10 +1,15 @@
 'use strict';
 
 let Loader = require('../libs/loader').Loader;
-let canvasMap = require('../modules/canvasMap');
+let canvasMap = require('../modules/canvasMap').canvasMap;
 let calcBbox = require('../libs/turf').calcBbox;
 let setView = require('../modules/leafletMap').setView;
 
+/**
+ * Class MouseObserver handles the onclick events on the "go" button
+ *
+ * @class MouseObserver
+ */
 class MouseObserver {
   constructor(fcMap) {
     let calc = window.document.getElementById('calc');
@@ -21,7 +26,7 @@ class MouseObserver {
 
       loadRoute.then((fcRoute) => {
         setView(calcBbox(fcRoute));
-        let status = canvasMap.initMap(fcRoute, fcMap);
+        let status = canvasMap(fcRoute, fcMap);
         if(status === "Done!") {
           spinner.className = '';
           cover.className = '';

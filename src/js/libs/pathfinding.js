@@ -12,8 +12,8 @@ let last = require('lodash/array').last;
  * Input has to be a geojson featureCollection containing each harbour as a feature object with long / lat coordinates
  *
  * @name pathfinding
- * @param {FeatureCollection<(LineString|MultiLineString)>}
- * @param {FeatureCollection<Point>}
+ * @param {FeatureCollection<(LineString|MultiLineString)>} fcRoute
+ * @param {FeatureCollection<Point>} fcMap
  * @returns {FeatureCollection<LineString>} the actual route
  */
 module.exports = function(fcRoute, fcMap) {
@@ -49,9 +49,9 @@ function setProperties(path, start, next) {
 /**
  * Use astar to find path from "start" to "end"
  *
- * @param {Object} start
- * @param {Object} end
- * @returns {Object} object containing the route and the previous point
+ * @param {Feature<Point>} start point of a route
+ * @param {Feature<Point>} end point of a route
+ * @returns {Feature<LineString>} containing the route and the previous point
  * the last harbour B to serve as the next new start point A
  */
 function findPath(start, end, prevPoint, fcMap) {
@@ -60,6 +60,7 @@ function findPath(start, end, prevPoint, fcMap) {
   let heuristic = {heuristic: astar.heuristics.diagonal};
   let prev = end;
   let path;
+
   let getNode = (node) => {
     node = mercator.posToPixel(node.value.geometry.coordinates);
     return graph.grid[node.x][node.y];
@@ -67,20 +68,16 @@ function findPath(start, end, prevPoint, fcMap) {
   start = getNode(start);
   end = getNode(end);
 
-  try {
-    path = astar.search(graph, start, end, heuristic);
-    if (path.length <= 0) {
-      throw new Error(`At least one of the given positions is set falsly.
-         Meaning that no path could be found.
-         Two of the given harbour points may be equal:
-         Given Points:  A long/lat ${mercator.pixelToPos([start.x, start.y])},
-                        B long/lat ${mercator.pixelToPos([end.x, end.y])}`
-      );
-    }
+  path = astar.search(graph, start, end, heuristic);
+  if (path.length <= 0) {
+    throw new Error(`At least one of the given positions is set falsly.
+        Meaning that no path could be found.
+        Two of the given harbour points may be equal:
+        Given Points: A long/lat ${mercator.pixelToPos([start.x, start.y])},
+                      B long/lat ${mercator.pixelToPos([end.x, end.y])}`
+    );
   }
-  catch (error) {
-    throw error;
-  }
+
   let route = gridNodeToLinestring(path);
   if(prevPoint !== false) route.geometry.coordinates[0] = prevPoint;
   return {route, prev};

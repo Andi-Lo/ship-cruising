@@ -4,7 +4,7 @@ function importTest(name, path) {
   });
 }
 
-var common = require("./common");
+let common = require("./common");
 
 describe("Mocha Test Suite", function() {
   beforeEach(function() {

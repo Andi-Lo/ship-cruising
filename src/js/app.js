@@ -9,10 +9,10 @@ function shipcruising() {
   let promise = new Loader('./map/coastline_2025_tiles.geojson');
   promise.then((fc) => {
     new MouseObserver(fc);
-    new DropObserver('drop-zone', fc);
+    new DropObserver(fc);
   });
 
-  leafletMap.init();
+  leafletMap();
 };
 
 shipcruising();

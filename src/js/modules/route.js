@@ -5,12 +5,18 @@ let pathfinding = require('../libs/pathfinding');
 let mercator = require('../libs/mercator');
 let defaults = require('../modules/options').defaults;
 
+/**
+ * The route class
+ *
+ * @public
+ * @class Route
+ */
 class Route {
   /**
    * Creates an instance of Route.
    *
-   * @param {FeatureCollection<Point>}
-   * @param {FeatureCollection<(LineString|MultiLineString)>} geojson map
+   * @param {FeatureCollection<Point>} fcWaypoints
+   * @param {FeatureCollection<(LineString|MultiLineString)>} fcMap a geojson map
    *
    * @memberOf Route
    */
@@ -35,7 +41,7 @@ class Route {
   get waypoints() { return this._waypoints; }
 
   /**
-   * Tries to merge routes that lay closely to each other
+   * Tries to merge routes that lay closely to each other into one
    *
    * @param {FeatureCollection<LineString>}
    * @param {number} [threshold=3] number in kilometers should be > 0 < 10. Defines the radius where 2 points should be merged to 1.
@@ -73,8 +79,7 @@ class Route {
    *
    * @param {FeatureCollection<Point>}
    * @param {FeatureCollection<(LineString|MultiLineString)>}
-   * @returns {Route}
-   * representing a step of the route
+   * @returns {Route} representing a step of the route
    *
    * @memberOf Route
    */
@@ -117,7 +122,6 @@ class Route {
    * Simplifies the coordinates of a given featureCollection
    *
    * @see http://turfjs.org/docs.html#simplify
-   *
    * @param {FeatureCollection<LineString>}
    * @param {number} [tolerance=0.01] tolerance of simplification
    * @returns {FeatureCollection<LineString>} simplified route
@@ -139,7 +143,6 @@ class Route {
    * features into bezier curves.
    *
    * @see http://turfjs.org/docs.html#bezier
-   *
    * @param {FeatureCollection<LineString>}
    * @param {number} [sharpness=0.4] higher values mean more curviness
    * @returns {FeatureCollection<LineString>} bezier curved route

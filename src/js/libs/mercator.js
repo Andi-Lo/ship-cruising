@@ -6,9 +6,16 @@ let SM = new (require('@mapbox/sphericalmercator'))();
 let bbox = require('./bbox');
 
 /**
- * Takes a long, lat coordinate
- * @param [any,any] coord
- * @returns {any, any} a pixel position object in form {p.x, p.y}
+ * @typedef {[number, number, number, number]} Bbox
+*/
+
+/**
+ * Takes a long, lat coordinate and returns an object with the corresponding
+ * pixel coordinates for the canvas using sphericalmercator projection.
+ *
+ * @name positionToPixel
+ * @param {Array<number>} coord 2‑tuple [number, number] where numbers must be long, lat
+ * @returns {Object} a pixel position object with properties {p.x, p.y}
  */
 let positionToPixel = function(coord) {
   if (typeof coord[0] !== 'number' || typeof coord[1] !== 'number') {
@@ -26,9 +33,12 @@ let positionToPixel = function(coord) {
 };
 
 /**
- * Takes a pixel position of [num, num] and calculating the longLat for it
- * @param [any, any] pixelPos
- * @returns {any, any} a longLat position object in form {p.x, p.y}
+* Takes a pixel coordinate and returns an object with the corresponding
+* long,lat coordinates using sphericalmercator projection. This is the reverse of {@link positionToPixel}
+ *
+ * @name pixelToPosition
+ * @param {Array<number>} pixelPos 2‑tuple [number, number] where number must be a int value
+ * @returns {Object} a longLat position object in form {p.x, p.y}
  */
 let pixelToPosition = function(pixelPos) {
   if (typeof pixelPos[0] !== 'number' || typeof pixelPos[1] !== 'number') {
@@ -51,8 +61,9 @@ let pixelToPosition = function(pixelPos) {
 /**
  * Takes a bbox and calculates the scale of the map taking the distance from the
  * lower left corner to the lower right corner of the rectangle.
+ *
  * @param {string} units (default kilometers) can be miles, or kilometers
- * @param {[any,any,any,any]} box
+ * @param {Bbox} box
  * @returns the scale of 1px in units
  */
 let calculateScale = function(units = 'kilometers', box = defaults.bbox) {
@@ -68,8 +79,9 @@ let calculateScale = function(units = 'kilometers', box = defaults.bbox) {
 /**
  * get the origin which is the very top left corner of the canvas
  * plus the actual zoom level of the bbox
- * @param {bbox} any bbox
- * @returns {[num, num, zoom]}
+ *
+ * @param {Bbox} box
+ * @returns {Object} containing [origin, zoom, stepSize]
  */
 let getOrigin = function(box = defaults.bbox) {
   let bounds = bbox(box, defaults.width, defaults.height);

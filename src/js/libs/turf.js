@@ -37,9 +37,9 @@ let iterateFeature = function* (fc, start = 0, end = -1) {
  * point to the array so the lineString behaves like a closed
  * polygon which needs to have start === endpoint
  *
- * @param {featureCollection<(lineString)>}
+ * @param {FeatureCollection<LineString>}
  * @throws {Error} on wrong geometry type
- * @returns {featureCollection<(LineString)>}
+ * @returns {FeatureCollection<LineString>}
  */
 let fixLineString = function(fc) {
   turf.meta.featureEach(fc, function(feature) {
@@ -87,9 +87,9 @@ function equdistantParameters(feature, stepSize) {
  * Distributes each route point equidistantly along the route
  * in the given stepSize
  *
- * @param {featureCollection<LineString>}
+ * @param {FeatureCollection<LineString>}
  * @param {number} stepSize
- * @returns {featureCollection<LineString>}
+ * @returns {FeatureCollection<LineString>}
  */
 let equidistant = function(fc, stepSize) {
   let features = [];
@@ -112,7 +112,7 @@ let equidistant = function(fc, stepSize) {
 /**
  * Converts a FeatureCollection<Point> into a LineString feature
  *
- * @param {featureCollection<Point>}
+ * @param {FeatureCollection<Point>}
  * @returns {Feature<LineString>}
  */
 let fcToLineString = function(fc) {
@@ -124,6 +124,15 @@ let fcToLineString = function(fc) {
   return lineString;
 };
 
+
+/**
+ * Get the polygons that lay inside or getting touched by a bounding box.
+ *
+ * @typedef {[number, number, number, number]} Bbox
+ * @param {FeatureCollection<(Polygon|MultiPolygon)>} FeatureCollection with Polygons
+ * @param {Bbox} bbox which encloses the desired polygons you want to get
+ * @returns {FeatureCollection<(Polygon|MultiPolygon)>}
+ */
 let getPolygons = function(fc, bbox) {
   let savedFeatures = [];
   turf.meta.featureEach(fc, function(feature) {
@@ -153,8 +162,9 @@ let getPolygons = function(fc, bbox) {
  * Calculates the minimal bbox for a given set of Features
  *
  * @example e.g. the function will give the minimal bounding box for the route
- * @param {featureCollection<LineString>} Feature or FeatureCollection
- * @returns {Feature<Bbox>} rectangular polygon feature that encompasses all vertices
+ * @typedef {[number, number, number, number]} Bbox
+ * @param {Feature|FeatureCollection} fc Feature or FeatureCollection
+ * @returns {Bbox} rectangular bbox that encompasses all vertices
  */
 let calcBbox = function(fc) {
   let feature = turf.envelope(fc);
