@@ -103,7 +103,6 @@ function canvasBlur(canvas) {
  * @typedef {[number, number, number, number]} Bbox
  * @param {FeatureCollection<Polygon>} fcMap
  * @param {Bbox} bbox
- * @returns {FeatureCollection<LineString>}
  */
 function updateMap(fcMap, bbox) {
   let canvas = createCanvas(defaults.width, defaults.height);
@@ -130,7 +129,6 @@ function updateMap(fcMap, bbox) {
     if(i === ITERATIONS-2)
       canvasBlur(canvas);
   }
-  return fcMap;
 };
 
 /**
@@ -198,6 +196,7 @@ let getColorData = function(start, end, fcMap) {
   let fcRoute = turf.featureCollection([start, end]);
   let bbox = turf.square(turf.calcBbox(fcRoute));
   let origin = mercator.getOrigin(bbox);
+  console.log(origin, turf.bboxPolygon(bbox));
   bbox = turf.size(bbox, Math.floor(origin.zoom / 3));
   defaults.bbox = bbox;
   updateMap(fcMap, bbox);
