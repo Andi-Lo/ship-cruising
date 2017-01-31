@@ -124,16 +124,38 @@ let fcToLineString = function(fc) {
   return lineString;
 };
 
+function expand(bbox, distance) {
+  // 1 deg = ~110.574 km
+  const TODEG = 110.574;
+  let currentXDistance = (bbox[2] - bbox[0]);
+  let currentYDistance = (bbox[3] - bbox[1]);
+  let newXDistance = currentXDistance + (distance / TODEG);
+  let newYDistance = currentYDistance + (distance / TODEG);
+  let xChange = newXDistance - currentXDistance;
+  let yChange = newYDistance - currentYDistance;
+
+  let lowX = bbox[0] - (xChange / 2);
+  let lowY = bbox[1] - (yChange / 2);
+  let highX = (xChange / 2) + bbox[2];
+  let highY = (yChange / 2) + bbox[3];
+
+  let sized = [lowX, lowY, highX, highY];
+  return sized;
+};
 
 /**
  * Get the polygons that lay inside or getting touched by a bounding box.
  *
  * @typedef {[number, number, number, number]} Bbox
- * @param {FeatureCollection<(Polygon|MultiPolygon)>} FeatureCollection with Polygons
+ * @param {FeatureCollection<(Polygon|MultiPolygon)>} fc FeatureCollection with Polygons
  * @param {Bbox} bbox which encloses the desired polygons you want to get
  * @returns {FeatureCollection<(Polygon|MultiPolygon)>}
  */
 let getPolygons = function(fc, bbox) {
+  // the tileSize of the coastline_2025_tiles.geojson map is 890 kilometers per tile
+  const TILESIZE = 890;
+  bbox = expand(bbox, TILESIZE);
+
   let savedFeatures = [];
   turf.meta.featureEach(fc, function(feature) {
     let coords = feature.geometry.coordinates;
@@ -154,7 +176,6 @@ let getPolygons = function(fc, bbox) {
       }
     }
   });
-
   return turf.featureCollection(savedFeatures);
 };
 
