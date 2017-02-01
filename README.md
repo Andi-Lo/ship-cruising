@@ -2,6 +2,25 @@
 
 [travis-ci]: https://travis-ci.com/Andi-Lo/ship-cruising.svg?token=hejt5J6fVuz1qkWoWxT7&branch=master
 
+## Getting started
+
+Open your terminal:
+
+```
+cd ship-cruising
+npm install
+npm start
+```
+Open your browser access the url below:
+
+```
+localhost:3000
+```
+
+## If you don't have node installed
+
+see [Setup](SETUP.md)
+
 ## Project Structure
 
 * `data/` Some project related stuff like documents and excel sheets
